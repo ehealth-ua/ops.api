@@ -78,12 +78,7 @@ defmodule OPS.Declarations do
   end
 
   defp declaration_changeset(%DeclarationSearch{} = declaration, attrs) do
-    fields = ~W(
-      person_id
-      is_active
-      employee_id
-      legal_entity_id
-    )
+    fields = DeclarationSearch.__schema__(:fields)
 
     cast(declaration, attrs, fields)
   end
