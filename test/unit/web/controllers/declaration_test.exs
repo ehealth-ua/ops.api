@@ -98,6 +98,15 @@ defmodule OPS.Web.DeclarationControllerTest do
     assert length(json_response(conn, 200)["data"]) == 0
   end
 
+  test "search declarations by statuses active and pending_verification", %{conn: conn} do
+    fixture(:declaration)
+    fixture(:declaration, Map.put(@create_attrs, :status, "pending_verification"))
+
+    conn = get conn, declaration_path(conn, :index), [status: "active,pending_verification"]
+
+    assert length(json_response(conn, 200)["data"]) == 2
+  end
+
   test "creates declaration and renders declaration when data is valid", %{conn: conn} do
     conn = post conn, declaration_path(conn, :create), declaration: @create_attrs
     assert %{"id" => id, "inserted_at" => inserted_at, "updated_at" => updated_at} = json_response(conn, 201)["data"]

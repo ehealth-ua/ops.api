@@ -31,13 +31,26 @@ defmodule OPS.Search do
       end
 
       def get_search_query(entity, changes) when map_size(changes) > 0 do
-        params = Map.to_list(changes)
+        statuses =
+          changes
+          |> Map.get(:status, "")
+          |> String.split(",")
 
-        from e in entity,
-          where: ^params,
-          order_by: [desc: :inserted_at]
+        params =
+          changes
+          |> Map.drop([:status])
+          |> Map.to_list()
+
+        query =
+          from e in entity,
+            where: ^params,
+            order_by: [desc: :inserted_at]
+        add_status_where(query, statuses)
       end
       def get_search_query(entity, _changes), do: from e in entity, order_by: [desc: :inserted_at]
+
+      defp add_status_where(query, [""]), do: query
+      defp add_status_where(query, statuses), do: query |> where([e], e.status in ^statuses)
 
       defoverridable [get_search_query: 2]
     end
