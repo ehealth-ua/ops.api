@@ -232,7 +232,7 @@ defmodule OPS.Web.DeclarationControllerTest do
   end
 
   test "terminates declarations for given person_id", %{conn: conn} do
-    user_id = Confex.get(:ops, :declaration_terminator_user)
+    user_id = Confex.get_env(:ops, :declaration_terminator_user)
     person_id = "84e30a11-94bd-49fe-8b1f-f5511c5916d6"
 
     dec = fixture(:declaration)

@@ -4,6 +4,7 @@ defmodule OPS do
   """
   use Application
   alias OPS.Web.Endpoint
+  alias Confex.Resolver
 
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
   # for more information on OTP Applications
@@ -22,6 +23,7 @@ defmodule OPS do
       # Starts a worker by calling: OPS.Worker.start_link(arg1, arg2, arg3)
       # worker(OPS.Worker, [arg1, arg2, arg3]),
       worker(OPS.DeclarationTerminator, []),
+      worker(OPS.DeclarationAutoApprove, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
@@ -53,6 +55,6 @@ defmodule OPS do
   # Loads configuration in `:on_init` callbacks and replaces `{:system, ..}` tuples via Confex
   @doc false
   def load_from_system_env(config) do
-    {:ok, Confex.process_env(config)}
+    {:ok, Resolver.resolve!(config)}
   end
 end
