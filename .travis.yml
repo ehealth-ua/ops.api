@@ -11,8 +11,14 @@ elixir:
   - 1.4.2
 otp_release:
   - 19.2
+notifications:
+  slack: 
+    rooms:
+      - secure: "u7uYfmURAOxH5f+aZUYDlbKNUHz+7Ekd7U5WsZAYjWXbx+ILnLy3ox4wJsubWxO39zyuNMRYwwASV15b7S1u9hgP0m5kE5yxrzq7H7HkN16b07HUMHjOvNmNn98FC6eZBdMtJ5DW8HhPTr9oUshuYBGTOas+WN+vX5RARKOlW4l/4vlyXgDCKEWt2O+fx/svJ0W+Kq1fpn4DdxFGUkwbcsFOFjjEeslNY4rfb2WEFWoYLsPJgCBW+vfdEaLVu2vlFSSKSoykvbTqt/m5JxB8SLX+9Oel36PdC3JnG5qFAW8RN92EQXOKJ6MxAnyQkd68cUkkPGSVWfEGC6KnfC8kwUwEzz5VMEwA5gk6io0AwlmfSbN7HBSMuyaT5DlFHx6VBPe19tsjiFDCAE9cgOyGOAwujg66AbeZhzLwuo+VYpjH1uhplu40DpIm8kLE7w6r2ACJcz8Amm4T4mWAGTdqpDxcOPTSNwYStfE2h6+VT+nygdtvtEgmjcfxMZ7r1a2V+Hb197y5isTqEWV1YszrwHNCsW4Q1KxqnSOLsCvOgyo6qFdNrpYhEgGK5uc4k/yfo7Im6xxBI1whNQ/B0PdHau4MLudJfX6qHjrSQKqzZ16PWZ76Oa1AcYn1m05Ck6v6e30/6gmsI9YXA0kgn5x3PalK/TLvcBGLfgIo42dlFLg="
+    on_success: always
 env:
   global:
+    - Chart=ops
     - MIX_ENV=test
     - DOCKER_HUB_ACCOUNT=edenlabllc
     - MAIN_BRANCHES="master develop staging" # Branches on which you want version to be incremented
@@ -25,6 +31,7 @@ branches:
   except:
     - /[0-9]*\.[0-9]*\.[0-9]*/
 before_install:
+  - openssl aes-256-cbc -K $encrypted_2c030700b0c2_key -iv $encrypted_2c030700b0c2_iv -in eHealth-eef414faa06b.json.enc -out eHealth-eef414faa06b.json -d
   # Expose MQ and DB to Docker container
   - sudo ./bin/ci/init-db.sh
 script:
@@ -42,23 +49,14 @@ script:
   # Check code style
   - mix dogma
   # Build Docker container
-  - ./bin/build.sh
+  - ./bin/build.sh || travis_terminate 1
   # Initialize DB for Docker container
   - MIX_ENV=dev mix ecto.setup
   # Run Docker container
-  - sudo ./bin/start.sh
-  - sleep 5
-  - docker ps
-  - RUNNING_CONTAINERS=`docker ps | wc -l`;
-    if [ "${RUNNING_CONTAINERS//[[:space:]]/}" == "1" ]; then
-      echo "[E] Container is not started\!";
-      docker logs ops --details --since 5h;
-      exit 1;
-    fi;
+  - sudo ./bin/start.sh || travis_terminate 1
   # Run acceptance tests on Docker container
   - "CONTAINER_HTTP_HOST=localhost CONTAINER_HTTP_PORT=4000 mix test test/acceptance"
-after_failure:
-  - docker logs ops --details --since 5h
-after_success:
   # Submit Docker container to Docker Hub and create GitHub Release by pushing tag with changelog
-  - ./bin/ci/push.sh
+  - ./bin/ci/push.sh || travis_terminate 1
+  # CD to Dev
+  - sudo ./bin/deploy.sh || travis_terminate 1
