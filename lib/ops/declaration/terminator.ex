@@ -10,7 +10,7 @@ defmodule OPS.DeclarationTerminator do
 
   # Client API
 
-  @config Confex.get_map(:ops, __MODULE__)
+  @config Confex.get_env(:ops, __MODULE__)
 
   def start_link do
     GenServer.start_link(__MODULE__, [])
