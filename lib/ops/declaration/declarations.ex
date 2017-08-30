@@ -96,6 +96,17 @@ defmodule OPS.Declarations do
     |> Repo.transaction()
   end
 
+  def approve_declarations(value, unit) do
+    query =
+      Declaration
+      |> where([d], fragment("?::date < now()::date", datetime_add(d.inserted_at, ^value, ^unit)))
+      |> where([d], d.status == ^Declaration.status(:pending))
+
+    Multi.new()
+    |> Multi.update_all(:declarations, query, set: [status: Declaration.status(:active)])
+    |> Repo.transaction()
+  end
+
   def terminate_declarations do
     query =
       Declaration
@@ -117,6 +128,7 @@ defmodule OPS.Declarations do
     |> Multi.run(:logged_terminations, fn multi -> log_updates(user_id, multi.terminated_declarations, updates) end)
     |> Repo.transaction()
   end
+
   def terminate_person_declarations(user_id, person_id) do
     query = from d in Declaration,
       where: [person_id: ^person_id]

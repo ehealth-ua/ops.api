@@ -7,12 +7,13 @@ defmodule OPS.Repo do
   use Ecto.Repo, otp_app: :ops
   use EctoTrail
   use Ecto.Paging.Repo
+  alias Confex.Resolver
 
   @doc """
   Dynamically loads the repository configuration from the environment variables.
   """
   def init(_, config) do
-    config = Confex.process_env(config)
+    config = Resolver.resolve!(config)
 
     unless config[:database] do
       raise "Set DB_NAME environment variable!"

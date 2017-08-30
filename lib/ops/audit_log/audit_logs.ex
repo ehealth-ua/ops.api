@@ -2,7 +2,7 @@ defmodule OPS.AuditLogs do
   @moduledoc false
 
   alias OPS.Repo
-  import Ecto.{Query, Changeset}
+  import Ecto.Changeset
 
   alias EctoTrail.Changelog
 

@@ -21,7 +21,21 @@ config :logger, level: :warn
 # Run acceptance test in concurrent mode
 config :ops, sql_sandbox: true
 
+# Configures IL API
+config :ops, OPS.API.IL,
+  endpoint: {:system, "IL_ENDPOINT", "http://localhost:4040"}
+
 # Configures declaration terminator
 config :ops, OPS.DeclarationTerminator,
   frequency: 100,
   utc_interval: {0, 23}
+
+# Configures declaration auto approve
+config :ops, OPS.DeclarationAutoApprove,
+  frequency: 300,
+  utc_interval: {0, 23}
+
+config :ops, mock: [
+  port: {:system, :integer, "TEST_MOCK_PORT", 4040},
+  host: {:system, "TEST_MOCK_HOST", "localhost"}
+]

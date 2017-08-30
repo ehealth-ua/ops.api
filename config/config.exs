@@ -48,11 +48,25 @@ config :ops, OPS.Web.Endpoint,
   secret_key_base: "4LcL78vtzM1yVeVCuY1351HuU/62qpTtDKykdJxAKKgwnTtH5JzkXNEUouzDBc1D",
   render_errors: [view: EView.Views.PhoenixError, accepts: ~w(json)]
 
+# Configures IL endpoint
+config :ops, OPS.API.IL,
+  endpoint: {:system, "IL_ENDPOINT", "http://api-svc.il/api"},
+  timeouts: [
+    connect_timeout: {:system, :integer, "IL_REQUEST_TIMEOUT", 30_000},
+    recv_timeout: {:system, :integer, "IL_REQUEST_TIMEOUT", 30_000},
+    timeout: {:system, :integer, "IL_REQUEST_TIMEOUT", 30_000}
+  ]
+
 config :ops, :declaration_terminator_user,
   {:system, "DECLARATION_TERMINATOR", "48ca528f-0d05-4811-ac49-a249f5309d3e"}
 
 # Configures declaration terminator
 config :ops, OPS.DeclarationTerminator,
+  frequency: 24 * 60 * 60 * 1000,
+  utc_interval: {0, 4}
+
+# Configures declaration auto approve
+config :ops, OPS.DeclarationAutoApprove,
   frequency: 24 * 60 * 60 * 1000,
   utc_interval: {0, 4}
 

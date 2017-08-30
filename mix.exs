@@ -1,7 +1,7 @@
 defmodule OPS.Mixfile do
   use Mix.Project
 
-  @version "0.1.29"
+  @version "0.1.31"
 
   def project do
     [app: :ops,
@@ -47,7 +47,7 @@ defmodule OPS.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [{:distillery, "~> 1.2"},
-     {:confex, "~> 1.4"},
+     {:confex, "~> 3.2"},
      {:logger_json, "~> 0.3.0"},
      {:poison, "~> 3.1"},
      {:ecto, "~> 2.1"},
