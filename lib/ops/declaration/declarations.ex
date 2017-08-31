@@ -84,11 +84,9 @@ defmodule OPS.Declarations do
   end
 
   def create_declaration_with_termination_logic(%{"person_id" => person_id} = declaration_params) do
-    # TODO: Red Lists
-    changeset = declaration_changeset(%DeclarationSearch{}, %{"person_id" => person_id, "status" => "active"})
-
-    query = from d in Declaration,
-      where: ^Map.to_list(changeset.changes)
+    query = Declaration
+      |> where([d], d.person_id == ^person_id)
+      |> where([d], d.status in ^[Declaration.status(:active), Declaration.status(:pending)])
 
     Multi.new()
     |> Multi.update_all(:previous_declarations, query, set: [status: Declaration.status(:terminated)])
