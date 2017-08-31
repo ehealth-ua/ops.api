@@ -116,10 +116,12 @@ defmodule OPS.Declarations do
     |> Repo.transaction()
   end
   def terminate_declarations(user_id, employee_id) do
-    query = from d in Declaration,
-      where: [status: "active", employee_id: ^employee_id]
+    query =
+      Declaration
+      |> where([d], d.status in ^[Declaration.status(:active), Declaration.status(:pending)])
+      |> where([d], d.employee_id == ^employee_id)
 
-    updates = [status: "terminated", updated_by: user_id]
+    updates = [status: Declaration.status(:terminated), updated_by: user_id]
 
     Multi.new
     |> Multi.update_all(:terminated_declarations, query, [set: updates], returning: [:id])
