@@ -1,6 +1,6 @@
 # OPS API
 
-[![Build Status](https://travis-ci.org/Nebo15/ops.api.svg?branch=master)](https://travis-ci.org/Nebo15/ops.api) [![Coverage Status](https://coveralls.io/repos/github/Nebo15/ops.api/badge.svg?branch=master)](https://coveralls.io/github/Nebo15/ops.api?branch=master)
+[![Build Status](https://travis-ci.org/edenlabllc/ops.api.svg?branch=master)](https://travis-ci.org/edenlabllc/ops.api) [![Coverage Status](https://coveralls.io/repos/github/edenlabllc/ops.api/badge.svg?branch=master)](https://coveralls.io/github/edenlabllc/ops.api?branch=master)
 
 Operation database which stores Declarations for Ukrainian Health Services government institution.
 
@@ -11,7 +11,7 @@ Operation database which stores Declarations for Ukrainian Health Services gover
 
 ## Installation
 
-You can use official Docker container to deploy this service, it can be found on [nebo15/ops](https://hub.docker.com/r/nebo15/ops/) Docker Hub.
+You can use official Docker container to deploy this service, it can be found on [edenlabllc/ops](https://hub.docker.com/r/edenlabllc/ops/) Docker Hub.
 
 ### Dependencies
 
