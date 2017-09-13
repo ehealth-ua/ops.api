@@ -4,6 +4,7 @@ defmodule OPS.Factory do
   use ExMachina.Ecto, repo: OPS.Repo
 
   alias OPS.Declarations.Declaration
+  alias OPS.MedicationDispense.Schema, as: MedicationDispense
 
   def declaration_factory do
     day = 60 * 60 * 24
@@ -25,6 +26,23 @@ defmodule OPS.Factory do
       is_active: true,
       scope: "",
       seed: "some seed"
+    }
+  end
+
+  def medication_dispense_factory do
+    %MedicationDispense{
+      id: Ecto.UUID.generate(),
+      status: MedicationDispense.status(:new),
+      inserted_by: Ecto.UUID.generate,
+      updated_by: Ecto.UUID.generate,
+      is_active: true,
+      dispensed_at: to_string(Date.utc_today),
+      party_id: Ecto.UUID.generate(),
+      legal_entity_id: Ecto.UUID.generate(),
+      payment_id: Ecto.UUID.generate(),
+      division_id: Ecto.UUID.generate(),
+      medical_program_id: Ecto.UUID.generate(),
+      medication_request_id: Ecto.UUID.generate(),
     }
   end
 end

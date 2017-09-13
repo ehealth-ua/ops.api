@@ -24,7 +24,8 @@ use Mix.Config
 #
 #     :var_name, "${ENV_VAR_NAME}"
 config :ops,
-  ecto_repos: [OPS.Repo]
+  ecto_repos: [OPS.Repo],
+  env: Mix.env()
 
 # Configure your database
 config :ops, OPS.Repo,
