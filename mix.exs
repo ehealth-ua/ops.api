@@ -51,7 +51,7 @@ defmodule OPS.Mixfile do
      {:logger_json, "~> 0.3.0"},
      {:poison, "~> 3.1"},
      {:ecto, "~> 2.1"},
-     {:ecto_paging, ">= 0.0.0"},
+     {:scrivener_ecto, "~> 1.2"},
      {:postgrex, "~> 0.13.2"},
      {:cowboy, "~> 1.1"},
      {:httpoison, "~> 0.11.1"},
