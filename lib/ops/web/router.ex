@@ -32,7 +32,6 @@ defmodule OPS.Web.Router do
 
     get "/medication_dispenses", MedicationDispenseController, :index
     post "/medication_dispenses", MedicationDispenseController, :create
-    get "/medication_dispenses/:id", MedicationDispenseController, :show
     put "/medication_dispenses/:id", MedicationDispenseController, :update
   end
 end

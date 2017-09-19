@@ -38,7 +38,9 @@ defmodule OPS.MedicationDispenses do
   end
 
   def get_medication_dispense!(id) do
-    Repo.get!(MedicationDispense, id)
+    MedicationDispense
+    |> where([md], md.is_active)
+    |> Repo.get!(id)
   end
 
   def create(attrs) do

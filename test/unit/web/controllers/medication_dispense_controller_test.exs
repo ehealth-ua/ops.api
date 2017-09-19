@@ -149,28 +149,4 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
       "updated_by" => ^updated_by,
     } = resp
   end
-
-  test "get medication dispense by id", %{conn: conn} do
-    medication_dispense = insert(:medication_dispense)
-    id = medication_dispense.id
-    conn = get conn, medication_dispense_path(conn, :show, id)
-    resp = json_response(conn, 200)["data"]
-
-    medication_request_id = medication_dispense.medication_request_id
-    division_id = medication_dispense.division_id
-    legal_entity_id = medication_dispense.legal_entity_id
-    inserted_by = medication_dispense.inserted_by
-    updated_by = medication_dispense.updated_by
-    dispensed_at = to_string(medication_dispense.dispensed_at)
-
-    assert %{
-      "id" => ^id,
-      "medication_request_id" => ^medication_request_id,
-      "division_id" => ^division_id,
-      "legal_entity_id" => ^legal_entity_id,
-      "dispensed_at" => ^dispensed_at,
-      "inserted_by" => ^inserted_by,
-      "updated_by" => ^updated_by,
-    } = resp
-  end
 end

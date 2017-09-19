@@ -31,10 +31,4 @@ defmodule OPS.Web.MedicationDispenseController do
       render(conn, "show.json", medication_dispense: medication_dispense)
     end
   end
-
-  def show(conn, %{"id" => id}) do
-    render(conn, "show.json",
-      medication_dispense: MedicationDispenses.get_medication_dispense!(id)
-    )
-  end
 end
