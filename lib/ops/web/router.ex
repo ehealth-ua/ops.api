@@ -30,6 +30,7 @@ defmodule OPS.Web.Router do
     patch "/employees/:id/declarations/actions/terminate", DeclarationController, :terminate_declarations
     patch "/persons/:id/declarations/actions/terminate", DeclarationController, :terminate_person_declarations
 
+    get "/medication_dispenses", MedicationDispenseController, :index
     post "/medication_dispenses", MedicationDispenseController, :create
     get "/medication_dispenses/:id", MedicationDispenseController, :show
     put "/medication_dispenses/:id", MedicationDispenseController, :update

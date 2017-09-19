@@ -4,7 +4,9 @@ defmodule OPS.MedicationDispenses do
   alias OPS.MedicationDispense.Schema, as: MedicationDispense
   alias OPS.MedicationDispense.Details
   alias OPS.Repo
+  alias OPS.MedicationDispense.Search
   import Ecto.Changeset
+  use OPS.Search
 
   @status_new MedicationDispense.status(:new)
   @status_processed MedicationDispense.status(:processed)
@@ -27,6 +29,13 @@ defmodule OPS.MedicationDispenses do
   )a
 
   @fields_optional ~w()a
+
+  def list(params) do
+    # Return only active dispenses
+    %Search{}
+    |> changeset(Map.put(params, "is_active", true))
+    |> search(params, MedicationDispense, 50)
+  end
 
   def get_medication_dispense!(id) do
     Repo.get!(MedicationDispense, id)
@@ -60,6 +69,11 @@ defmodule OPS.MedicationDispenses do
     medication_dispense
     |> changeset(attrs)
     |> Repo.update_and_log(Map.get(attrs, "updated_by"))
+  end
+
+  defp changeset(%Search{} = search, attrs) do
+    # allow to search by all available fields
+    cast(search, attrs, Search.__schema__(:fields))
   end
 
   defp changeset(%MedicationDispense{} = medication_dispense, attrs) do

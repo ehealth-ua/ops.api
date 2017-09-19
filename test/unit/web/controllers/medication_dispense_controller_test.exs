@@ -43,6 +43,61 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
+  test "search medications", %{conn: conn} do
+    medication_dispense1 = insert(:medication_dispense)
+    medication_dispense2 = insert(:medication_dispense, status: MedicationDispense.status(:processed))
+    insert(:medication_dispense, is_active: false)
+    conn1 = get conn, medication_dispense_path(conn, :index)
+    resp = json_response(conn1, 200)["data"]
+    assert 2 == length(resp)
+
+    conn2 = get conn, medication_dispense_path(conn, :index, id: medication_dispense1.id)
+    resp = json_response(conn2, 200)["data"]
+    assert 1 == length(resp)
+    assert medication_dispense1.id == hd(resp)["id"]
+
+    conn3 = get conn, medication_dispense_path(conn, :index,
+      medication_request_id: medication_dispense1.medication_request_id
+    )
+    resp = json_response(conn3, 200)["data"]
+    assert 1 == length(resp)
+    assert medication_dispense1.medication_request_id == hd(resp)["medication_request_id"]
+
+    conn4 = get conn, medication_dispense_path(conn, :index,
+      legal_entity_id: medication_dispense1.legal_entity_id
+    )
+    resp = json_response(conn4, 200)["data"]
+    assert 1 == length(resp)
+    assert medication_dispense1.legal_entity_id == hd(resp)["legal_entity_id"]
+
+    conn5 = get conn, medication_dispense_path(conn, :index,
+      division_id: medication_dispense1.division_id
+    )
+    resp = json_response(conn5, 200)["data"]
+    assert 1 == length(resp)
+    assert medication_dispense1.division_id == hd(resp)["division_id"]
+
+    conn6 = get conn, medication_dispense_path(conn, :index,
+      status: medication_dispense2.status
+    )
+    resp = json_response(conn6, 200)["data"]
+    assert 1 == length(resp)
+    assert medication_dispense2.status == hd(resp)["status"]
+
+    conn7 = get conn, medication_dispense_path(conn, :index,
+      status: medication_dispense2.status,
+      legal_entity_id: medication_dispense2.legal_entity_id,
+      division_id: medication_dispense2.division_id,
+      medication_request_id: medication_dispense2.medication_request_id,
+    )
+    resp = json_response(conn7, 200)["data"]
+    assert 1 == length(resp)
+    assert medication_dispense2.status == hd(resp)["status"]
+    assert medication_dispense2.legal_entity_id == hd(resp)["legal_entity_id"]
+    assert medication_dispense2.division_id == hd(resp)["division_id"]
+    assert medication_dispense2.medication_request_id == hd(resp)["medication_request_id"]
+  end
+
   test "creates medication dispense when data is valid", %{conn: conn} do
     conn = post conn, medication_dispense_path(conn, :create), medication_dispense: @create_attrs
     resp = json_response(conn, 201)["data"]

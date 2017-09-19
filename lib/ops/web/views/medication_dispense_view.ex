@@ -3,6 +3,10 @@ defmodule OPS.Web.MedicationDispenseView do
 
   use OPS.Web, :view
 
+  def render("index.json", %{medication_dispenses: medication_dispenses}) do
+    render_many(medication_dispenses, __MODULE__, "show.json")
+  end
+
   def render("show.json", %{medication_dispense: medication_dispense}) do
     Map.take(medication_dispense, ~w(
       id

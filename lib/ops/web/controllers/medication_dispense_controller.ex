@@ -3,9 +3,16 @@ defmodule OPS.Web.MedicationDispenseController do
 
   use OPS.Web, :controller
 
+  alias Scrivener.Page
   alias OPS.MedicationDispenses
 
   action_fallback OPS.Web.FallbackController
+
+  def index(conn, params) do
+    with %Page{} = paging <- MedicationDispenses.list(params) do
+      render(conn, "index.json", medication_dispenses: paging.entries, paging: paging)
+    end
+  end
 
   def create(conn, %{"medication_dispense" => params}) do
     with {:ok, medication_dispense} <- MedicationDispenses.create(params) do
