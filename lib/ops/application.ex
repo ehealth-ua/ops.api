@@ -24,6 +24,7 @@ defmodule OPS do
       # worker(OPS.Worker, [arg1, arg2, arg3]),
       worker(OPS.DeclarationTerminator, []),
       worker(OPS.DeclarationAutoApprove, []),
+      worker(OPS.MedicationDispense.Scheduler, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

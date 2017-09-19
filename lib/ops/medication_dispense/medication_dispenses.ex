@@ -5,6 +5,7 @@ defmodule OPS.MedicationDispenses do
   alias OPS.MedicationDispense.Details
   alias OPS.Repo
   alias OPS.MedicationDispense.Search
+  alias Ecto.Multi
   import Ecto.Changeset
   use OPS.Search
 
@@ -73,6 +74,20 @@ defmodule OPS.MedicationDispenses do
     |> Repo.update_and_log(Map.get(attrs, "updated_by"))
   end
 
+  def terminate(expiration) do
+    query =
+      MedicationDispense
+      |> where([md], md.status == ^MedicationDispense.status(:new))
+      |> where([md], md.inserted_at < datetime_add(^NaiveDateTime.utc_now, ^-expiration, "minute"))
+
+    Multi.new()
+    |> Multi.update_all(:medication_dispenses, query, set: [
+      status: MedicationDispense.status(:expired),
+      updated_at: NaiveDateTime.utc_now()
+    ])
+    |> Repo.transaction()
+  end
+
   defp changeset(%Search{} = search, attrs) do
     # allow to search by all available fields
     cast(search, attrs, Search.__schema__(:fields))
@@ -112,7 +127,7 @@ defmodule OPS.MedicationDispenses do
     end
   end
 
-  def details_changeset(%Details{} = details, attrs) do
+  defp details_changeset(%Details{} = details, attrs) do
     fields = ~w(medication_id medication_qty sell_price reimbursement_amount)a
 
     details
