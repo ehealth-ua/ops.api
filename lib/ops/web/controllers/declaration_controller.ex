@@ -3,14 +3,15 @@ defmodule OPS.Web.DeclarationController do
 
   use OPS.Web, :controller
 
+  alias Scrivener.Page
   alias OPS.Declarations
   alias OPS.Declarations.Declaration
 
   action_fallback OPS.Web.FallbackController
 
   def index(conn, params) do
-    with {declarations, %Ecto.Paging{} = paging} <- Declarations.list_declarations(params) do
-      render(conn, "index.json", declarations: declarations, paging: paging)
+    with %Page{} = paging <- Declarations.list_declarations(params) do
+      render(conn, "index.json", declarations: paging.entries, paging: paging)
     end
   end
 

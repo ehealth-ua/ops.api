@@ -1,6 +1,7 @@
 defmodule OPS.DeclarationTest do
   use OPS.DataCase
 
+  alias Scrivener.Page
   alias EctoTrail.Changelog
   alias OPS.Declarations
   alias OPS.Declarations.Declaration
@@ -56,7 +57,7 @@ defmodule OPS.DeclarationTest do
 
   test "list_declarations/1 returns all declarations" do
     declaration = fixture(:declaration)
-    assert {[^declaration], %Ecto.Paging{}} = Declarations.list_declarations(%{})
+    assert %Page{entries: [^declaration]} = Declarations.list_declarations(%{})
   end
 
   test "get_declaration! returns the declaration with given id" do
