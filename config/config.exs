@@ -24,7 +24,8 @@ use Mix.Config
 #
 #     :var_name, "${ENV_VAR_NAME}"
 config :ops,
-  ecto_repos: [OPS.Repo]
+  ecto_repos: [OPS.Repo],
+  env: Mix.env()
 
 # Configure your database
 config :ops, OPS.Repo,
@@ -80,6 +81,23 @@ config :logger_json, :backend,
   on_init: {OPS, :load_from_system_env, []},
   json_encoder: Poison,
   metadata: :all
+
+config :ops, OPS.MedicationDispense.Scheduler,
+  global: true,
+  overlap: false,
+  jobs: [
+    {
+      {
+        :cron,
+        System.get_env("MEDICATION_DISPENSE_AUTOTERMINATION_SCHEDULE") || "* * * * *"
+      },
+      {
+        OPS.MedicationDispenses,
+        :terminate,
+        [System.get_env("MEDICATION_DISPENSE_EXPIRATION") || 10]
+      }
+    }
+  ]
 
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
