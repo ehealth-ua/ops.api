@@ -28,6 +28,7 @@ defmodule OPS.MedicationDispense.Schema do
     field :updated_by, Ecto.UUID
 
     has_many :details, OPS.MedicationDispense.Details
+    belongs_to :medication_request, OPS.MedicationRequest.Schema, define_field: false
 
     timestamps(type: :utc_datetime)
   end

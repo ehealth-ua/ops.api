@@ -5,6 +5,7 @@ defmodule OPS.Factory do
 
   alias OPS.Declarations.Declaration
   alias OPS.MedicationDispense.Schema, as: MedicationDispense
+  alias OPS.MedicationRequest.Schema, as: MedicationRequest
 
   def declaration_factory do
     day = 60 * 60 * 24
@@ -42,7 +43,28 @@ defmodule OPS.Factory do
       payment_id: Ecto.UUID.generate(),
       division_id: Ecto.UUID.generate(),
       medical_program_id: Ecto.UUID.generate(),
-      medication_request_id: Ecto.UUID.generate(),
+      medication_request: build(:medication_request),
+    }
+  end
+
+  def medication_request_factory do
+    %MedicationRequest{
+      id: Ecto.UUID.generate(),
+      status: MedicationRequest.status(:active),
+      inserted_by: Ecto.UUID.generate,
+      updated_by: Ecto.UUID.generate,
+      is_active: true,
+      person_id: Ecto.UUID.generate(),
+      employee_id: Ecto.UUID.generate(),
+      medication_id: Ecto.UUID.generate(),
+      created_at: NaiveDateTime.utc_now(),
+      started_at: NaiveDateTime.utc_now(),
+      ended_at: NaiveDateTime.utc_now(),
+      dispense_valid_from: Date.utc_today(),
+      dispense_valid_to: Date.utc_today(),
+      medication_qty: 0,
+      medication_request_requests_id: Ecto.UUID.generate(),
+      request_number: ""
     }
   end
 end

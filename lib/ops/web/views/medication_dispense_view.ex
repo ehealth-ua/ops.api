@@ -8,9 +8,15 @@ defmodule OPS.Web.MedicationDispenseView do
   end
 
   def render("show.json", %{medication_dispense: medication_dispense}) do
-    Map.take(medication_dispense, ~w(
+    medication_request = render_one(
+      Map.get(medication_dispense, :medication_request),
+      OPS.Web.MedicationRequestView,
+      "show.json"
+    )
+
+    medication_dispense
+    |> Map.take(~w(
       id
-      medication_request_id
       dispensed_at
       employee_id
       legal_entity_id
@@ -23,5 +29,6 @@ defmodule OPS.Web.MedicationDispenseView do
       updated_at
       updated_by
     )a)
+    |> Map.put("medication_request", medication_request)
   end
 end
