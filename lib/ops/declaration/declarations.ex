@@ -26,8 +26,12 @@ defmodule OPS.Declarations do
   def create_declaration(attrs \\ %{}) do
     # TODO: Ensure seed exists in a separate DB, e.g. seed = Seed.get_or_insert(today)
     #       Test this by creating 10 declarations at once
+    #
+    # TODO: separately run a CRON-like job. On 00:00:00 or 00:00:01 everyday
+    seed = OPS.Seed.API.get_or_create_seed(Date.utc_now())
+
     %Declaration{}
-    |> declaration_changeset(attrs)
+    |> declaration_changeset(Map.put_new(attrs, :seed, seed))
     |> Repo.insert_and_log(Map.get(attrs, "created_by", Map.get(attrs, :created_by)))
   end
 
