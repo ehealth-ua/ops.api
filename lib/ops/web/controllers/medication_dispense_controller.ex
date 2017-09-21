@@ -23,11 +23,9 @@ defmodule OPS.Web.MedicationDispenseController do
   end
 
   def update(conn, %{"id" => id, "medication_dispense" => params}) do
-    result =
-      id
-      |> MedicationDispenses.get_medication_dispense!()
-      |> MedicationDispenses.update(params)
-    with {:ok, medication_dispense} <- result do
+    with %Page{entries: [medication_dispense]} <- MedicationDispenses.list(%{"id" => id}),
+         {:ok, medication_dispense} <- MedicationDispenses.update(medication_dispense, params)
+    do
       render(conn, "show.json", medication_dispense: medication_dispense)
     end
   end

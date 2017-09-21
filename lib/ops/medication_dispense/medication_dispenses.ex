@@ -37,12 +37,6 @@ defmodule OPS.MedicationDispenses do
     |> search(params, MedicationDispense, 50)
   end
 
-  def get_medication_dispense!(id) do
-    MedicationDispense
-    |> where([md], md.is_active)
-    |> Repo.get!(id)
-  end
-
   def create(attrs) do
     dispense_changeset = changeset(%MedicationDispense{}, attrs)
     details = Enum.map(Map.get(attrs, "dispense_details") || [], &details_changeset(%Details{}, &1))

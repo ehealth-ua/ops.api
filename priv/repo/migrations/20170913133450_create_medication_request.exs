@@ -2,7 +2,8 @@ defmodule OPS.Repo.Migrations.CreateMedicationRequest do
   use Ecto.Migration
 
   def change do
-    create table(:medication_requests) do
+    create table(:medication_requests, primary_key: false) do
+      add :id, :uuid, primary_key: true
       add :request_number, :string, null: false
       add :created_at, :date, null: false
       add :started_at, :date, null: false
@@ -24,6 +25,8 @@ defmodule OPS.Repo.Migrations.CreateMedicationRequest do
       add :medical_program_id, :uuid
       add :inserted_by, :uuid
       add :updated_by, :uuid
+
+      timestamps()
     end
   end
 end

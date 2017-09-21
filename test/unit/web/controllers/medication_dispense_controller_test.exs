@@ -43,7 +43,7 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
-  test "search medications", %{conn: conn} do
+  test "search medication dispenses", %{conn: conn} do
     medication_dispense1 = insert(:medication_dispense)
     medication_dispense2 = insert(:medication_dispense, status: MedicationDispense.status(:processed))
     conn1 = get conn, medication_dispense_path(conn, :index)

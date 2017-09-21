@@ -3,6 +3,17 @@ defmodule OPS.MedicationRequest.Schema do
 
   use Ecto.Schema
 
+  @status_active "ACTIVE"
+  @status_completed "COMPLETED"
+  @status_rejected "REJECTED"
+  @status_expired "EXPIRED"
+
+  def status(:active), do: @status_active
+  def status(:completed), do: @status_completed
+  def status(:rejected), do: @status_rejected
+  def status(:expired), do: @status_expired
+
+  @primary_key {:id, :binary_id, autogenerate: false}
   schema "medication_requests" do
     field :request_number, :string
     field :created_at, :date
