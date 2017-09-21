@@ -24,6 +24,8 @@ defmodule OPS.Declarations do
 
   # TODO: Make more clearly getting created_by and updated_by parameters
   def create_declaration(attrs \\ %{}) do
+    # TODO: Ensure seed exists in a separate DB, e.g. seed = Seed.get_or_insert(today)
+    #       Test this by creating 10 declarations at once
     %Declaration{}
     |> declaration_changeset(attrs)
     |> Repo.insert_and_log(Map.get(attrs, "created_by", Map.get(attrs, :created_by)))
