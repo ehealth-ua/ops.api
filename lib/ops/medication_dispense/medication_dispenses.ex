@@ -32,9 +32,8 @@ defmodule OPS.MedicationDispenses do
   @fields_optional ~w()a
 
   def list(params) do
-    # Return only active dispenses
     %Search{}
-    |> changeset(Map.put(params, "is_active", true))
+    |> changeset(params)
     |> search(params, MedicationDispense, 50)
   end
 

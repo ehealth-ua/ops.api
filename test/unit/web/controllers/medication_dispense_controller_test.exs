@@ -46,7 +46,6 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
   test "search medications", %{conn: conn} do
     medication_dispense1 = insert(:medication_dispense)
     medication_dispense2 = insert(:medication_dispense, status: MedicationDispense.status(:processed))
-    insert(:medication_dispense, is_active: false)
     conn1 = get conn, medication_dispense_path(conn, :index)
     resp = json_response(conn1, 200)["data"]
     assert 2 == length(resp)
