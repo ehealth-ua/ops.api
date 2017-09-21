@@ -8,7 +8,7 @@ conn = PG.connect(dbname: 'ops_dev')
 conn_seeds = PG.connect(dbname: 'ops_seeds_dev')
 
 DAYS = 7
-PER_DAY = 1..1
+PER_DAY = 300..400
 
 puts "Preparing DBs..."
 
@@ -99,20 +99,23 @@ DAYS.times do |day|
     )
   end
 
-  new_seed = conn.exec(generate_new_hash % { today: today })[0]
+  calculated_seed = conn.exec(generate_new_hash % { today: today })[0]
 
-  new_hash = new_seed["new_seed"]
-  new_value = new_seed["value"]
+  new_hash = calculated_seed["new_seed"]
+  new_value = calculated_seed["value"]
 
+  # Note: Instead of inserting into seeds, we can insert into a temp table.
+  #       Then compare values from the temp table with seed values from table in separate DB.
+  #
+  #       This will be analogue to "full check"
+  #
   new_seed = conn_seeds.exec("INSERT INTO seeds (hash, debug, inserted_at) VALUES ('#{new_hash}', '#{new_value}', '#{today} 23:59:59') returning hash")[0]['hash']
 
-  puts "Day #{today}: generated #{samples} declarations: "
-  puts "  seed: #{new_seed}"
-  puts "  value: #{new_value}"
+  puts "Day #{today}: generated #{samples} declarations. Seed: #{new_seed}"
 end
 
 puts "
-Verifying...
+Verifying: every day distinctly...
 
 "
 
@@ -135,5 +138,9 @@ conn.exec("SELECT DISTINCT date(inserted_at) AS today FROM declarations ORDER BY
   end
 end
 
-# 9d62e831-e727-4b58-87db-01273e110d4213d3af77-82e6-4fcb-a2b3-4451d9e685e32017-07-142017-07-152017-09-21 15:03:01.675414ccc6c85b-c4dc-43fc-8e75-ba9b855ea597tfamily_doctora7007627-cb29-4159-b813-68cd51bb3d989c81824b-bc13-4d07-bc76-b069e2a2876b2014-01-08 00:00:003ba18ea0-09a7-4d5d-9330-029e02dd29ab\x5fbed87f9a67607b37e6297e47ed29e74a0a38a516e3bb2b549dd0d92dbd3910b3e5909c15fbd8aea05ac26fbda7da1efaef0da5be1700176980aaefa84dabc9
-# 9d62e831-e727-4b58-87db-01273e110d4213d3af77-82e6-4fcb-a2b3-4451d9e685e32017-07-142017-07-152017-09-21 15:03:01.675414ccc6c85b-c4dc-43fc-8e75-ba9b855ea597tfamily_doctora7007627-cb29-4159-b813-68cd51bb3d989c81824b-bc13-4d07-bc76-b069e2a2876b2014-01-08 00:00:003ba18ea0-09a7-4d5d-9330-029e02dd29ab\x5fbed87f9a67607b37e6297e47ed29e74a0a38a516e3bb2b549dd0d92dbd3910b3e5909c15fbd8aea05ac26fbda7da1efaef0da5be1700176980aaefa84dabc9
+puts "
+Verifying: every day distinctly...
+
+TODO: make this happen
+
+"
