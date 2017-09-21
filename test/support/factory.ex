@@ -43,7 +43,7 @@ defmodule OPS.Factory do
       payment_id: Ecto.UUID.generate(),
       division_id: Ecto.UUID.generate(),
       medical_program_id: Ecto.UUID.generate(),
-      medication_request_id: Ecto.UUID.generate(),
+      medication_request: build(:medication_request),
     }
   end
 

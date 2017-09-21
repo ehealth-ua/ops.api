@@ -44,8 +44,14 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
   end
 
   test "search medication dispenses", %{conn: conn} do
-    medication_dispense1 = insert(:medication_dispense)
-    medication_dispense2 = insert(:medication_dispense, status: MedicationDispense.status(:processed))
+    medication_dispense1 =
+      :medication_dispense
+      |> insert()
+      |> Repo.preload(:medication_request)
+    medication_dispense2 =
+      :medication_dispense
+      |> insert(status: MedicationDispense.status(:processed))
+      |> Repo.preload(:medication_request)
     conn1 = get conn, medication_dispense_path(conn, :index)
     resp = json_response(conn1, 200)["data"]
     assert 2 == length(resp)
@@ -60,7 +66,7 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
     )
     resp = json_response(conn3, 200)["data"]
     assert 1 == length(resp)
-    assert medication_dispense1.medication_request_id == hd(resp)["medication_request_id"]
+    assert medication_dispense1.medication_request.id == hd(resp)["medication_request"]["id"]
 
     conn4 = get conn, medication_dispense_path(conn, :index,
       legal_entity_id: medication_dispense1.legal_entity_id
@@ -94,10 +100,11 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
     assert medication_dispense2.status == hd(resp)["status"]
     assert medication_dispense2.legal_entity_id == hd(resp)["legal_entity_id"]
     assert medication_dispense2.division_id == hd(resp)["division_id"]
-    assert medication_dispense2.medication_request_id == hd(resp)["medication_request_id"]
+    assert medication_dispense2.medication_request.id == hd(resp)["medication_request"]["id"]
   end
 
   test "creates medication dispense when data is valid", %{conn: conn} do
+    insert(:medication_request, id: @create_attrs.medication_request_id)
     conn = post conn, medication_dispense_path(conn, :create), medication_dispense: @create_attrs
     resp = json_response(conn, 201)["data"]
 
@@ -110,7 +117,7 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
 
     assert %{
       "id" => _id,
-      "medication_request_id" => ^medication_request_id,
+      "medication_request" => %{"id" => ^medication_request_id},
       "division_id" => ^division_id,
       "legal_entity_id" => ^legal_entity_id,
       "dispensed_at" => "2017-08-17",
@@ -127,9 +134,10 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
 
   test "updates medication dispense when data is valid", %{conn: conn} do
     %MedicationDispense{id: id} = insert(:medication_dispense)
+    medication_request_id = @update_attrs.medication_request_id
+    insert(:medication_request, id: medication_request_id)
     conn = put conn, medication_dispense_path(conn, :update, id), medication_dispense: @update_attrs
     resp = json_response(conn, 200)["data"]
-    medication_request_id = @update_attrs.medication_request_id
     division_id = @update_attrs.division_id
     legal_entity_id = @update_attrs.legal_entity_id
     status = MedicationDispense.status(:rejected)
@@ -139,7 +147,7 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
 
     assert %{
       "id" => ^id,
-      "medication_request_id" => ^medication_request_id,
+      "medication_request" => %{"id" => ^medication_request_id},
       "division_id" => ^division_id,
       "legal_entity_id" => ^legal_entity_id,
       "dispensed_at" => ^dispensed_at,

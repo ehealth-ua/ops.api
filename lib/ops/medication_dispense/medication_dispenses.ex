@@ -37,6 +37,13 @@ defmodule OPS.MedicationDispenses do
     |> search(params, MedicationDispense, 50)
   end
 
+  def get_search_query(entity, changes) do
+    entity
+    |> super(changes)
+    |> join(:left, [md], mr in assoc(md, :medication_request))
+    |> preload([md, mr], [medication_request: mr])
+  end
+
   def create(attrs) do
     dispense_changeset = changeset(%MedicationDispense{}, attrs)
     details = Enum.map(Map.get(attrs, "dispense_details") || [], &details_changeset(%Details{}, &1))
@@ -50,7 +57,7 @@ defmodule OPS.MedicationDispenses do
                 Repo.insert(item)
              end)
         do
-          medication_dispense
+          Repo.preload(medication_dispense, :medication_request)
         end
       end
     else
@@ -62,9 +69,12 @@ defmodule OPS.MedicationDispenses do
   end
 
   def update(medication_dispense, attrs) do
-    medication_dispense
-    |> changeset(attrs)
-    |> Repo.update_and_log(Map.get(attrs, "updated_by"))
+    with {:ok, medication_dispense} <- medication_dispense
+                                       |> changeset(attrs)
+                                       |> Repo.update_and_log(Map.get(attrs, "updated_by"))
+    do
+      {:ok, Repo.preload(medication_dispense, :medication_request, force: true)}
+    end
   end
 
   def terminate(expiration) do
