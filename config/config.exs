@@ -24,7 +24,7 @@ use Mix.Config
 #
 #     :var_name, "${ENV_VAR_NAME}"
 config :ops,
-  ecto_repos: [OPS.Repo],
+  ecto_repos: [OPS.Repo, OPS.SeedRepo],
   env: Mix.env()
 
 # Configure your database
@@ -35,6 +35,14 @@ config :ops, OPS.Repo,
   password: {:system, "DB_PASSWORD", "postgres"},
   hostname: {:system, "DB_HOST", "localhost"},
   port: {:system, :integer, "DB_PORT", 5432}
+
+config :ops, OPS.SeedRepo,
+  adapter: Ecto.Adapters.Postgres,
+  database: {:system, "SEED_DB_NAME", "seed_dev"},
+  username: {:system, "SEED_DB_USER", "postgres"},
+  password: {:system, "SEED_DB_PASSWORD", "postgres"},
+  hostname: {:system, "SEED_DB_HOST", "localhost"},
+  port: {:system, :integer, "SEED_DB_PORT", 5432}
 # This configuration file is loaded before any dependency and
 # is restricted to this project.
 
