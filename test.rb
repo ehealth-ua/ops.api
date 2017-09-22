@@ -5,7 +5,7 @@ template_file = File.read('output_nice.json')
 template = JSON.parse(template_file)
 
 conn = PG.connect(dbname: 'ops_dev')
-conn_seeds = PG.connect(dbname: 'ops_seeds_dev')
+conn_seeds = PG.connect(dbname: 'seed_dev')
 
 DAYS = 7
 PER_DAY = 300..400
@@ -16,7 +16,7 @@ conn_seeds.exec("
   CREATE EXTENSION IF NOT EXISTS pgcrypto;
   DELETE FROM seeds;
 
-  INSERT INTO seeds (hash, debug, inserted_at) VALUES (digest('Слава Україні!', 'sha512'), 'Слава Україні!', '2014-01-01 23:59:59');
+  INSERT INTO seeds (hash, inserted_at) VALUES (digest('Слава Україні!', 'sha512'), '2014-01-01 23:59:59');
 ")
 
 conn.exec("
@@ -97,6 +97,8 @@ DAYS.times do |day|
         '#{seed}'
       )"
     )
+
+    # TODO: add random time above
   end
 
   calculated_seed = conn.exec(generate_new_hash % { today: today })[0]
@@ -109,7 +111,7 @@ DAYS.times do |day|
   #
   #       This will be analogue to "full check"
   #
-  new_seed = conn_seeds.exec("INSERT INTO seeds (hash, debug, inserted_at) VALUES ('#{new_hash}', '#{new_value}', '#{today} 23:59:59') returning hash")[0]['hash']
+  new_seed = conn_seeds.exec("INSERT INTO seeds (hash, inserted_at) VALUES ('#{new_hash}', '#{today} 23:59:59') returning hash")[0]['hash']
 
   puts "Day #{today}: generated #{samples} declarations. Seed: #{new_seed}"
 end

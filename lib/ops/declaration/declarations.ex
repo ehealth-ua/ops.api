@@ -28,7 +28,7 @@ defmodule OPS.Declarations do
     #       Test this by creating 10 declarations at once
     #
     # TODO: separately run a CRON-like job. On 00:00:00 or 00:00:01 everyday
-    seed = OPS.Seed.API.get_or_create_seed(Date.utc_now())
+    seed = OPS.Seed.API.get_or_create_seed(Date.utc_today())
 
     %Declaration{}
     |> declaration_changeset(Map.put_new(attrs, :seed, seed))
