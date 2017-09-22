@@ -92,6 +92,34 @@ config :logger_json, :backend,
   json_encoder: Poison,
   metadata: :all
 
+config :ops, OPS.MedicationDispense.Scheduler,
+  global: true,
+  overlap: false,
+  jobs: [
+    {
+      {
+        :cron,
+        System.get_env("MEDICATION_DISPENSE_AUTOTERMINATION_SCHEDULE") || "* * * * *"
+      },
+      {
+        OPS.MedicationDispenses,
+        :terminate,
+        [System.get_env("MEDICATION_DISPENSE_EXPIRATION") || 10]
+      }
+    },
+    {
+      {
+        :cron,
+        System.get_env("CREATE_NEW_SEED_SCHEDULE") || "59 23 * * *"
+      },
+      {
+        OPS.Seed.API,
+        :get_or_create_seed,
+        []
+      }
+    }
+  ]
+
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
 # by uncommenting the line below and defining dev.exs, test.exs and such.
