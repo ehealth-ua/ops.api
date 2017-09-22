@@ -8,7 +8,7 @@ conn = PG.connect(dbname: 'ops_dev')
 conn_seeds = PG.connect(dbname: 'seed_dev')
 
 DAYS = 7
-PER_DAY = 300..400
+PER_DAY = 100..200
 
 puts "Preparing DBs..."
 
@@ -47,7 +47,7 @@ generate_new_hash = "
         ) ORDER BY id ASC
       ), '') AS value FROM declarations WHERE DATE(inserted_at) = '%{today}'
   )
-  SELECT digest(value, 'sha512') as new_seed, value FROM concat;
+  SELECT digest(concat('%{today}', value), 'sha512') as new_seed, value FROM concat;
 "
 
 DAYS.times do |day|
@@ -101,7 +101,9 @@ DAYS.times do |day|
     # TODO: add random time above
   end
 
+  before = Time.now.to_i
   calculated_seed = conn.exec(generate_new_hash % { today: today })[0]
+  after = Time.now.to_i
 
   new_hash = calculated_seed["new_seed"]
   new_value = calculated_seed["value"]
@@ -113,7 +115,7 @@ DAYS.times do |day|
   #
   new_seed = conn_seeds.exec("INSERT INTO seeds (hash, inserted_at) VALUES ('#{new_hash}', '#{today} 23:59:59') returning hash")[0]['hash']
 
-  puts "Day #{today}: generated #{samples} declarations. Seed: #{new_seed}"
+  puts "Day #{today}: generated #{samples} declarations. Seed: #{new_seed}. Seed gen took: #{after - before} s."
 end
 
 puts "
