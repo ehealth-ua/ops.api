@@ -26,28 +26,26 @@ conn.exec("
 
 puts "Generating data, for #{DAYS} days, #{PER_DAY} declarations every day..."
 
-generate_new_hash = "
-  WITH concat AS (
-    SELECT
-      ARRAY_TO_STRING(ARRAY_AGG(
-        CONCAT(
-          id,
-          employee_id,
-          start_date,
-          end_date,
-          signed_at,
-          created_by,
-          is_active,
-          scope,
-          division_id,
-          legal_entity_id,
-          inserted_at,
-          declaration_request_id,
-          seed
-        ) ORDER BY id ASC
-      ), '') AS value FROM declarations WHERE DATE(inserted_at) = '%{today}'
-  )
-  SELECT digest(value, 'sha512') as new_seed, value FROM concat;
+concatenation = "
+  SELECT
+    ARRAY_TO_STRING(ARRAY_AGG(
+      CONCAT(
+        id,
+        employee_id,
+        start_date,
+        end_date,
+        signed_at,
+        created_by,
+        is_active,
+        scope,
+        division_id,
+        legal_entity_id,
+        inserted_at,
+        declaration_request_id,
+        seed
+      ) ORDER BY id ASC
+    ), '') AS value FROM declarations
+  WHERE DATE(inserted_at) = '%{today}'
 "
 
 DAYS.times do |day|
@@ -99,9 +97,8 @@ DAYS.times do |day|
     )
   end
 
-  calculated_seed = conn.exec(generate_new_hash % { today: today })[0]
+  calculated_seed = conn.exec(concatenation % { today: today })[0]
 
-  new_hash = calculated_seed["new_seed"]
   new_value = calculated_seed["value"]
 
   # Note: Instead of inserting into seeds, we can insert into a temp table.
@@ -109,7 +106,7 @@ DAYS.times do |day|
   #
   #       This will be analogue to "full check"
   #
-  new_seed = conn_seeds.exec("INSERT INTO seeds (hash, debug, inserted_at) VALUES ('#{new_hash}', '#{new_value}', '#{today} 23:59:59') returning hash")[0]['hash']
+  new_seed = conn_seeds.exec("INSERT INTO seeds (hash, debug, inserted_at) VALUES (digest('#{new_value}', 'sha512'), '#{new_value}', '#{today} 23:59:59') returning hash")[0]['hash']
 
   puts "Day #{today}: generated #{samples} declarations. Seed: #{new_seed}"
 end
@@ -121,20 +118,18 @@ Verifying: every day distinctly...
 
 conn.exec("SELECT DISTINCT date(inserted_at) AS today FROM declarations ORDER BY today;").each do |row|
   today = row['today']
-  new_seed = conn.exec(generate_new_hash % { today: today })[0]
+  verification_value = conn.exec(concatenation % { today: today })[0]["value"]
 
-  new_hash = new_seed["new_seed"]
-  new_value = new_seed["value"]
+  veification_hash = conn_seeds.exec("SELECT digest('#{verification_value}', 'sha512') as hash")[0]['hash']
+  existing_hash = conn_seeds.exec("SELECT hash FROM seeds WHERE date(inserted_at) = '#{today}'")[0]['hash']
 
-  existing_hash = conn_seeds.exec("SELECT hash FROM seeds WHERE date(inserted_at) = '#{today}'").map { |row| row["hash"] }[0]
-
-  if new_hash == existing_hash
+  if veification_hash == existing_hash
     puts "Day #{today} vas verified. It's correct!"
   else
     puts "Day #{today} vas verified. It's not correct!"
     puts "  - recalculated hash: #{new_hash}"
-    puts "  - existing hash: #{existing_hash}"
-    puts "    - #{new_value}"
+    puts "  - existing hash: #{veification_hash}"
+    puts "    - #{verification_value}"
   end
 end
 
