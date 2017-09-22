@@ -24,14 +24,10 @@ defmodule OPS.Declarations do
 
   # TODO: Make more clearly getting created_by and updated_by parameters
   def create_declaration(attrs \\ %{}) do
-    # TODO: Ensure seed exists in a separate DB, e.g. seed = Seed.get_or_insert(today)
-    #       Test this by creating 10 declarations at once
-    #
-    # TODO: separately run a CRON-like job. On 00:00:00 or 00:00:01 everyday
-    seed = OPS.Seed.API.get_or_create_seed(Date.utc_today())
+    seed = OPS.Seed.API.get_latest()
 
     %Declaration{}
-    |> declaration_changeset(Map.put_new(attrs, :seed, seed))
+    |> declaration_changeset(Map.put_new(attrs, :seed, seed.hash))
     |> Repo.insert_and_log(Map.get(attrs, "created_by", Map.get(attrs, :created_by)))
   end
 
