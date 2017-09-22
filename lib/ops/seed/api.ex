@@ -31,7 +31,7 @@ defmodule OPS.Seed.API do
     SELECT digest(value, 'sha512') as value FROM concat;
   "
 
-  def get_or_create_seed(date) do
+  def get_or_create_seed(date \\ Date.utc_today()) do
     SeedRepo.transaction fn ->
       get_seed(date) || create_seed(date)
     end
