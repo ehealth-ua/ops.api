@@ -1,12 +1,38 @@
 defmodule OPS.Seed.API do
-  @primary_key false
+  @moduledoc false
 
   import Ecto.Query
 
+  alias OPS.Repo
+  alias OPS.SeedRepo
   alias OPS.Seed.Schema, as: Seed
 
+  @calculate_seed_query "
+    WITH concat AS (
+      SELECT
+        ARRAY_TO_STRING(ARRAY_AGG(
+          CONCAT(
+            id,
+            employee_id,
+            start_date,
+            end_date,
+            signed_at,
+            created_by,
+            is_active,
+            scope,
+            division_id,
+            legal_entity_id,
+            inserted_at,
+            declaration_request_id,
+            seed
+          ) ORDER BY id ASC
+        ), '') AS value FROM declarations WHERE DATE(inserted_at) = $1
+    )
+    SELECT digest(value, 'sha512') as value FROM concat;
+  "
+
   def get_or_create_seed(date) do
-    Repo.transaction fn ->
+    SeedRepo.transaction fn ->
       get_seed(date) || create_seed(date)
     end
   end
@@ -27,6 +53,8 @@ defmodule OPS.Seed.API do
   end
 
   def calculated_hash(date) do
+    {:ok, %{rows: [[hash_value]], num_rows: 1}} = Repo.query(@calculate_seed_query, [date])
 
+    hash_value
   end
 end
