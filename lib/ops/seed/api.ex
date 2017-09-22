@@ -54,16 +54,22 @@ defmodule OPS.Seed.API do
     SeedRepo.insert(payload)
   end
 
+  # TODO: handle case when declarations do not exist on a given day
+  # TODO: handle case when seed do not exist on a given day
+  # TODO: it cannot verify the first day. Related to the fact that there were no declarations on that day. Why?
   def verify_day(date) do
     existing_hash = get_seed(date).hash
-    do_compare(date, existing_hash)
+    IO.inspect existing_hash, label: "existing"
+    do_verify(date, existing_hash)
   end
 
   def verify_chain do
+    # TODO: take all except the first one. First one is genesis, it cannot be verified
+    #       this TODO is related to the ones above
     Enum.reduce_while SeedRepo.all(Seed), :ok, fn seed, _acc ->
       existing_hash = seed.hash
 
-      case do_compare(DateTime.to_date(seed.inserted_at), existing_hash) do
+      case do_verify(DateTime.to_date(seed.inserted_at), existing_hash) do
         :ok ->
           {:cont, :ok}
         {:error, _} = error ->
@@ -72,13 +78,7 @@ defmodule OPS.Seed.API do
     end
   end
 
-  def calculated_hash(date) do
-    {:ok, %{rows: [[hash_value]], num_rows: 1}} = Repo.query(@calculate_seed_query, [date])
-
-    hash_value
-  end
-
-  def do_compare(date, existing_hash) do
+  def do_verify(date, existing_hash) do
     reconstructed_hash = calculated_hash(date)
 
     if reconstructed_hash == existing_hash do
@@ -86,5 +86,11 @@ defmodule OPS.Seed.API do
     else
       {:error, {date, existing_hash, reconstructed_hash}}
     end
+  end
+
+  def calculated_hash(date) do
+    {:ok, %{rows: [[hash_value]], num_rows: 1}} = Repo.query(@calculate_seed_query, [date])
+
+    hash_value
   end
 end

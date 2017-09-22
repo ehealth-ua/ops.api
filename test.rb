@@ -16,7 +16,7 @@ conn_seeds.exec("
   CREATE EXTENSION IF NOT EXISTS pgcrypto;
   DELETE FROM seeds;
 
-  INSERT INTO seeds (hash, inserted_at) VALUES (digest('Слава Україні!', 'sha512'), '2014-01-01 23:59:59');
+  INSERT INTO seeds (hash, inserted_at) VALUES (digest(concat('2014-01-01', 'Слава Україні!'), 'sha512'), '2014-01-01 23:59:59');
 ")
 
 conn.exec("
