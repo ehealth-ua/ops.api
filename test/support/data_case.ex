@@ -27,9 +27,11 @@ defmodule OPS.DataCase do
 
   setup tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(OPS.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(OPS.SeedRepo)
 
     unless tags[:async] do
       Ecto.Adapters.SQL.Sandbox.mode(OPS.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(OPS.SeedRepo, {:shared, self()})
     end
 
     :ok
