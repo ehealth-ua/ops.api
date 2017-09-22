@@ -110,11 +110,11 @@ config :ops, OPS.MedicationDispense.Scheduler,
     {
       {
         :cron,
-        System.get_env("CREATE_NEW_SEED_SCHEDULE") || "59 23 * * *"
+        System.get_env("CREATE_NEW_SEED_SCHEDULE") || "0 0 * * *"
       },
       {
         OPS.Seed.API,
-        :get_or_create_seed,
+        :close_day,
         []
       }
     }

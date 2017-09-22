@@ -28,7 +28,7 @@ defmodule OPS.Seed.API do
           ) ORDER BY id ASC
         ), '') AS value FROM declarations WHERE DATE(inserted_at) = $1
     )
-    SELECT digest(value, 'sha512') as value FROM concat;
+    SELECT digest(concat(date($1), value), 'sha512') as value FROM concat;
   "
 
   def get_latest() do
@@ -39,12 +39,6 @@ defmodule OPS.Seed.API do
     SeedRepo.one(seed_query)
   end
 
-  def get_or_create_seed(date \\ Date.utc_today()) do
-    SeedRepo.transaction fn ->
-      get_seed(date) || create_seed(date)
-    end
-  end
-
   def get_seed(date) do
     seed_query = from s in Seed,
       where: fragment("date(?) = ?", s.inserted_at, ^date)
@@ -52,7 +46,7 @@ defmodule OPS.Seed.API do
     SeedRepo.one(seed_query)
   end
 
-  def create_seed(date) do
+  def close_day(date \\ Timex.shift(Timex.today, days: -1)) do
     payload = %Seed{
       hash: calculated_hash(date)
     }
@@ -60,9 +54,37 @@ defmodule OPS.Seed.API do
     SeedRepo.insert(payload)
   end
 
+  def verify_day(date) do
+    existing_hash = get_seed(date).hash
+    do_compare(date, existing_hash)
+  end
+
+  def verify_chain do
+    Enum.reduce_while SeedRepo.all(Seed), :ok, fn seed, _acc ->
+      existing_hash = seed.hash
+
+      case do_compare(DateTime.to_date(seed.inserted_at), existing_hash) do
+        :ok ->
+          {:cont, :ok}
+        {:error, _} = error ->
+          {:halt, error}
+      end
+    end
+  end
+
   def calculated_hash(date) do
     {:ok, %{rows: [[hash_value]], num_rows: 1}} = Repo.query(@calculate_seed_query, [date])
 
     hash_value
+  end
+
+  def do_compare(date, existing_hash) do
+    reconstructed_hash = calculated_hash(date)
+
+    if reconstructed_hash == existing_hash do
+      :ok
+    else
+      {:error, {date, existing_hash, reconstructed_hash}}
+    end
   end
 end

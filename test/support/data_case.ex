@@ -22,6 +22,7 @@ defmodule OPS.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import OPS.DataCase
+      import OPS.Factory
     end
   end
 
