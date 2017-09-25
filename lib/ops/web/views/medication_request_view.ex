@@ -22,6 +22,7 @@ defmodule OPS.Web.MedicationRequestView do
       employee_id
       division_id
       legal_entity_id
+      verification_code
     )a)
   end
 end
