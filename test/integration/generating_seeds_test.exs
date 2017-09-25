@@ -39,4 +39,34 @@ defmodule OPS.DeclarationTerminatorTest do
 
     {:error, {~D[2014-01-02], ^second_hash, _malformed_hash}} = SeedAPI.verify_chain()
   end
+
+  test "an addition to block is detected" do
+    {:ok, %{hash: first_hash}} = SeedAPI.close_day(~D[2014-01-01])
+
+    d1 = insert(:declaration, seed: first_hash, inserted_at: ~N[2014-01-02 01:00:00])
+    d2 = insert(:declaration, seed: first_hash, inserted_at: ~N[2014-01-02 02:00:00])
+    assert first_hash == d1.seed
+    assert first_hash == d2.seed
+
+    {:ok, %{hash: second_hash}} = SeedAPI.close_day(~D[2014-01-02])
+
+    insert(:declaration, seed: first_hash, inserted_at: ~N[2014-01-02 03:00:00])
+
+    {:error, {~D[2014-01-02], ^second_hash, _malformed_hash}} = SeedAPI.verify_chain()
+  end
+
+  test "a deletion from block is detected" do
+    {:ok, %{hash: first_hash}} = SeedAPI.close_day(~D[2014-01-01])
+
+    d1 = insert(:declaration, seed: first_hash, inserted_at: ~N[2014-01-02 01:00:00])
+    d2 = insert(:declaration, seed: first_hash, inserted_at: ~N[2014-01-02 02:00:00])
+    assert first_hash == d1.seed
+    assert first_hash == d2.seed
+
+    {:ok, %{hash: second_hash}} = SeedAPI.close_day(~D[2014-01-02])
+
+    {:ok, _} = Repo.delete(d2)
+
+    {:error, {~D[2014-01-02], ^second_hash, _malformed_hash}} = SeedAPI.verify_chain()
+  end
 end
