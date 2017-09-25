@@ -5,18 +5,18 @@ template_file = File.read('output_nice.json')
 template = JSON.parse(template_file)
 
 conn = PG.connect(dbname: 'ops_dev')
-conn_seeds = PG.connect(dbname: 'seed_dev')
+blocks_conn = PG.connect(dbname: 'seed_dev')
 
 DAYS = 7
 PER_DAY = 100..200
 
 puts "Preparing DBs..."
 
-conn_seeds.exec("
+blocks_conn.exec("
   CREATE EXTENSION IF NOT EXISTS pgcrypto;
-  DELETE FROM seeds;
+  DELETE FROM blocks;
 
-  INSERT INTO seeds (hash, day, inserted_at) VALUES (digest(concat('2014-01-01', 'Слава Україні!'), 'sha512')::text, '2014-01-01', '2014-01-01 23:59:59');
+  INSERT INTO blocks (hash, day, inserted_at) VALUES (digest(concat('2014-01-01', 'Слава Україні!'), 'sha512')::text, '2014-01-01', '2014-01-01 23:59:59');
 ")
 
 conn.exec("
@@ -54,7 +54,7 @@ DAYS.times do |day|
   yesterday = (Date.new(2014, 1, 1) + day).to_s
   today = (Date.new(2014, 1, 1) + day + 1).to_s
 
-  seed = conn_seeds.exec("SELECT hash FROM seeds ORDER BY inserted_at DESC LIMIT 1").map { |row| row["hash"] }[0]
+  seed = blocks_conn.exec("SELECT hash FROM blocks ORDER BY inserted_at DESC LIMIT 1").map { |row| row["hash"] }[0]
   samples = PER_DAY.to_a.sample
 
   samples.times do |_declaration|
@@ -113,7 +113,7 @@ DAYS.times do |day|
   #
   #       This will be analogue to "full check"
   #
-  new_seed = conn_seeds.exec("INSERT INTO seeds (hash, day, inserted_at) VALUES ('#{new_hash}', '#{today}', '#{today} 23:59:59') returning hash")[0]['hash']
+  new_seed = blocks_conn.exec("INSERT INTO blocks (hash, day, inserted_at) VALUES ('#{new_hash}', '#{today}', '#{today} 23:59:59') returning hash")[0]['hash']
 
   puts "Day #{today}: generated #{samples} declarations. Seed: #{new_seed}. Seed gen took: #{after - before} s."
 end
@@ -130,7 +130,7 @@ conn.exec("SELECT DISTINCT date(inserted_at) AS today FROM declarations ORDER BY
   new_hash = new_seed["new_seed"]
   new_value = new_seed["value"]
 
-  existing_hash = conn_seeds.exec("SELECT hash FROM seeds WHERE date(inserted_at) = '#{today}'").map { |row| row["hash"] }[0]
+  existing_hash = blocks_conn.exec("SELECT hash FROM blocks WHERE date(inserted_at) = '#{today}'").map { |row| row["hash"] }[0]
 
   if new_hash == existing_hash
     puts "Day #{today} vas verified. It's correct!"

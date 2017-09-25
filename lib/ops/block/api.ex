@@ -31,7 +31,7 @@ defmodule OPS.Block.API do
     SELECT digest(concat(date($1), value), 'sha512')::text as value FROM concat;
   "
 
-  def get_latest() do
+  def get_latest do
     block_query = from s in Block,
       order_by: [desc: s.day],
       limit: 1
