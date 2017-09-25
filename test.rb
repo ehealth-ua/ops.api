@@ -16,7 +16,7 @@ conn_seeds.exec("
   CREATE EXTENSION IF NOT EXISTS pgcrypto;
   DELETE FROM seeds;
 
-  INSERT INTO seeds (hash, inserted_at) VALUES (digest(concat('2014-01-01', 'Слава Україні!'), 'sha512'), '2014-01-01 23:59:59');
+  INSERT INTO seeds (hash, day, inserted_at) VALUES (digest(concat('2014-01-01', 'Слава Україні!'), 'sha512')::text, '2014-01-01', '2014-01-01 23:59:59');
 ")
 
 conn.exec("
@@ -47,7 +47,7 @@ generate_new_hash = "
         ) ORDER BY id ASC
       ), '') AS value FROM declarations WHERE DATE(inserted_at) = '%{today}'
   )
-  SELECT digest(concat('%{today}', value), 'sha512') as new_seed, value FROM concat;
+  SELECT digest(concat('%{today}', value), 'sha512')::text as new_seed, value FROM concat;
 "
 
 DAYS.times do |day|
@@ -113,7 +113,7 @@ DAYS.times do |day|
   #
   #       This will be analogue to "full check"
   #
-  new_seed = conn_seeds.exec("INSERT INTO seeds (hash, inserted_at) VALUES ('#{new_hash}', '#{today} 23:59:59') returning hash")[0]['hash']
+  new_seed = conn_seeds.exec("INSERT INTO seeds (hash, day, inserted_at) VALUES ('#{new_hash}', '#{today}', '#{today} 23:59:59') returning hash")[0]['hash']
 
   puts "Day #{today}: generated #{samples} declarations. Seed: #{new_seed}. Seed gen took: #{after - before} s."
 end

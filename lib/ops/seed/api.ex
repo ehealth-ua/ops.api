@@ -28,7 +28,7 @@ defmodule OPS.Seed.API do
           ) ORDER BY id ASC
         ), '') AS value FROM declarations WHERE DATE(inserted_at) = $1
     )
-    SELECT digest(concat(date($1), value), 'sha512') as value FROM concat;
+    SELECT digest(concat(date($1), value), 'sha512')::text as value FROM concat;
   "
 
   def get_latest() do

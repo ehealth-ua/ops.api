@@ -5,7 +5,7 @@ defmodule OPS.Seed.Schema do
 
   @primary_key false
   schema "seeds" do
-    field :hash, :binary
+    field :hash, :string
     field :day, :date
 
     timestamps(updated_at: false, type: :utc_datetime)
