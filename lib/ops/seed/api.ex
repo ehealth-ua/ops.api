@@ -60,17 +60,18 @@ defmodule OPS.Seed.API do
   # TODO: it cannot verify the first day. Related to the fact that there were no declarations on that day. Why?
   def verify_day(date) do
     existing_hash = get_seed(date).hash
-    IO.inspect existing_hash, label: "existing"
     do_verify(date, existing_hash)
   end
 
   def verify_chain do
-    # TODO: take all except the first one. First one is genesis, it cannot be verified
-    #       this TODO is related to the ones above
-    Enum.reduce_while SeedRepo.all(Seed), :ok, fn seed, _acc ->
+    query = from s in Seed,
+      order_by: [asc: s.day],
+      offset: 1
+
+    Enum.reduce_while SeedRepo.all(query), :ok, fn seed, _acc ->
       existing_hash = seed.hash
 
-      case do_verify(DateTime.to_date(seed.day), existing_hash) do
+      case do_verify(seed.day, existing_hash) do
         :ok ->
           {:cont, :ok}
         {:error, _} = error ->

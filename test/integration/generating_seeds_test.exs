@@ -27,6 +27,6 @@ defmodule OPS.DeclarationTerminatorTest do
     assert second_hash = SeedAPI.verify_day(~D[2014-01-02])
     assert third_hash = SeedAPI.verify_day(~D[2014-01-03])
 
-    # SeedAPI.verify_chain()
+    :ok = SeedAPI.verify_chain()
   end
 end
