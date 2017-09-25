@@ -1,4 +1,4 @@
-defmodule OPS.SeedRepo.Migrations.AddCryptoExt do
+defmodule OPS.BlockRepo.Migrations.AddCryptoExt do
   use Ecto.Migration
 
   def change do

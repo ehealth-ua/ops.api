@@ -24,7 +24,7 @@ use Mix.Config
 #
 #     :var_name, "${ENV_VAR_NAME}"
 config :ops,
-  ecto_repos: [OPS.Repo, OPS.SeedRepo],
+  ecto_repos: [OPS.Repo, OPS.BlockRepo],
   env: Mix.env()
 
 # Configure your database
@@ -36,7 +36,7 @@ config :ops, OPS.Repo,
   hostname: {:system, "DB_HOST", "localhost"},
   port: {:system, :integer, "DB_PORT", 5432}
 
-config :ops, OPS.SeedRepo,
+config :ops, OPS.BlockRepo,
   adapter: Ecto.Adapters.Postgres,
   database: {:system, "SEED_DB_NAME", "seed_dev"},
   username: {:system, "SEED_DB_USER", "postgres"},
@@ -113,7 +113,7 @@ config :ops, OPS.MedicationDispense.Scheduler,
         System.get_env("CREATE_NEW_SEED_SCHEDULE") || "0 0 * * *"
       },
       {
-        OPS.Seed.API,
+        OPS.Block.API,
         :close_day,
         []
       }

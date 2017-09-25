@@ -19,8 +19,7 @@ defmodule OPS.Web.DeclarationControllerTest do
     scope: "family_doctor",
     division_id: Ecto.UUID.generate(),
     legal_entity_id: Ecto.UUID.generate(),
-    declaration_request_id: Ecto.UUID.generate(),
-    seed: Ecto.UUID.generate()
+    declaration_request_id: Ecto.UUID.generate()
   }
 
   @update_attrs %{
@@ -54,6 +53,8 @@ defmodule OPS.Web.DeclarationControllerTest do
   end
 
   setup %{conn: conn} do
+    OPS.Block.API.close_day(~D[2014-01-01])
+
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 

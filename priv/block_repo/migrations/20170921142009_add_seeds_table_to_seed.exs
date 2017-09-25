@@ -1,8 +1,8 @@
-defmodule OPS.SeedRepo.Migrations.AddSeedsTableToSeed do
+defmodule OPS.BlockRepo.Migrations.AddSeedsTableToSeed do
   use Ecto.Migration
 
   def change do
-    create table(:seeds, primary_key: false) do
+    create table(:blocks, primary_key: false) do
       add :hash, :string, null: false
       add :day, :date, null: false
 

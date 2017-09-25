@@ -1,13 +1,13 @@
-defmodule OPS.Seed.API do
+defmodule OPS.Block.API do
   @moduledoc false
 
   import Ecto.Query
 
   alias OPS.Repo
-  alias OPS.SeedRepo
-  alias OPS.Seed.Schema, as: Seed
+  alias OPS.BlockRepo
+  alias OPS.Block.Schema, as: Block
 
-  @calculate_seed_query "
+  @calculate_block_query "
     WITH concat AS (
       SELECT
         ARRAY_TO_STRING(ARRAY_AGG(
@@ -32,46 +32,46 @@ defmodule OPS.Seed.API do
   "
 
   def get_latest() do
-    seed_query = from s in Seed,
+    block_query = from s in Block,
       order_by: [desc: s.day],
       limit: 1
 
-    SeedRepo.one(seed_query)
+    BlockRepo.one(block_query)
   end
 
-  def get_seed(date) do
-    seed_query = from s in Seed,
+  def get_block(date) do
+    block_query = from s in Block,
       where: fragment("date(?) = ?", s.day, ^date)
 
-    SeedRepo.one(seed_query)
+    BlockRepo.one(block_query)
   end
 
   def close_day(date \\ Timex.shift(Timex.today, days: -1)) do
-    payload = %Seed{
+    payload = %Block{
       hash: calculated_hash(date),
       day: date
     }
 
-    SeedRepo.insert(payload)
+    BlockRepo.insert(payload)
   end
 
   # TODO: handle case when declarations do not exist on a given day
   # TODO: handle case when seed do not exist on a given day
   # TODO: it cannot verify the first day. Related to the fact that there were no declarations on that day. Why?
   def verify_day(date) do
-    existing_hash = get_seed(date).hash
+    existing_hash = get_block(date).hash
     do_verify(date, existing_hash)
   end
 
   def verify_chain do
-    query = from s in Seed,
+    query = from s in Block,
       order_by: [asc: s.day],
       offset: 1
 
-    Enum.reduce_while SeedRepo.all(query), :ok, fn seed, _acc ->
-      existing_hash = seed.hash
+    Enum.reduce_while BlockRepo.all(query), :ok, fn block, _acc ->
+      existing_hash = block.hash
 
-      case do_verify(seed.day, existing_hash) do
+      case do_verify(block.day, existing_hash) do
         :ok ->
           {:cont, :ok}
         {:error, _} = error ->
@@ -91,7 +91,7 @@ defmodule OPS.Seed.API do
   end
 
   def calculated_hash(date) do
-    {:ok, %{rows: [[hash_value]], num_rows: 1}} = Repo.query(@calculate_seed_query, [date])
+    {:ok, %{rows: [[hash_value]], num_rows: 1}} = Repo.query(@calculate_block_query, [date])
 
     hash_value
   end

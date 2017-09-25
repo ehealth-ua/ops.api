@@ -9,7 +9,7 @@ config :ops, OPS.Repo,
   pool: Ecto.Adapters.SQL.Sandbox,
   database: {:system, "DB_NAME", "ops_test"}
 
-config :ops, OPS.SeedRepo,
+config :ops, OPS.BlockRepo,
   pool: Ecto.Adapters.SQL.Sandbox,
   database: {:system, "SEED_DB_NAME", "seed_test"}
 

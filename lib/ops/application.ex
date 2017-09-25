@@ -19,7 +19,7 @@ defmodule OPS do
     children = [
       # Start the Ecto repository
       supervisor(OPS.Repo, []),
-      supervisor(OPS.SeedRepo, []),
+      supervisor(OPS.BlockRepo, []),
       # Start the endpoint when the application starts
       supervisor(OPS.Web.Endpoint, []),
       # Starts a worker by calling: OPS.Worker.start_link(arg1, arg2, arg3)

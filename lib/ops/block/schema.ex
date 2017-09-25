@@ -1,10 +1,10 @@
-defmodule OPS.Seed.Schema do
+defmodule OPS.Block.Schema do
   @moduledoc false
 
   use Ecto.Schema
 
   @primary_key false
-  schema "seeds" do
+  schema "blocks" do
     field :hash, :string
     field :day, :date
 

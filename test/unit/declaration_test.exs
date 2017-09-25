@@ -43,9 +43,9 @@ defmodule OPS.DeclarationTest do
    }
 
   setup do
-    {:ok, %{hash: seed}} = OPS.Seed.API.close_day(~D[2014-01-01])
+    {:ok, %{hash: hash}} = OPS.Block.API.close_day(~D[2014-01-01])
 
-    {:ok, %{seed: seed}}
+    {:ok, %{hash: hash}}
   end
 
   def fixture(:declaration, attrs \\ @create_attrs) do
@@ -60,9 +60,9 @@ defmodule OPS.DeclarationTest do
     declaration
   end
 
-  test "declaration is assigned a seed", %{seed: seed} do
+  test "declaration is assigned a seed", %{hash: hash} do
     declaration = fixture(:declaration)
-    assert declaration.seed == seed
+    assert declaration.seed == hash
   end
 
   test "list_declarations/1 returns all declarations" do
