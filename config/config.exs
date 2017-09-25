@@ -38,11 +38,11 @@ config :ops, OPS.Repo,
 
 config :ops, OPS.BlockRepo,
   adapter: Ecto.Adapters.Postgres,
-  database: {:system, "SEED_DB_NAME", "seed_dev"},
-  username: {:system, "SEED_DB_USER", "postgres"},
-  password: {:system, "SEED_DB_PASSWORD", "postgres"},
-  hostname: {:system, "SEED_DB_HOST", "localhost"},
-  port: {:system, :integer, "SEED_DB_PORT", 5432}
+  database: {:system, "BLOCK_DB_NAME", "seed_dev"},
+  username: {:system, "BLOCK_DB_USER", "postgres"},
+  password: {:system, "BLOCK_DB_PASSWORD", "postgres"},
+  hostname: {:system, "BLOCK_DB_HOST", "localhost"},
+  port: {:system, :integer, "BLOCK_DB_PORT", 5432}
 # This configuration file is loaded before any dependency and
 # is restricted to this project.
 

@@ -11,7 +11,7 @@ config :ops, OPS.Repo,
 
 config :ops, OPS.BlockRepo,
   pool: Ecto.Adapters.SQL.Sandbox,
-  database: {:system, "SEED_DB_NAME", "seed_test"}
+  database: {:system, "BLOCK_DB_NAME", "seed_test"}
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
