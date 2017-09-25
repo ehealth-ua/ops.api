@@ -5,7 +5,9 @@ defmodule OPS.SeedRepo.Migrations.AddSeedsTableToSeed do
     # TODO: add index (make sure only one record per day)
     create table(:seeds, primary_key: false) do
       add :hash, :bytea, null: false
-      add :inserted_at, :utc_datetime, null: false
+      add :day, :date, null: false
+
+      timestamps(updated_at: false, type: :utc_datetime)
     end
   end
 end

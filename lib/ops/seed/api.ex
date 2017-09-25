@@ -33,7 +33,7 @@ defmodule OPS.Seed.API do
 
   def get_latest() do
     seed_query = from s in Seed,
-      order_by: [desc: s.inserted_at],
+      order_by: [desc: s.day],
       limit: 1
 
     SeedRepo.one(seed_query)
@@ -41,14 +41,15 @@ defmodule OPS.Seed.API do
 
   def get_seed(date) do
     seed_query = from s in Seed,
-      where: fragment("date(?) = ?", s.inserted_at, ^date)
+      where: fragment("date(?) = ?", s.day, ^date)
 
     SeedRepo.one(seed_query)
   end
 
   def close_day(date \\ Timex.shift(Timex.today, days: -1)) do
     payload = %Seed{
-      hash: calculated_hash(date)
+      hash: calculated_hash(date),
+      day: date
     }
 
     SeedRepo.insert(payload)
@@ -69,7 +70,7 @@ defmodule OPS.Seed.API do
     Enum.reduce_while SeedRepo.all(Seed), :ok, fn seed, _acc ->
       existing_hash = seed.hash
 
-      case do_verify(DateTime.to_date(seed.inserted_at), existing_hash) do
+      case do_verify(DateTime.to_date(seed.day), existing_hash) do
         :ok ->
           {:cont, :ok}
         {:error, _} = error ->
