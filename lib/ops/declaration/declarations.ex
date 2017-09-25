@@ -11,6 +11,8 @@ defmodule OPS.Declarations do
   alias OPS.AuditLogs
   alias OPS.Declarations.Declaration
   alias OPS.Declarations.DeclarationSearch
+  alias OPS.API.IL
+  require Logger
 
   def list_declarations(params) do
     %DeclarationSearch{}
@@ -94,7 +96,22 @@ defmodule OPS.Declarations do
     |> Repo.transaction()
   end
 
-  def approve_declarations(value, unit) do
+  def approve_declarations do
+    with {:ok, response} <- IL.get_global_parameters(),
+         parameters <- Map.fetch!(response, "data"),
+         unit <- Map.fetch!(parameters, "verification_request_term_unit"),
+         expiration <- Map.fetch!(parameters, "verification_request_expiration")
+    do
+      unit =
+        unit
+        |> String.downcase
+        |> String.replace_trailing("s", "")
+      do_approve_declarations(expiration, unit)
+    end
+  end
+
+  defp do_approve_declarations(value, unit) do
+    Logger.info("approve all declarations with inserted_at + #{value} #{unit} < now()")
     query =
       Declaration
       |> where([d], fragment("?::date < now()::date", datetime_add(d.inserted_at, ^value, ^unit)))

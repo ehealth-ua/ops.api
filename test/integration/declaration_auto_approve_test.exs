@@ -3,12 +3,11 @@ defmodule OPS.Integration.DeclarationAutoApproveTest do
 
   use OPS.Web.ConnCase
 
-  alias OPS.DeclarationAutoApprove
+  alias OPS.Declarations
   alias OPS.Declarations.Declaration
   alias OPS.Repo
 
-  @tag :pending
-  test "start init genserver" do
+  test "approve_declarations/0" do
     declaration = insert(:declaration, status: Declaration.status(:pending))
     inserted_at = NaiveDateTime.add(NaiveDateTime.utc_now(), -86_400 * 10, :seconds)
 
@@ -16,8 +15,7 @@ defmodule OPS.Integration.DeclarationAutoApproveTest do
     |> Ecto.Changeset.change(inserted_at: inserted_at)
     |> Repo.update()
 
-    GenServer.cast(DeclarationAutoApprove, {:approve, 1})
-    Process.sleep(1000)
+    Declarations.approve_declarations()
 
     active_status = Declaration.status(:active)
     assert %{status: ^active_status} = Repo.get(Declaration, declaration.id)
