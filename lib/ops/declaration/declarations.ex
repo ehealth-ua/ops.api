@@ -26,8 +26,8 @@ defmodule OPS.Declarations do
   def create_declaration(attrs \\ %{}) do
     seed = OPS.Seed.API.get_latest()
 
-    %Declaration{}
-    |> declaration_changeset(Map.put_new(attrs, :seed, seed.hash))
+    %Declaration{seed: seed.hash}
+    |> declaration_changeset(attrs)
     |> Repo.insert_and_log(Map.get(attrs, "created_by", Map.get(attrs, :created_by)))
   end
 
@@ -92,9 +92,11 @@ defmodule OPS.Declarations do
       |> where([d], d.person_id == ^person_id)
       |> where([d], d.status in ^[Declaration.status(:active), Declaration.status(:pending)])
 
+    seed = OPS.Seed.API.get_latest()
+
     Multi.new()
     |> Multi.update_all(:previous_declarations, query, set: [status: Declaration.status(:terminated)])
-    |> Multi.insert(:new_declaration, declaration_changeset(%Declaration{}, declaration_params))
+    |> Multi.insert(:new_declaration, declaration_changeset(%Declaration{seed: seed.hash}, declaration_params))
     |> Repo.transaction()
   end
 
