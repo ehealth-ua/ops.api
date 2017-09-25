@@ -43,6 +43,13 @@ config :ops, OPS.Repo,
 config :ops,
   namespace: OPS
 
+config :ops, OPS.Scheduler,
+  declaration_auto_approve: {:system, :string,
+    "DECLARATION_AUTO_APPROVE_SCHEDULE", "* 0-4 * * *"},
+  medication_dispense_autotermination: {:system, :string,
+    "MEDICATION_DISPENSE_AUTOTERMINATION_SCHEDULE", "* * * * *"},
+  medication_dispense_expiration: {:system, :integer, "MEDICATION_DISPENSE_EXPIRATION", 10}
+
 # Configures the endpoint
 config :ops, OPS.Web.Endpoint,
   url: [host: "localhost"],
@@ -66,11 +73,6 @@ config :ops, OPS.DeclarationTerminator,
   frequency: 24 * 60 * 60 * 1000,
   utc_interval: {0, 4}
 
-# Configures declaration auto approve
-config :ops, OPS.DeclarationAutoApprove,
-  frequency: 24 * 60 * 60 * 1000,
-  utc_interval: {0, 4}
-
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
@@ -81,23 +83,6 @@ config :logger_json, :backend,
   on_init: {OPS, :load_from_system_env, []},
   json_encoder: Poison,
   metadata: :all
-
-config :ops, OPS.MedicationDispense.Scheduler,
-  global: true,
-  overlap: false,
-  jobs: [
-    {
-      {
-        :cron,
-        System.get_env("MEDICATION_DISPENSE_AUTOTERMINATION_SCHEDULE") || "* * * * *"
-      },
-      {
-        OPS.MedicationDispenses,
-        :terminate,
-        [System.get_env("MEDICATION_DISPENSE_EXPIRATION") || 10]
-      }
-    }
-  ]
 
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment

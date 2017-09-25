@@ -5,6 +5,7 @@ defmodule OPS do
   use Application
   alias OPS.Web.Endpoint
   alias Confex.Resolver
+  alias OPS.Scheduler
 
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
   # for more information on OTP Applications
@@ -23,14 +24,15 @@ defmodule OPS do
       # Starts a worker by calling: OPS.Worker.start_link(arg1, arg2, arg3)
       # worker(OPS.Worker, [arg1, arg2, arg3]),
       worker(OPS.DeclarationTerminator, []),
-      worker(OPS.DeclarationAutoApprove, []),
-      worker(OPS.MedicationDispense.Scheduler, []),
+      worker(OPS.Scheduler, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: OPS.Supervisor]
-    Supervisor.start_link(children, opts)
+    result = Supervisor.start_link(children, opts)
+    Scheduler.create_jobs()
+    result
   end
 
   # Tell Phoenix to update the endpoint configuration
