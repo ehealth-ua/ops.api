@@ -36,6 +36,7 @@ defmodule OPS.MedicationRequest.Schema do
     field :medical_program_id, Ecto.UUID
     field :inserted_by, Ecto.UUID
     field :updated_by, Ecto.UUID
+    field :verification_code, :string
 
     timestamps()
   end
