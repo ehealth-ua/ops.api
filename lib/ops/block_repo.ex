@@ -8,23 +8,23 @@ defmodule OPS.BlockRepo do
     config = Resolver.resolve!(config)
 
     unless config[:database] do
-      raise "Set DB_NAME environment variable!"
+      raise "Set BLOCK_DB_NAME environment variable!"
     end
 
     unless config[:username] do
-      raise "Set DB_USER environment variable!"
+      raise "Set BLOCK_DB_USER environment variable!"
     end
 
     unless config[:password] do
-      raise "Set DB_PASSWORD environment variable!"
+      raise "Set BLOCK_DB_PASSWORD environment variable!"
     end
 
     unless config[:hostname] do
-      raise "Set DB_HOST environment variable!"
+      raise "Set BLOCK_DB_HOST environment variable!"
     end
 
     unless config[:port] do
-      raise "Set DB_PORT environment variable!"
+      raise "Set BLOCK_DB_PORT environment variable!"
     end
 
     {:ok, config}
