@@ -1,45 +1,26 @@
 defmodule :ops_tasks do
-  @moduledoc """
-  Nice way to apply migrations inside a released application.
+  @moduledoc false
 
-  Example:
-
-      ops/bin/ops command ops_tasks migrate!
-  """
   import Mix.Ecto, warn: false
 
-  @priv_dir "priv"
-  @repo OPS.Repo
-
   def migrate! do
-    # Migrate
-    migrations_dir = Path.join([@priv_dir, "repo", "migrations"])
+    block_migrations_dir = Path.join(["priv", "block_repo", "migrations"])
+    migrations_dir = Path.join(["priv", "repo", "migrations"])
 
-    # Run migrations
-    @repo
-    |> start_repo()
-    |> Ecto.Migrator.run(migrations_dir, :up, all: true)
-
-    System.halt(0)
-    :init.stop()
-  end
-
-  def seed! do
-    seed_script = Path.join([@priv_dir, "repo", "seeds.exs"])
-
-    # Run seed script
-    start_repo(@repo)
-
-    Code.require_file(seed_script)
-
-    System.halt(0)
-    :init.stop()
-  end
-
-  defp start_repo(repo) do
     load_app()
-    {:ok, _} = repo.start_link()
-    repo
+
+    ops_block_repo = OPS.BlockRepo
+    ops_block_repo.start_link()
+
+    Ecto.Migrator.run(ops_block_repo, ops_migrations_dir, :up, all: true)
+
+    repo = OPS.Repo
+    repo.start_link()
+
+    Ecto.Migrator.run(repo, migrations_dir, :up, all: true)
+
+    System.halt(0)
+    :init.stop()
   end
 
   defp load_app do
