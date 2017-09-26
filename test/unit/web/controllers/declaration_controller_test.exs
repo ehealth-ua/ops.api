@@ -53,8 +53,6 @@ defmodule OPS.Web.DeclarationControllerTest do
   end
 
   setup %{conn: conn} do
-    insert_initial_block()
-
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 

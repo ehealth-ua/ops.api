@@ -23,7 +23,6 @@ defmodule OPS.DataCase do
       import Ecto.Query
       import OPS.DataCase
       import OPS.Factory
-      import OPS.Test.Helpers
     end
   end
 

@@ -5,6 +5,7 @@ defmodule OPS.DeclarationTest do
   alias EctoTrail.Changelog
   alias OPS.Declarations
   alias OPS.Declarations.Declaration
+  alias OPS.Block.API, as: BlockAPI
 
   @create_attrs %{
     "id" => Ecto.UUID.generate(),
@@ -42,12 +43,6 @@ defmodule OPS.DeclarationTest do
      "division_id" => "invalid"
    }
 
-  setup do
-    {:ok, initial_block} = insert_initial_block()
-
-    {:ok, %{hash: initial_block.hash}}
-  end
-
   def fixture(:declaration, attrs \\ @create_attrs) do
     create_attrs =
       attrs
@@ -60,9 +55,9 @@ defmodule OPS.DeclarationTest do
     declaration
   end
 
-  test "declaration is assigned a seed", %{hash: hash} do
+  test "declaration is assigned a seed" do
     declaration = fixture(:declaration)
-    assert declaration.seed == hash
+    assert declaration.seed == BlockAPI.get_latest().hash
   end
 
   test "list_declarations/1 returns all declarations" do
