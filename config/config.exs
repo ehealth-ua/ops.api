@@ -24,7 +24,7 @@ use Mix.Config
 #
 #     :var_name, "${ENV_VAR_NAME}"
 config :ops,
-  ecto_repos: [OPS.Repo],
+  ecto_repos: [OPS.Repo, OPS.BlockRepo],
   env: Mix.env()
 
 # Configure your database
@@ -35,6 +35,14 @@ config :ops, OPS.Repo,
   password: {:system, "DB_PASSWORD", "postgres"},
   hostname: {:system, "DB_HOST", "localhost"},
   port: {:system, :integer, "DB_PORT", 5432}
+
+config :ops, OPS.BlockRepo,
+  adapter: Ecto.Adapters.Postgres,
+  database: {:system, "BLOCK_DB_NAME", "seed_dev"},
+  username: {:system, "BLOCK_DB_USER", "postgres"},
+  password: {:system, "BLOCK_DB_PASSWORD", "postgres"},
+  hostname: {:system, "BLOCK_DB_HOST", "localhost"},
+  port: {:system, :integer, "BLOCK_DB_PORT", 5432}
 # This configuration file is loaded before any dependency and
 # is restricted to this project.
 
@@ -83,6 +91,34 @@ config :logger_json, :backend,
   on_init: {OPS, :load_from_system_env, []},
   json_encoder: Poison,
   metadata: :all
+
+config :ops, OPS.MedicationDispense.Scheduler,
+  global: true,
+  overlap: false,
+  jobs: [
+    {
+      {
+        :cron,
+        System.get_env("MEDICATION_DISPENSE_AUTOTERMINATION_SCHEDULE") || "* * * * *"
+      },
+      {
+        OPS.MedicationDispenses,
+        :terminate,
+        [System.get_env("MEDICATION_DISPENSE_EXPIRATION") || 10]
+      }
+    },
+    {
+      {
+        :cron,
+        System.get_env("BLOCK_CREATION_SCHEDULE") || "0 0 * * *"
+      },
+      {
+        OPS.Block.API,
+        :close_block,
+        []
+      }
+    }
+  ]
 
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment

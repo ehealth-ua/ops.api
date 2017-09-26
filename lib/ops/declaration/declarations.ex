@@ -7,7 +7,7 @@ defmodule OPS.Declarations do
   import Ecto.{Query, Changeset}, warn: false
   alias Ecto.Multi
   alias OPS.Repo
-
+  alias OPS.Block.API, as: BlockAPI
   alias OPS.AuditLogs
   alias OPS.Declarations.Declaration
   alias OPS.Declarations.DeclarationSearch
@@ -24,7 +24,9 @@ defmodule OPS.Declarations do
 
   # TODO: Make more clearly getting created_by and updated_by parameters
   def create_declaration(attrs \\ %{}) do
-    %Declaration{}
+    block = BlockAPI.get_latest()
+
+    %Declaration{seed: block.hash}
     |> declaration_changeset(attrs)
     |> Repo.insert_and_log(Map.get(attrs, "created_by", Map.get(attrs, :created_by)))
   end
@@ -90,9 +92,11 @@ defmodule OPS.Declarations do
       |> where([d], d.person_id == ^person_id)
       |> where([d], d.status in ^[Declaration.status(:active), Declaration.status(:pending)])
 
+    block = BlockAPI.get_latest()
+
     Multi.new()
     |> Multi.update_all(:previous_declarations, query, set: [status: Declaration.status(:terminated)])
-    |> Multi.insert(:new_declaration, declaration_changeset(%Declaration{}, declaration_params))
+    |> Multi.insert(:new_declaration, declaration_changeset(%Declaration{seed: block.hash}, declaration_params))
     |> Repo.transaction()
   end
 

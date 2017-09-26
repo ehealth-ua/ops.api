@@ -21,6 +21,8 @@ defmodule OPS.Declaration.ReportTest do
   }
 
   def fixture(:declaration, attrs \\ @create_attrs) do
+    insert_initial_block()
+
     create_attrs =
       attrs
       |> Map.put(:id, Ecto.UUID.generate())

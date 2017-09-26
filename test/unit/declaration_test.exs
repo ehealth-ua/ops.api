@@ -21,7 +21,6 @@ defmodule OPS.DeclarationTest do
     "division_id" => Ecto.UUID.generate(),
     "legal_entity_id" => Ecto.UUID.generate(),
     "declaration_request_id" => Ecto.UUID.generate(),
-    "seed" => "some_seed"
   }
 
   @update_attrs %{
@@ -43,6 +42,12 @@ defmodule OPS.DeclarationTest do
      "division_id" => "invalid"
    }
 
+  setup do
+    {:ok, initial_block} = insert_initial_block()
+
+    {:ok, %{hash: initial_block.hash}}
+  end
+
   def fixture(:declaration, attrs \\ @create_attrs) do
     create_attrs =
       attrs
@@ -53,6 +58,11 @@ defmodule OPS.DeclarationTest do
 
     {:ok, declaration} = Declarations.create_declaration(create_attrs)
     declaration
+  end
+
+  test "declaration is assigned a seed", %{hash: hash} do
+    declaration = fixture(:declaration)
+    assert declaration.seed == hash
   end
 
   test "list_declarations/1 returns all declarations" do

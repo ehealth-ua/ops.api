@@ -22,14 +22,18 @@ defmodule OPS.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import OPS.DataCase
+      import OPS.Factory
+      import OPS.Test.Helpers
     end
   end
 
   setup tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(OPS.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(OPS.BlockRepo)
 
     unless tags[:async] do
       Ecto.Adapters.SQL.Sandbox.mode(OPS.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(OPS.BlockRepo, {:shared, self()})
     end
 
     :ok

@@ -23,6 +23,7 @@ defmodule OPS.Web.ConnCase do
       import Ecto.Changeset
       import Ecto.Query
       import OPS.Factory
+      import OPS.Test.Helpers
       alias OPS.Repo
 
       # The default endpoint for testing
@@ -32,9 +33,11 @@ defmodule OPS.Web.ConnCase do
 
   setup tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(OPS.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(OPS.BlockRepo)
 
     unless tags[:async] do
       Ecto.Adapters.SQL.Sandbox.mode(OPS.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(OPS.BlockRepo, {:shared, self()})
     end
 
     conn =
