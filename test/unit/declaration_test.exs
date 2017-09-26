@@ -43,9 +43,9 @@ defmodule OPS.DeclarationTest do
    }
 
   setup do
-    {:ok, %{hash: hash}} = OPS.Block.API.close_block(~D[2014-01-01])
+    {:ok, initial_block} = insert_initial_block()
 
-    {:ok, %{hash: hash}}
+    {:ok, %{hash: initial_block.hash}}
   end
 
   def fixture(:declaration, attrs \\ @create_attrs) do

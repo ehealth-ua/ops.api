@@ -26,44 +26,42 @@ defmodule OPS.Block.API do
             declaration_request_id,
             seed
           ) ORDER BY id ASC
-        ), '') AS value FROM declarations WHERE DATE(inserted_at) = $1
+        ), '') AS value FROM declarations WHERE inserted_at > $1 AND inserted_at <= $2
     )
-    SELECT digest(concat(date($1), value), 'sha512')::text as value FROM concat;
+    SELECT digest(concat(value), 'sha512')::text AS value FROM concat;
   "
 
   def get_latest do
     block_query = from s in Block,
-      order_by: [desc: s.day],
+      order_by: [desc: s.inserted_at],
       limit: 1
 
     BlockRepo.one(block_query)
   end
 
-  def get_block(date) do
-    block_query = from s in Block,
-      where: fragment("date(?) = ?", s.day, ^date)
+  # TODO: make sure to insert initial block
+  #
+  #       make sure ot insert a block with value, that was hardcoded, in migration!
+  def close_block() do
+    block_start = get_latest().block_end
+    block_end = DateTime.utc_now()
 
-    BlockRepo.one(block_query)
-  end
-
-  def close_block(date \\ Timex.shift(Timex.today, days: -1)) do
-    payload = %Block{
-      hash: calculated_hash(date),
-      day: date
+    block = %Block{
+      hash: calculated_hash(block_start, block_end),
+      block_start: block_start,
+      block_end: block_end
     }
 
-    BlockRepo.insert(payload)
+    BlockRepo.insert(block)
   end
 
   def verify_chain do
     query = from s in Block,
-      order_by: [asc: s.day],
+      order_by: [asc: s.inserted_at],
       offset: 1
 
     Enum.reduce_while BlockRepo.all(query), :ok, fn block, _acc ->
-      existing_hash = block.hash
-
-      case do_verify(block.day, existing_hash) do
+      case do_verify(block) do
         :ok ->
           {:cont, :ok}
         {:error, _} = error ->
@@ -72,26 +70,34 @@ defmodule OPS.Block.API do
     end
   end
 
-  # TODO: handle case when declarations do not exist on a given day
-  # TODO: handle case when seed do not exist on a given day
-  # TODO: it cannot verify the first day. Related to the fact that there were no declarations on that day. Why?
-  def verify_day(date) do
-    existing_hash = get_block(date).hash
-    do_verify(date, existing_hash)
+  def verify_block(time) do
+    if block = get_block(time) do
+      do_verify(block.hash)
+    else
+      {:error, "No block covers provided time: #{inspect time}."}
+    end
   end
 
-  def do_verify(date, existing_hash) do
-    reconstructed_hash = calculated_hash(date)
+  def get_block(time) do
+    block_query = from s in Block,
+      where: fragment("? > ? AND ? <= ?", s.block_start, ^time, s.block_end, ^time)
+
+    BlockRepo.one(block_query)
+  end
+
+  def do_verify(existing_block) do
+    existing_hash = existing_block.hash
+    reconstructed_hash = calculated_hash(existing_block.block_start, existing_block.block_end)
 
     if reconstructed_hash == existing_hash do
       :ok
     else
-      {:error, {date, existing_hash, reconstructed_hash}}
+      {:error, {existing_block, reconstructed_hash}}
     end
   end
 
-  def calculated_hash(date) do
-    {:ok, %{rows: [[hash_value]], num_rows: 1}} = Repo.query(@calculate_block_query, [date])
+  def calculated_hash(from, to) do
+    {:ok, %{rows: [[hash_value]], num_rows: 1}} = Repo.query(@calculate_block_query, [from, to])
 
     hash_value
   end
