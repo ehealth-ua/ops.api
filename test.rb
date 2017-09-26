@@ -115,17 +115,13 @@ DAYS.times do |day|
   #       This will be analogue to "full check"
   #
   new_block = blocks_conn.exec("
-    INSERT INTO blocks (hash, block_start, block_end, inserted_at) VALUES ('#{new_hash}', '#{today}', '#{today} 23:59:59', now()) returning hash"
+    INSERT INTO blocks (hash, block_start, block_end, inserted_at)
+      VALUES ('#{new_hash}', '#{today}', '#{today} 23:59:59', now()) returning hash"
   )[0]
 
   puts "Day #{today}: generated #{samples} declarations. Hash: #{new_block["hash"]}. Block gen. took: #{after - before}s"
 end
 
-# puts "
-# Verifying: every day distinctly...
-#
-# "
-#
 blocks_conn.exec("SELECT * FROM blocks").each do |existing_block|
   from = existing_block["block_start"]
   to   = existing_block["block_end"]
@@ -134,8 +130,6 @@ blocks_conn.exec("SELECT * FROM blocks").each do |existing_block|
 
   new_hash      = recalculated_block["hash"]
   existing_hash = existing_block["hash"]
-
-  # existing_block = blocks_conn.exec("SELECT hash FROM blocks WHERE date(inserted_at) = '#{today}'").map { |row| row["hash"] }[0]
 
   if new_hash == existing_hash
     puts "Block #{from}..#{to} vas verified. It's correct!"
@@ -146,24 +140,3 @@ blocks_conn.exec("SELECT * FROM blocks").each do |existing_block|
     puts "    - #{recalculated_block["new_value"]}"
   end
 end
-
-# New block gen / verificaion algorithm:
-#
-#   1. new declaration picks up hash from latest available block
-#   2. a new block closes at arbitrary point in time
-#   3. new declaration picks up hash from latest available block
-#   4. a new block closes at arbitrary point in time
-#   5. and so on...
-#
-# New verificaion algorithm:
-#
-#   1. take a block A and a previous block B
-#   2. take a declarations that were created in (B.inserted_at, A.inserted_at]
-#   3. all these declarations belong to block A
-#
-puts "
-Verifying: every day distinctly...
-
-TODO: make this happen
-
-"
