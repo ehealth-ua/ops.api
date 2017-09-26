@@ -1,4 +1,6 @@
 defmodule OPS.Test.Helpers do
+  @moduledoc false
+
   alias OPS.BlockRepo
   alias OPS.Block.Schema, as: Block
 

@@ -42,7 +42,7 @@ defmodule OPS.Block.API do
   # TODO: make sure to insert initial block
   #
   #       make sure ot insert a block with value, that was hardcoded, in migration!
-  def close_block() do
+  def close_block do
     block_start = get_latest().block_end
     block_end = DateTime.utc_now()
 
