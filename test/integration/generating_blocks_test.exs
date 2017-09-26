@@ -6,7 +6,9 @@ defmodule OPS.GeneratingSeedsTest do
   alias OPS.Block.API, as: BlockAPI
 
   setup do
-    {:ok, %{initial_hash:  BlockAPI.get_latest().hash}}
+    {:ok, initial_block} = insert_initial_block()
+
+    {:ok, %{initial_hash: initial_block.hash}}
   end
 
   test "start init genserver", %{initial_hash: first_hash} do
