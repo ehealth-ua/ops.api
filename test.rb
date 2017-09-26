@@ -122,7 +122,7 @@ DAYS.times do |day|
   puts "Day #{today}: generated #{samples} declarations. Hash: #{new_block["hash"]}. Block gen. took: #{after - before}s"
 end
 
-blocks_conn.exec("SELECT * FROM blocks").each do |existing_block|
+blocks_conn.exec("SELECT * FROM blocks ORDER BY inserted_at ASC OFFSET 1").each do |existing_block|
   from = existing_block["block_start"]
   to   = existing_block["block_end"]
 
