@@ -24,6 +24,7 @@ defmodule OPS.Web.MedicationRequestView do
       legal_entity_id
       verification_code
       is_active
+      medical_program_id
     )a)
   end
 end
