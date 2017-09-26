@@ -16,7 +16,7 @@ blocks_conn.exec("
   CREATE EXTENSION IF NOT EXISTS pgcrypto;
   DELETE FROM blocks;
 
-  INSERT INTO blocks (hash, day, inserted_at) VALUES (digest(concat('2014-01-01', 'Слава Україні!'), 'sha512')::text, '2014-01-01', '2014-01-01 23:59:59');
+  INSERT INTO blocks (hash, block_start, block_end, inserted_at) VALUES (digest(concat('Слава Україні!'), 'sha512')::text, '1970-01-01 00:00:00', now(), now());
 ")
 
 conn.exec("
@@ -45,13 +45,12 @@ generate_new_hash = "
           declaration_request_id,
           seed
         ) ORDER BY id ASC
-      ), '') AS value FROM declarations WHERE DATE(inserted_at) = '%{today}'
+      ), '') AS value FROM declarations WHERE inserted_at > '%{from}' AND inserted_at <= '%{to}'
   )
-  SELECT digest(concat('%{today}', value), 'sha512')::text as new_seed, value FROM concat;
+  SELECT digest(concat(value), 'sha512')::text as hash, value FROM concat;
 "
 
 DAYS.times do |day|
-  yesterday = (Date.new(2014, 1, 1) + day).to_s
   today = (Date.new(2014, 1, 1) + day + 1).to_s
 
   seed = blocks_conn.exec("SELECT hash FROM blocks ORDER BY inserted_at DESC LIMIT 1").map { |row| row["hash"] }[0]
@@ -91,8 +90,8 @@ DAYS.times do |day|
         '#{template["scope"]}',
         '#{template["division"]["id"]}',
         '#{template["legal_entity"]["id"]}',
-        '#{today}',
-        '#{today}',
+        '#{today} 00:00:01',
+        '#{today} 00:00:01',
         '3BA18EA0-09A7-4D5D-9330-029E02DD29AB',
         '#{seed}'
       )"
@@ -101,11 +100,13 @@ DAYS.times do |day|
     # TODO: add random time above
   end
 
+  # inserted_at > '%{previous_block_ts}' AND a <= y '%{today}'
+
   before = Time.now.to_i
-  calculated_seed = conn.exec(generate_new_hash % { today: today })[0]
+  calculated_seed = conn.exec(generate_new_hash % { from: "#{today} 00:00:00", to: "#{today} 23:59:59" })[0]
   after = Time.now.to_i
 
-  new_hash = calculated_seed["new_seed"]
+  new_hash = calculated_seed["hash"]
   new_value = calculated_seed["value"]
 
   # Note: Instead of inserting into seeds, we can insert into a temp table.
@@ -113,35 +114,53 @@ DAYS.times do |day|
   #
   #       This will be analogue to "full check"
   #
-  new_seed = blocks_conn.exec("INSERT INTO blocks (hash, day, inserted_at) VALUES ('#{new_hash}', '#{today}', '#{today} 23:59:59') returning hash")[0]['hash']
+  new_block = blocks_conn.exec("
+    INSERT INTO blocks (hash, block_start, block_end, inserted_at) VALUES ('#{new_hash}', '#{today}', '#{today} 23:59:59', now()) returning hash"
+  )[0]
 
-  puts "Day #{today}: generated #{samples} declarations. Seed: #{new_seed}. Seed gen took: #{after - before} s."
+  puts "Day #{today}: generated #{samples} declarations. Hash: #{new_block["hash"]}. Block gen. took: #{after - before}s"
 end
 
-puts "
-Verifying: every day distinctly...
+# puts "
+# Verifying: every day distinctly...
+#
+# "
+#
+blocks_conn.exec("SELECT * FROM blocks").each do |existing_block|
+  from = existing_block["block_start"]
+  to   = existing_block["block_end"]
 
-"
+  recalculated_block = conn.exec(generate_new_hash % { from: from, to: to })[0]
 
-conn.exec("SELECT DISTINCT date(inserted_at) AS today FROM declarations ORDER BY today;").each do |row|
-  today = row['today']
-  new_seed = conn.exec(generate_new_hash % { today: today })[0]
+  new_hash      = recalculated_block["hash"]
+  existing_hash = existing_block["hash"]
 
-  new_hash = new_seed["new_seed"]
-  new_value = new_seed["value"]
-
-  existing_hash = blocks_conn.exec("SELECT hash FROM blocks WHERE date(inserted_at) = '#{today}'").map { |row| row["hash"] }[0]
+  # existing_block = blocks_conn.exec("SELECT hash FROM blocks WHERE date(inserted_at) = '#{today}'").map { |row| row["hash"] }[0]
 
   if new_hash == existing_hash
-    puts "Day #{today} vas verified. It's correct!"
+    puts "Block #{from}..#{to} vas verified. It's correct!"
   else
-    puts "Day #{today} vas verified. It's not correct!"
-    puts "  - recalculated hash: #{new_hash}"
+    puts "Block #{from}..#{to} vas not verified. It's not correct!"
     puts "  - existing hash: #{existing_hash}"
-    puts "    - #{new_value}"
+    puts "  - recalculated hash: #{new_hash}"
+    puts "    - #{recalculated_block["new_value"]}"
   end
 end
 
+# New block gen / verificaion algorithm:
+#
+#   1. new declaration picks up hash from latest available block
+#   2. a new block closes at arbitrary point in time
+#   3. new declaration picks up hash from latest available block
+#   4. a new block closes at arbitrary point in time
+#   5. and so on...
+#
+# New verificaion algorithm:
+#
+#   1. take a block A and a previous block B
+#   2. take a declarations that were created in (B.inserted_at, A.inserted_at]
+#   3. all these declarations belong to block A
+#
 puts "
 Verifying: every day distinctly...
 
