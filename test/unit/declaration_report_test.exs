@@ -21,7 +21,7 @@ defmodule OPS.Declaration.ReportTest do
   }
 
   def fixture(:declaration, attrs \\ @create_attrs) do
-    OPS.Block.API.close_day(~D[2014-01-01])
+    OPS.Block.API.close_block(~D[2014-01-01])
 
     create_attrs =
       attrs

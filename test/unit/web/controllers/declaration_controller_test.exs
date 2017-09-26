@@ -53,7 +53,7 @@ defmodule OPS.Web.DeclarationControllerTest do
   end
 
   setup %{conn: conn} do
-    OPS.Block.API.close_day(~D[2014-01-01])
+    OPS.Block.API.close_block(~D[2014-01-01])
 
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end

@@ -43,7 +43,7 @@ defmodule OPS.DeclarationTest do
    }
 
   setup do
-    {:ok, %{hash: hash}} = OPS.Block.API.close_day(~D[2014-01-01])
+    {:ok, %{hash: hash}} = OPS.Block.API.close_block(~D[2014-01-01])
 
     {:ok, %{hash: hash}}
   end

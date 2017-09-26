@@ -46,21 +46,13 @@ defmodule OPS.Block.API do
     BlockRepo.one(block_query)
   end
 
-  def close_day(date \\ Timex.shift(Timex.today, days: -1)) do
+  def close_block(date \\ Timex.shift(Timex.today, days: -1)) do
     payload = %Block{
       hash: calculated_hash(date),
       day: date
     }
 
     BlockRepo.insert(payload)
-  end
-
-  # TODO: handle case when declarations do not exist on a given day
-  # TODO: handle case when seed do not exist on a given day
-  # TODO: it cannot verify the first day. Related to the fact that there were no declarations on that day. Why?
-  def verify_day(date) do
-    existing_hash = get_block(date).hash
-    do_verify(date, existing_hash)
   end
 
   def verify_chain do
@@ -78,6 +70,14 @@ defmodule OPS.Block.API do
           {:halt, error}
       end
     end
+  end
+
+  # TODO: handle case when declarations do not exist on a given day
+  # TODO: handle case when seed do not exist on a given day
+  # TODO: it cannot verify the first day. Related to the fact that there were no declarations on that day. Why?
+  def verify_day(date) do
+    existing_hash = get_block(date).hash
+    do_verify(date, existing_hash)
   end
 
   def do_verify(date, existing_hash) do

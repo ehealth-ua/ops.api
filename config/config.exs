@@ -114,7 +114,7 @@ config :ops, OPS.MedicationDispense.Scheduler,
       },
       {
         OPS.Block.API,
-        :close_day,
+        :close_block,
         []
       }
     }
