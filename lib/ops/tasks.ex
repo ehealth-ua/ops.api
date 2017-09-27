@@ -23,6 +23,16 @@ defmodule :ops_tasks do
     :init.stop()
   end
 
+  def close_block! do
+    load_app()
+
+    {:ok, block} = BlockAPI.close_block()
+    IO.inspect block
+
+    System.halt(0)
+    :init.stop()
+  end
+
   defp load_app do
     start_applications([:logger, :postgrex, :ecto])
     :ok = Application.load(:ops)
