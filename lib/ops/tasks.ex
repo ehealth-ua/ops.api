@@ -23,6 +23,18 @@ defmodule :ops_tasks do
     :init.stop()
   end
 
+  def check_consistency! do
+    load_app()
+
+    OPS.Repo.start_link()
+    OPS.BlockRepo.start_link()
+
+    OPS.Block.API.verify_chain()
+
+    System.halt(0)
+    :init.stop()
+  end
+
   def close_block! do
     load_app()
 
