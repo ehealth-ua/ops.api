@@ -26,6 +26,9 @@ defmodule :ops_tasks do
   def close_block! do
     load_app()
 
+    OPS.Repo.start_link()
+    OPS.BlockRepo.start_link()
+
     {:ok, block} = OPS.Block.API.close_block()
     IO.inspect block
 
