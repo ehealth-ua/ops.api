@@ -39,7 +39,7 @@ defmodule OPS.GeneratingSeedsTest do
 
     {:ok, _} = Repo.update(Ecto.Changeset.change(d1, %{employee_id: "0bea8aed-9f41-44f9-a3cf-43ac221d2f1a"}))
 
-    {:error, {^block, _malformed_hash}} = BlockAPI.verify_chain()
+    {:error, [%{block: ^block, reconstructed_hash: _malformed_hash}]} = BlockAPI.verify_chain()
   end
 
   test "an addition to block is detected", %{initial_hash: first_hash} do
@@ -52,7 +52,7 @@ defmodule OPS.GeneratingSeedsTest do
 
     insert(:declaration, seed: first_hash, inserted_at: d1.inserted_at)
 
-    {:error, {^block, _malformed_hash}} = BlockAPI.verify_chain()
+    {:error, [%{block: ^block, reconstructed_hash: _malformed_hash}]} = BlockAPI.verify_chain()
   end
 
   test "a deletion from block is detected", %{initial_hash: first_hash} do
@@ -65,6 +65,6 @@ defmodule OPS.GeneratingSeedsTest do
 
     {:ok, _} = Repo.delete(d2)
 
-    {:error, {^block, _malformed_hash}} = BlockAPI.verify_chain()
+    {:error, [%{block: ^block, reconstructed_hash: _malformed_hash}]} = BlockAPI.verify_chain()
   end
 end

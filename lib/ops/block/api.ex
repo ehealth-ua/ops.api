@@ -60,13 +60,20 @@ defmodule OPS.Block.API do
     # TODO: run this in parallel
     # TODO: no need to stop, e.g. {:halt, error}
     # TODO: write to LOG both :success and :error status
-    Enum.reduce_while BlockRepo.all(query), :ok, fn block, _acc ->
-      case do_verify(block) do
-        :ok ->
-          {:cont, :ok}
-        {:error, _} = error ->
-          {:halt, error}
+    result =
+      Enum.reduce BlockRepo.all(query), [], fn block, acc ->
+        case do_verify(block) do
+          :ok ->
+            acc
+          error_info ->
+            [error_info|acc]
+        end
       end
+
+    if Enum.empty? result do
+      :ok
+    else
+      {:error, result}
     end
   end
 
@@ -92,7 +99,7 @@ defmodule OPS.Block.API do
     if reconstructed_hash == existing_hash do
       :ok
     else
-      {:error, {existing_block, reconstructed_hash}}
+      %{block: existing_block, reconstructed_hash: reconstructed_hash}
     end
   end
 
