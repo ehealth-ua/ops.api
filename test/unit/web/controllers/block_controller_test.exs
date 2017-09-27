@@ -1,4 +1,4 @@
-defmodule OPS.Web.DeclarationControllerTest do
+defmodule OPS.Web.BlockControllerTest do
   use OPS.Web.ConnCase
 
   alias OPS.BlockRepo
