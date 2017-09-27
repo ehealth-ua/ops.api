@@ -18,12 +18,12 @@ defmodule OPS.Block.API do
             end_date,
             signed_at,
             created_by,
-            is_active,
             scope,
             division_id,
             legal_entity_id,
             inserted_at,
             declaration_request_id,
+            person_id,
             seed
           ) ORDER BY id ASC
         ), '') AS value FROM declarations WHERE inserted_at > $1 AND inserted_at <= $2
