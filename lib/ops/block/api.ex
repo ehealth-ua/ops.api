@@ -60,6 +60,9 @@ defmodule OPS.Block.API do
       order_by: [asc: s.inserted_at],
       offset: 1
 
+    # TODO: run this in parallel
+    # TODO: no need to stop, e.g. {:halt, error}
+    # TODO: write to LOG both :success and :error status
     Enum.reduce_while BlockRepo.all(query), :ok, fn block, _acc ->
       case do_verify(block) do
         :ok ->
