@@ -56,7 +56,6 @@ defmodule OPS.Mixfile do
      {:cowboy, "~> 1.1"},
      {:httpoison, "~> 0.11.1"},
      {:phoenix, "~> 1.3.0-rc"},
-     {:multiverse, "~> 0.4.3"},
      {:eview, "~> 0.12.0"},
      {:phoenix_ecto, "~> 3.2"},
      {:ecto_trail, ">= 0.0.0"},
