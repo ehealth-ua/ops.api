@@ -26,7 +26,7 @@ defmodule :ops_tasks do
   def close_block! do
     load_app()
 
-    {:ok, block} = BlockAPI.close_block()
+    {:ok, block} = OPS.Block.API.close_block()
     IO.inspect block
 
     System.halt(0)
