@@ -8,23 +8,6 @@ defmodule OPS.Web.MedicationRequestView do
   end
 
   def render("show.json", %{medication_request: medication_request}) do
-    Map.take(medication_request, ~w(
-      id
-      status
-      reques_number
-      created_at
-      started_at
-      ended_at
-      dispense_valid_from
-      dispense_valid_to
-      person_id
-      medication_id
-      employee_id
-      division_id
-      legal_entity_id
-      verification_code
-      is_active
-      medical_program_id
-    )a)
+    medication_request
   end
 end
