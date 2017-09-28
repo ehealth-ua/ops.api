@@ -3,6 +3,8 @@ defmodule OPS.MedicationRequest.Schema do
 
   use Ecto.Schema
 
+  @derive {Poison.Encoder, except: [:__meta__]}
+
   @status_active "ACTIVE"
   @status_completed "COMPLETED"
   @status_rejected "REJECTED"
