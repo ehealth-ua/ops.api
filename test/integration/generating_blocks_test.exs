@@ -68,7 +68,6 @@ defmodule OPS.GeneratingSeedsTest do
     {:error, [%{block: ^block, reconstructed_hash: _malformed_hash}]} = BlockAPI.verify_chain()
   end
 
-  @tag :pending
   test "each block is verified using its own algorithm's version", %{initial_hash: first_hash} do
     d1 = insert(:declaration, seed: first_hash)
     d2 = insert(:declaration, seed: first_hash)
@@ -79,16 +78,30 @@ defmodule OPS.GeneratingSeedsTest do
 
     assert "v1" == v1_block.version
 
-    d1 = insert(:declaration, seed: v1_block.hash)
-    d2 = insert(:declaration, seed: v1_block.hash)
-    assert v1_block.hash == d1.seed
-    assert v1_block.hash == d2.seed
+    d3 = insert(:declaration, seed: v1_block.hash)
+    d4 = insert(:declaration, seed: v1_block.hash)
+    assert v1_block.hash == d3.seed
+    assert v1_block.hash == d4.seed
 
-    # Change version here
+    new_query = "
+      SELECT array_to_string(array_agg(id), '')
+        FROM declarations
+       WHERE inserted_at > $1 AND inserted_at <= $2
+    "
+
+    block_versions = Application.get_env(:ops, :block_versions)
+    Application.put_env(:ops, :block_versions, Map.put_new(block_versions, "v2", new_query))
+    Application.put_env(:ops, :current_block_version, "v2")
 
     {:ok, v2_block} = BlockAPI.close_block()
 
-    assert "v2" == v1_block.version
+    d5 = insert(:declaration, seed: v2_block.hash)
+    d6 = insert(:declaration, seed: v2_block.hash)
+
+    assert "v2" == v2_block.version
+    assert "#{d3.id}#{d4.id}" == v2_block.hash
+    assert "#{d3.id}#{d4.id}" == d5.seed
+    assert "#{d3.id}#{d4.id}" == d6.seed
 
     :ok = BlockAPI.verify_chain()
   end
