@@ -7,29 +7,33 @@ defmodule OPS.Block.API do
   alias OPS.BlockRepo
   alias OPS.Block.Schema, as: Block
 
+  @query_v1 "
+    WITH concat AS (
+      SELECT
+        ARRAY_TO_STRING(ARRAY_AGG(
+          CONCAT(
+            id,
+            employee_id,
+            start_date,
+            end_date,
+            signed_at,
+            created_by,
+            scope,
+            division_id,
+            legal_entity_id,
+            inserted_at,
+            declaration_request_id,
+            person_id,
+            seed
+          ) ORDER BY id ASC
+        ), '') AS value FROM declarations
+        WHERE inserted_at > $1 AND inserted_at <= $2
+    )
+  SELECT digest(concat(value), 'sha512')::text AS value FROM concat;
+  "
+
   @calculate_block_query %{
-    v1: "WITH concat AS (
-          SELECT
-            ARRAY_TO_STRING(ARRAY_AGG(
-              CONCAT(
-                id,
-                employee_id,
-                start_date,
-                end_date,
-                signed_at,
-                created_by,
-                scope,
-                division_id,
-                legal_entity_id,
-                inserted_at,
-                declaration_request_id,
-                person_id,
-                seed
-              ) ORDER BY id ASC
-            ), '') AS value FROM declarations
-            WHERE inserted_at > $1 AND inserted_at <= $2
-        )
-        SELECT digest(concat(value), 'sha512')::text AS value FROM concat;"
+    "v1" => @query_v1
   }
 
   def get_latest do
@@ -48,7 +52,7 @@ defmodule OPS.Block.API do
       hash: calculated_hash(current_version(), block_start, block_end),
       block_start: block_start,
       block_end: block_end,
-      version: to_string(current_version)
+      version: to_string(current_version())
     }
 
     BlockRepo.insert(block)
@@ -114,6 +118,6 @@ defmodule OPS.Block.API do
   # Must be adjusted every time
   # a hash algorithm changes
   def current_version do
-    :v1
+    "v1"
   end
 end

@@ -8,6 +8,7 @@ defmodule OPS.Block.Schema do
     field :hash, :string
     field :block_start, :utc_datetime
     field :block_end, :utc_datetime
+    field :version, :string
 
     timestamps(updated_at: false, type: :utc_datetime)
   end

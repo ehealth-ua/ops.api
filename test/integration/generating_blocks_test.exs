@@ -67,4 +67,23 @@ defmodule OPS.GeneratingSeedsTest do
 
     {:error, [%{block: ^block, reconstructed_hash: _malformed_hash}]} = BlockAPI.verify_chain()
   end
+
+  @tag :pending
+  test "each block is verified using its own algorithm's version", %{initial_hash: first_hash} do
+    d1 = insert(:declaration, seed: first_hash)
+    d2 = insert(:declaration, seed: first_hash)
+    assert first_hash == d1.seed
+    assert first_hash == d2.seed
+
+    {:ok, v1_block} = BlockAPI.close_block()
+
+    d1 = insert(:declaration, seed: v1_block.hash)
+    d2 = insert(:declaration, seed: v1_block.hash)
+    assert v1_block.hash == d1.seed
+    assert v1_block.hash == d2.seed
+
+    {:ok, v2_block} = BlockAPI.close_block()
+
+    :ok = BlockAPI.verify_chain()
+  end
 end
