@@ -3,7 +3,6 @@ defmodule OPS.Block.Schema do
 
   use Ecto.Schema
 
-  @primary_key false
   schema "blocks" do
     field :hash, :string
     field :block_start, :utc_datetime
