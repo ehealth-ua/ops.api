@@ -120,6 +120,36 @@ config :ops, OPS.MedicationDispense.Scheduler,
     }
   ]
 
+config :ops, :block_versions, %{
+  "v1" => "
+    WITH concat AS (
+      SELECT
+        ARRAY_TO_STRING(ARRAY_AGG(
+          CONCAT(
+            id,
+            employee_id,
+            start_date,
+            end_date,
+            signed_at,
+            created_by,
+            scope,
+            division_id,
+            legal_entity_id,
+            inserted_at,
+            declaration_request_id,
+            person_id,
+            seed
+          ) ORDER BY id ASC
+        ), '') AS value FROM declarations
+        WHERE inserted_at > $1 AND inserted_at <= $2
+    )
+    SELECT digest(concat(value), 'sha512')::text AS value FROM concat
+  "
+}
+
+# Must be adjusted every time current_block_version is appended with new version
+config :ops, :current_block_version, "v1"
+
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
 # by uncommenting the line below and defining dev.exs, test.exs and such.

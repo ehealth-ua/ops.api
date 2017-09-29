@@ -7,30 +7,6 @@ defmodule OPS.Block.API do
   alias OPS.BlockRepo
   alias OPS.Block.Schema, as: Block
 
-  @calculate_block_query "
-    WITH concat AS (
-      SELECT
-        ARRAY_TO_STRING(ARRAY_AGG(
-          CONCAT(
-            id,
-            employee_id,
-            start_date,
-            end_date,
-            signed_at,
-            created_by,
-            scope,
-            division_id,
-            legal_entity_id,
-            inserted_at,
-            declaration_request_id,
-            person_id,
-            seed
-          ) ORDER BY id ASC
-        ), '') AS value FROM declarations WHERE inserted_at > $1 AND inserted_at <= $2
-    )
-    SELECT digest(concat(value), 'sha512')::text AS value FROM concat;
-  "
-
   def get_latest do
     block_query = from s in Block,
       order_by: [desc: s.inserted_at],
@@ -44,9 +20,10 @@ defmodule OPS.Block.API do
     block_end = DateTime.utc_now()
 
     block = %Block{
-      hash: calculated_hash(block_start, block_end),
+      hash: calculated_hash(current_version(), block_start, block_end),
       block_start: block_start,
-      block_end: block_end
+      block_end: block_end,
+      version: to_string(current_version())
     }
 
     BlockRepo.insert(block)
@@ -94,7 +71,7 @@ defmodule OPS.Block.API do
 
   def do_verify(existing_block) do
     existing_hash = existing_block.hash
-    reconstructed_hash = calculated_hash(existing_block.block_start, existing_block.block_end)
+    reconstructed_hash = calculated_hash(existing_block.version, existing_block.block_start, existing_block.block_end)
 
     if reconstructed_hash == existing_hash do
       :ok
@@ -103,9 +80,17 @@ defmodule OPS.Block.API do
     end
   end
 
-  def calculated_hash(from, to) do
-    {:ok, %{rows: [[hash_value]], num_rows: 1}} = Repo.query(@calculate_block_query, [from, to])
+  def calculated_hash(version, from, to) do
+    {:ok, %{rows: [[hash_value]], num_rows: 1}} = Repo.query(current_version_query(version), [from, to])
 
     hash_value
+  end
+
+  def current_version do
+    Application.get_env(:ops, :current_block_version)
+  end
+
+  def current_version_query(version) do
+    Application.get_env(:ops, :block_versions)[version]
   end
 end

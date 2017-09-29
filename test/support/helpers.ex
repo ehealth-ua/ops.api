@@ -11,7 +11,8 @@ defmodule OPS.Test.Helpers do
     block = %Block{
       hash: "just_some_initially_put_hash",
       block_start: block_start,
-      block_end: block_end
+      block_end: block_end,
+      version: "v1"
     }
 
     BlockRepo.insert(block)

@@ -16,7 +16,7 @@ blocks_conn.exec("
   CREATE EXTENSION IF NOT EXISTS pgcrypto;
   DELETE FROM blocks;
 
-  INSERT INTO blocks (hash, block_start, block_end, inserted_at) VALUES (digest(concat('Слава Україні!'), 'sha512')::text, '1970-01-01 00:00:00', now(), now());
+  INSERT INTO blocks (hash, version, block_start, block_end, inserted_at) VALUES (digest(concat('Слава Україні!'), 'sha512')::text, 'v1', '1970-01-01 00:00:00', now(), now());
 ")
 
 conn.exec("
@@ -115,8 +115,8 @@ DAYS.times do |day|
   #       This will be analogue to "full check"
   #
   new_block = blocks_conn.exec("
-    INSERT INTO blocks (hash, block_start, block_end, inserted_at)
-      VALUES ('#{new_hash}', '#{today}', '#{today} 23:59:59', now()) returning hash"
+    INSERT INTO blocks (hash, version, block_start, block_end, inserted_at)
+      VALUES ('#{new_hash}', 'v1', '#{today}', '#{today} 23:59:59', now()) returning hash"
   )[0]
 
   puts "Day #{today}: generated #{samples} declarations. Hash: #{new_block["hash"]}. Block gen. took: #{after - before}s"
