@@ -115,9 +115,7 @@ defmodule OPS.Block.API do
     hash_value
   end
 
-  # Must be adjusted every time
-  # a hash algorithm changes
   def current_version do
-    Application.get_env(:ops, :block_version)
+    Application.get_env(:ops, :current_block_version)
   end
 end

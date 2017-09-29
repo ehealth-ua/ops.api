@@ -77,12 +77,18 @@ defmodule OPS.GeneratingSeedsTest do
 
     {:ok, v1_block} = BlockAPI.close_block()
 
+    assert "v1" == v1_block.version
+
     d1 = insert(:declaration, seed: v1_block.hash)
     d2 = insert(:declaration, seed: v1_block.hash)
     assert v1_block.hash == d1.seed
     assert v1_block.hash == d2.seed
 
+    # Change version here
+
     {:ok, v2_block} = BlockAPI.close_block()
+
+    assert "v2" == v1_block.version
 
     :ok = BlockAPI.verify_chain()
   end
