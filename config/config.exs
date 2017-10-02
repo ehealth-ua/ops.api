@@ -66,7 +66,7 @@ config :ops, OPS.Web.Endpoint,
 
 # Configures IL endpoint
 config :ops, OPS.API.IL,
-  endpoint: {:system, "IL_ENDPOINT", "http://api-svc.il/api"},
+  endpoint: {:system, "IL_ENDPOINT", "http://api-svc.il"}, # TODO: update Chart configs
   timeouts: [
     connect_timeout: {:system, :integer, "IL_REQUEST_TIMEOUT", 30_000},
     recv_timeout: {:system, :integer, "IL_REQUEST_TIMEOUT", 30_000},
@@ -115,6 +115,17 @@ config :ops, OPS.MedicationDispense.Scheduler,
       {
         OPS.Block.API,
         :close_block,
+        []
+      }
+    },
+    {
+      {
+        :cron,
+        System.get_env("BLOCK_VALIDATION_SCHEDULE") || "0 5 * * *"
+      },
+      {
+        OPS.Block.API,
+        :verify_chain_and_notify,
         []
       }
     }

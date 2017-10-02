@@ -6,6 +6,7 @@ defmodule OPS.Block.API do
   alias OPS.Repo
   alias OPS.BlockRepo
   alias OPS.Block.Schema, as: Block
+  alias OPS.API.IL
 
   def get_latest do
     block_query = from s in Block,
@@ -27,6 +28,15 @@ defmodule OPS.Block.API do
     }
 
     BlockRepo.insert(block)
+  end
+
+  def verify_chain_and_notify do
+    case verify_chain() do
+      {:error, result} ->
+        IL.send_notification(result)
+      _ ->
+        :ok
+    end
   end
 
   def verify_chain do

@@ -14,8 +14,14 @@ defmodule OPS.API.IL do
   def timeouts, do: config()[:timeouts]
 
   def get_global_parameters do
-    "/global_parameters"
+    "/api/global_parameters"
     |> get!()
+    |> ResponseDecoder.check_response()
+  end
+
+  def send_notification(verification_result) do
+    "/internal/hash_chain/verification_failed"
+    |> post!(Poison.encode!(verification_result))
     |> ResponseDecoder.check_response()
   end
 end
