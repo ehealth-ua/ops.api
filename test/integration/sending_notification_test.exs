@@ -68,7 +68,7 @@ defmodule OPS.SendingNotificationTest do
       assert first_hash == d2.seed
 
       {:ok, _block} = BlockAPI.close_block()
-  
+
       assert :ok = BlockAPI.verify_chain_and_notify()
     end
   end
