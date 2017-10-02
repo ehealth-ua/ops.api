@@ -29,7 +29,7 @@ defmodule :ops_tasks do
     OPS.Repo.start_link()
     OPS.BlockRepo.start_link()
 
-    result = OPS.Block.API.verify_chain()
+    result = OPS.Block.API.verify_chain_and_notify()
     IO.inspect result, label: "Verification result:"
 
     System.halt(0)
