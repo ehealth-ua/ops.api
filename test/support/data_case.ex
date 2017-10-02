@@ -39,6 +39,19 @@ defmodule OPS.DataCase do
     :ok
   end
 
+  def start_microservices(module) do
+    {:ok, port} = :gen_tcp.listen(0, [])
+    {:ok, port_string} = :inet.port(port)
+    :erlang.port_close(port)
+    ref = make_ref()
+    {:ok, _pid} = Plug.Adapters.Cowboy.http module, [], port: port_string, ref: ref
+    {:ok, port_string, ref}
+  end
+
+  def stop_microservices(ref) do
+    Plug.Adapters.Cowboy.shutdown(ref)
+  end
+
   @doc """
   Helper for returning list of errors in a struct when given certain data.
   ## Examples

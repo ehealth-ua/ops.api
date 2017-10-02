@@ -21,7 +21,7 @@ defmodule OPS.API.IL do
 
   def send_notification(verification_result) do
     "/internal/hash_chain/verification_failed"
-    |> post!(Poison.encode!(verification_result))
+    |> post!(Poison.encode!(%{"data" => verification_result}))
     |> ResponseDecoder.check_response()
   end
 end

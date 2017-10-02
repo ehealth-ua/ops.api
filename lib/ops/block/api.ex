@@ -33,7 +33,15 @@ defmodule OPS.Block.API do
   def verify_chain_and_notify do
     case verify_chain() do
       {:error, result} ->
-        IL.send_notification(result)
+        prepared_result = Enum.map result, fn %{block: block, reconstructed_hash: reconstructed_hash} ->
+          %{
+            block_id: block.id,
+            original_hash: block.hash,
+            reconstructed_hash: reconstructed_hash
+          }
+        end
+
+        IL.send_notification(prepared_result)
       _ ->
         :ok
     end
@@ -45,7 +53,6 @@ defmodule OPS.Block.API do
       offset: 1
 
     # TODO: run this in parallel
-    # TODO: no need to stop, e.g. {:halt, error}
     # TODO: write to LOG both :success and :error status
     result =
       Enum.reduce BlockRepo.all(query), [], fn block, acc ->
