@@ -6,6 +6,7 @@ defmodule OPS.Block.API do
   alias OPS.Repo
   alias OPS.BlockRepo
   alias OPS.Block.Schema, as: Block
+  alias OPS.API.IL
 
   def get_latest do
     block_query = from s in Block,
@@ -29,13 +30,29 @@ defmodule OPS.Block.API do
     BlockRepo.insert(block)
   end
 
+  def verify_chain_and_notify do
+    case verify_chain() do
+      {:error, result} ->
+        prepared_result = Enum.map result, fn %{block: block, reconstructed_hash: reconstructed_hash} ->
+          %{
+            block_id: block.id,
+            original_hash: block.hash,
+            reconstructed_hash: reconstructed_hash
+          }
+        end
+
+        IL.send_notification(prepared_result)
+      _ ->
+        :ok
+    end
+  end
+
   def verify_chain do
     query = from s in Block,
       order_by: [asc: s.inserted_at],
       offset: 1
 
     # TODO: run this in parallel
-    # TODO: no need to stop, e.g. {:halt, error}
     # TODO: write to LOG both :success and :error status
     result =
       Enum.reduce BlockRepo.all(query), [], fn block, acc ->

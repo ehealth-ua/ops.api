@@ -10,7 +10,7 @@ defmodule OPS.MockServer do
 
   # Il
 
-  get "/global_parameters" do
+  get "/api/global_parameters" do
     Plug.Conn.send_resp(conn, 200, parameters() |> wrap_response() |> Poison.encode!())
   end
 
