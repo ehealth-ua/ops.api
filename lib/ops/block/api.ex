@@ -16,6 +16,25 @@ defmodule OPS.Block.API do
     BlockRepo.one(block_query)
   end
 
+  def get_verification_candidates do
+    first_block = BlockRepo.one(first(Block, :block_start))
+
+    query = from b in Block,
+      left_join: vf in assoc(b, :verification_failures),
+      where: is_nil(vf.id) or vf.resolved == true,
+      where: b.id != ^first_block.id
+
+    BlockRepo.all(query)
+  end
+
+  def get_unresolved_mangled_blocks do
+    query = from b in Block,
+      left_join: vf in assoc(b, :verification_failures),
+      where: vf.resolved == false
+
+    BlockRepo.all(query)
+  end
+
   def close_block do
     block_start = get_latest().block_end
     block_end = DateTime.utc_now()
@@ -32,33 +51,29 @@ defmodule OPS.Block.API do
 
   def verify_chain_and_notify do
     case verify_chain() do
-      {:error, result} ->
-        prepared_result = Enum.map result, fn %{block: block, reconstructed_hash: reconstructed_hash} ->
+      {:error, new, previous} ->
+        prepare_fun = fn block ->
           %{
             block_id: block.id,
             original_hash: block.hash,
-            reconstructed_hash: reconstructed_hash
+            version: block.version
           }
         end
 
-        IL.send_notification(prepared_result)
+        IL.send_notification(%{
+          newly_mangled_blocks: Enum.map(new, prepare_fun),
+          previously_mangled_blocks: Enum.map(previous, prepare_fun)
+        })
       _ ->
         :ok
     end
   end
 
   def verify_chain do
-    first_block = BlockRepo.one(first(Block, :block_start))
-
-    query = from b in Block,
-      left_join: vf in assoc(b, :verification_failures),
-      where: is_nil(vf.id) or vf.resolved == true,
-      where: b.id != ^first_block.id
-
     # TODO: run this in parallel
     # TODO: write to LOG both :success and :error status
-    result =
-      Enum.reduce BlockRepo.all(query), [], fn block, acc ->
+    newly_mangled_blocks =
+      Enum.reduce get_verification_candidates(), [], fn block, acc ->
         case do_verify(block) do
           :ok ->
             acc
@@ -67,10 +82,12 @@ defmodule OPS.Block.API do
         end
       end
 
-    if Enum.empty? result do
+    previously_mangled_blocks = get_unresolved_mangled_blocks()
+
+    if Enum.empty?(newly_mangled_blocks) && Enum.empty?(previously_mangled_blocks) do
       :ok
     else
-      {:error, result}
+      {:error, newly_mangled_blocks, previously_mangled_blocks}
     end
   end
 
@@ -96,7 +113,7 @@ defmodule OPS.Block.API do
     if reconstructed_hash == existing_hash do
       :ok
     else
-      %{block: existing_block, reconstructed_hash: reconstructed_hash}
+      existing_block
     end
   end
 

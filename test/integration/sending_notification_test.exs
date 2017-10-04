@@ -13,13 +13,16 @@ defmodule OPS.SendingNotificationTest do
 
       Plug.Router.post "/internal/hash_chain/verification_failed" do
         %{
-          "data" => [
-            %{
-              "block_id" => _,
-              "original_hash" => _,
-              "reconstructed_hash" => _
-            }
-          ]
+          "data" => %{
+            "newly_mangled_blocks" => [
+              %{
+                "block_id" => _,
+                "original_hash" => _,
+                "version" => _
+              }
+            ],
+            "previously_mangled_blocks" => []
+          }
         } = conn.params
 
         Plug.Conn.send_resp(conn, 200, Poison.encode!(%{data: "Notification has been received."}))
