@@ -131,7 +131,14 @@ defmodule OPS.MedicationDispenses do
   end
 
   defp details_changeset(%Details{} = details, attrs) do
-    fields = ~w(medication_id medication_qty sell_price reimbursement_amount)a
+    fields = ~w(
+      medication_id
+      medication_qty
+      sell_price
+      reimbursement_amount
+      sell_amount
+      discount_amount
+    )a
 
     details
     |> cast(attrs, fields)

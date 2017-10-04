@@ -23,6 +23,8 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
         medication_qty: 10,
         sell_price: 18.65,
         reimbursement_amount: 0,
+        sell_amount: 5,
+        discount_amount: 10,
       }
     ]
   }
