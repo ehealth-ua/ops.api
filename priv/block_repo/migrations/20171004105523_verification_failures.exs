@@ -6,7 +6,7 @@ defmodule OPS.BlockRepo.Migrations.VerificationFailures do
       add :block_id, references(:blocks), null: true
       add :resolved, :boolean, default: false, null: false
 
-      timestamps(updated_at: false, type: :utc_datetime)
+      timestamps(type: :utc_datetime)
     end
   end
 end

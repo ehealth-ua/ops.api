@@ -7,6 +7,7 @@ defmodule OPS.Block.API do
   alias OPS.BlockRepo
   alias OPS.Block.Schema, as: Block
   alias OPS.API.IL
+  alias OPS.VerificationFailure.API, as: VerificationFailureAPI
 
   def get_latest do
     block_query = from s in Block,
@@ -72,6 +73,8 @@ defmodule OPS.Block.API do
   def verify_chain do
     # TODO: run this in parallel
     # TODO: write to LOG both :success and :error status
+    previously_mangled_blocks = get_unresolved_mangled_blocks()
+
     newly_mangled_blocks =
       Enum.reduce get_verification_candidates(), [], fn block, acc ->
         case do_verify(block) do
@@ -81,8 +84,6 @@ defmodule OPS.Block.API do
             [error_info|acc]
         end
       end
-
-    previously_mangled_blocks = get_unresolved_mangled_blocks()
 
     if Enum.empty?(newly_mangled_blocks) && Enum.empty?(previously_mangled_blocks) do
       :ok
@@ -106,14 +107,16 @@ defmodule OPS.Block.API do
     BlockRepo.one(block_query)
   end
 
-  def do_verify(existing_block) do
-    existing_hash = existing_block.hash
-    reconstructed_hash = calculated_hash(existing_block.version, existing_block.block_start, existing_block.block_end)
+  def do_verify(block) do
+    existing_hash = block.hash
+    reconstructed_hash = calculated_hash(block.version, block.block_start, block.block_end)
 
     if reconstructed_hash == existing_hash do
       :ok
     else
-      existing_block
+      VerificationFailureAPI.mark_as_mangled!(block)
+
+      block
     end
   end
 

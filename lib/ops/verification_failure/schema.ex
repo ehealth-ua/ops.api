@@ -10,6 +10,6 @@ defmodule OPS.VerificationFailure.Schema do
 
     belongs_to :block, Block, foreign_key: :block_id
 
-    timestamps(updated_at: false, type: :utc_datetime)
+    timestamps(type: :utc_datetime)
   end
 end
