@@ -11,7 +11,7 @@ defmodule OPS.GeneratingSeedsTest do
     {:ok, %{initial_hash: initial_block.hash}}
   end
 
-  test "start init genserver", %{initial_hash: first_hash} do
+  test "chain is verified to be good", %{initial_hash: first_hash} do
     d1 = insert(:declaration, seed: first_hash)
     d2 = insert(:declaration, seed: first_hash)
     assert first_hash == d1.seed
@@ -40,6 +40,34 @@ defmodule OPS.GeneratingSeedsTest do
     {:ok, _} = Repo.update(Ecto.Changeset.change(d1, %{employee_id: "0bea8aed-9f41-44f9-a3cf-43ac221d2f1a"}))
 
     assert {:error, [^block], []} = BlockAPI.verify_chain()
+  end
+
+  test "block was recalculated, but is still detected", %{initial_hash: first_hash} do
+    d1 = insert(:declaration, seed: first_hash)
+    d2 = insert(:declaration, seed: first_hash)
+    assert first_hash == d1.seed
+    assert first_hash == d2.seed
+
+    {:ok, %{hash: second_hash} = block_under_test} = BlockAPI.close_block()
+
+    d3 = insert(:declaration, seed: second_hash)
+    d4 = insert(:declaration, seed: second_hash)
+    assert second_hash == d3.seed
+    assert second_hash == d4.seed
+
+    {:ok, %{hash: _third_hash}} = BlockAPI.close_block()
+
+    # Make change to declaration
+    {:ok, _} = Repo.update(Ecto.Changeset.change(d1, %{employee_id: "0bea8aed-9f41-44f9-a3cf-43ac221d2f1a"}))
+
+    # Recalculate hash and update block
+    new_hash =
+      OPS.Block.API.calculated_hash(block_under_test.version, block_under_test.block_start, block_under_test.block_end)
+    {:ok, _} = OPS.BlockRepo.update(Ecto.Changeset.change(block_under_test, %{hash: new_hash}))
+
+    # second_hash is found to be mangled
+    {:error, [%{id: id} = _faulty_block], []} = BlockAPI.verify_chain()
+    assert ^id = block_under_test.id
   end
 
   test "an addition to block is detected", %{initial_hash: first_hash} do
