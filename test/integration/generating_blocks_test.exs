@@ -26,7 +26,7 @@ defmodule OPS.GeneratingSeedsTest do
 
     {:ok, %{hash: _third_hash}} = BlockAPI.close_block()
 
-    :ok = BlockAPI.verify_chain()
+    assert :ok = BlockAPI.verify_chain()
   end
 
   test "a modification to block is detected", %{initial_hash: first_hash} do
@@ -39,7 +39,7 @@ defmodule OPS.GeneratingSeedsTest do
 
     {:ok, _} = Repo.update(Ecto.Changeset.change(d1, %{employee_id: "0bea8aed-9f41-44f9-a3cf-43ac221d2f1a"}))
 
-    {:error, [%{block: ^block, reconstructed_hash: _malformed_hash}]} = BlockAPI.verify_chain()
+    assert {:error, [^block], []} = BlockAPI.verify_chain()
   end
 
   test "an addition to block is detected", %{initial_hash: first_hash} do
@@ -52,7 +52,7 @@ defmodule OPS.GeneratingSeedsTest do
 
     insert(:declaration, seed: first_hash, inserted_at: d1.inserted_at)
 
-    {:error, [%{block: ^block, reconstructed_hash: _malformed_hash}]} = BlockAPI.verify_chain()
+    assert {:error, [^block], []} = BlockAPI.verify_chain()
   end
 
   test "a deletion from block is detected", %{initial_hash: first_hash} do
@@ -65,7 +65,27 @@ defmodule OPS.GeneratingSeedsTest do
 
     {:ok, _} = Repo.delete(d2)
 
-    {:error, [%{block: ^block, reconstructed_hash: _malformed_hash}]} = BlockAPI.verify_chain()
+    assert {:error, [^block], []} = BlockAPI.verify_chain()
+  end
+
+  test "previously mangled block is not reported as a 'new' one", %{initial_hash: first_hash} do
+    d1 = insert(:declaration, seed: first_hash)
+    d2 = insert(:declaration, seed: first_hash)
+    assert first_hash == d1.seed
+    assert first_hash == d2.seed
+    {:ok, to_be_mangled_block} = BlockAPI.close_block()
+
+    {:ok, _} = Repo.delete(d2)
+
+    {:error, [^to_be_mangled_block], []} = BlockAPI.verify_chain()
+
+    assert [to_be_mangled_block] = BlockAPI.get_unresolved_mangled_blocks()
+
+    insert(:declaration, seed: to_be_mangled_block.hash)
+    insert(:declaration, seed: to_be_mangled_block.hash)
+    {:ok, _fine_block} = BlockAPI.close_block()
+
+    assert {:error, [], [^to_be_mangled_block]} = BlockAPI.verify_chain()
   end
 
   test "each block is verified using its own algorithm's version", %{initial_hash: first_hash} do
