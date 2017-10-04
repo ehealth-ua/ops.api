@@ -9,6 +9,8 @@ defmodule OPS.MedicationDispense.Details do
     field :sell_price, :float
     field :reimbursement_amount, :float
     field :medication_dispense_id, Ecto.UUID
+    field :sell_amount, :float
+    field :discount_amount, :float
 
     belongs_to :medication_dispense, OPS.MedicationDispense.Schema, define_field: false
   end
