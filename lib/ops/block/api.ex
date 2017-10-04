@@ -48,9 +48,12 @@ defmodule OPS.Block.API do
   end
 
   def verify_chain do
-    query = from s in Block,
-      order_by: [asc: s.inserted_at],
-      offset: 1
+    first_block = BlockRepo.one(first(Block, :block_start))
+
+    query = from b in Block,
+      left_join: vf in assoc(b, :verification_failures),
+      where: is_nil(vf.id) or vf.resolved == true,
+      where: b.id != ^first_block.id
 
     # TODO: run this in parallel
     # TODO: write to LOG both :success and :error status
