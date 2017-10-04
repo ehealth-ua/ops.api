@@ -7,6 +7,7 @@ defmodule OPS.Block.API do
   alias OPS.BlockRepo
   alias OPS.Block.Schema, as: Block
   alias OPS.API.IL
+  alias OPS.Declarations.Declaration
   alias OPS.VerificationFailure.API, as: VerificationFailureAPI
 
   def get_latest do
@@ -110,8 +111,9 @@ defmodule OPS.Block.API do
   def do_verify(block) do
     existing_hash = block.hash
     reconstructed_hash = calculated_hash(block.version, block.block_start, block.block_end)
+    declaration_hashes_match? = verify_declarations_hashes(block.hash, block.block_end)
 
-    if reconstructed_hash == existing_hash do
+    if (reconstructed_hash == existing_hash) && declaration_hashes_match? do
       :ok
     else
       VerificationFailureAPI.mark_as_mangled!(block)
@@ -124,6 +126,29 @@ defmodule OPS.Block.API do
     {:ok, %{rows: [[hash_value]], num_rows: 1}} = Repo.query(current_version_query(version), [from, to])
 
     hash_value
+  end
+
+  # declarations from next block will tell if block under verification
+  # has been recalculated
+  def verify_declarations_hashes(block_hash, block_end) do
+    if next_block = BlockRepo.one(from b in Block, where: b.block_start == ^block_end) do
+      query1 =
+        from d in Declaration,
+        where: d.inserted_at > ^next_block.block_start,
+        where: d.inserted_at <= ^next_block.block_end,
+        where: d.seed == ^block_hash,
+        select: count(1)
+
+      query2 =
+        from d in Declaration,
+        where: d.inserted_at > ^next_block.block_start,
+        where: d.inserted_at <= ^next_block.block_end,
+        select: count(1)
+
+      Repo.one(query1) == Repo.one(query2)
+    else
+      true
+    end
   end
 
   def current_version do
