@@ -50,7 +50,7 @@ defmodule :ops_tasks do
   end
 
   defp load_app do
-    start_applications([:logger, :postgrex, :ecto])
+    start_applications([:logger, :postgrex, :ecto, :hackney])
     :ok = Application.load(:ops)
   end
 
