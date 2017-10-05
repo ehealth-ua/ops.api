@@ -25,6 +25,7 @@ defmodule OPS.MedicationRequest.Schema do
     field :dispense_valid_to, :date
     field :person_id, Ecto.UUID
     field :employee_id, Ecto.UUID
+    field :division_id, Ecto.UUID
     field :medication_id, Ecto.UUID
     field :medication_qty, :float
     field :status, :string

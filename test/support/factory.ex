@@ -56,6 +56,7 @@ defmodule OPS.Factory do
       is_active: true,
       person_id: Ecto.UUID.generate(),
       employee_id: Ecto.UUID.generate(),
+      division_id: Ecto.UUID.generate(),
       medication_id: Ecto.UUID.generate(),
       created_at: NaiveDateTime.utc_now(),
       started_at: NaiveDateTime.utc_now(),
