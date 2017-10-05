@@ -17,7 +17,7 @@ defmodule OPS.Declarations do
   def list_declarations(params) do
     %DeclarationSearch{}
     |> declaration_changeset(params)
-    |> search(params, Declaration, 50)
+    |> search(params, Declaration)
   end
 
   def get_declaration!(id), do: Repo.get!(Declaration, id)

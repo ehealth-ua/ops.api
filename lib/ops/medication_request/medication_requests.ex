@@ -10,7 +10,7 @@ defmodule OPS.MedicationRequests do
   def list(params) do
     %Search{}
     |> changeset(params)
-    |> search(params, MedicationRequest, 50)
+    |> search(params, MedicationRequest)
   end
 
   defp changeset(%Search{} = search, attrs) do

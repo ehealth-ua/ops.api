@@ -6,7 +6,7 @@ defmodule OPS.Repo do
   """
   use Ecto.Repo, otp_app: :ops
   use EctoTrail
-  use Scrivener
+  use Scrivener, page_size: 50
   alias Confex.Resolver
 
   @doc """

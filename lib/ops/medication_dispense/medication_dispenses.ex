@@ -34,7 +34,7 @@ defmodule OPS.MedicationDispenses do
   def list(params) do
     %Search{}
     |> changeset(params)
-    |> search(params, MedicationDispense, 50)
+    |> search(params, MedicationDispense)
   end
 
   def get_search_query(entity, changes) do
