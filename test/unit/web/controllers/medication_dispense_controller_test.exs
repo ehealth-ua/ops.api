@@ -105,6 +105,20 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
     assert medication_dispense2.medication_request.id == hd(resp)["medication_request"]["id"]
   end
 
+  test "search dispenses with pagination", %{conn: conn} do
+    Enum.each(1..2, fn _ ->
+      :medication_dispense
+      |> insert()
+      |> Repo.preload(:medication_request)
+    end)
+    conn = get conn, medication_dispense_path(conn, :index, %{"page_size" => 1})
+    resp = json_response(conn, 200)
+    assert %{"page_number" => 1,
+             "page_size" => 1,
+             "total_entries" => 2,
+             "total_pages" => 2} == resp["paging"]
+  end
+
   test "creates medication dispense when data is valid", %{conn: conn} do
     insert(:medication_request, id: @create_attrs.medication_request_id)
     conn = post conn, medication_dispense_path(conn, :create), medication_dispense: @create_attrs

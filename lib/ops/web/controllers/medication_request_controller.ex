@@ -13,4 +13,10 @@ defmodule OPS.Web.MedicationRequestController do
       render(conn, "index.json", medication_requests: paging.entries, paging: paging)
     end
   end
+
+  def doctor_list(conn, params) do
+    with %Page{} = paging <- MedicationRequests.doctor_list(params) do
+      render(conn, "index.json", medication_requests: paging.entries, paging: paging)
+    end
+  end
 end
