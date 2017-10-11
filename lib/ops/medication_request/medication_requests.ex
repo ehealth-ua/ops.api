@@ -22,6 +22,12 @@ defmodule OPS.MedicationRequests do
     |> Repo.paginate(params)
   end
 
+  def update(medication_request, attrs) do
+    medication_request
+    |> changeset(attrs)
+    |> Repo.update_and_log(Map.get(attrs, "updated_by"))
+  end
+
   defp doctor_search(%Ecto.Changeset{valid?: true, changes: changes} = changeset) do
     employee_ids =
       changeset
@@ -54,5 +60,8 @@ defmodule OPS.MedicationRequests do
   end
   defp changeset(%DoctorSearch{} = search, attrs) do
     cast(search, attrs, DoctorSearch.__schema__(:fields))
+  end
+  defp changeset(%MedicationRequest{} = medication_request, attrs) do
+    cast(medication_request, attrs, MedicationRequest.__schema__(:fields))
   end
 end

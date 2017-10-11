@@ -91,4 +91,17 @@ defmodule OPS.Web.MedicationRequestControllerTest do
       assert 0 == length(resp)
     end
   end
+
+  describe "update medication request" do
+    test "success update", %{conn: conn, data: [medication_request, _]} do
+      conn = patch conn, medication_request_path(conn, :update, medication_request.id), %{
+        "medication_request" => %{
+          "status" => MedicationRequest.status(:completed),
+          "updated_by" => Ecto.UUID.generate(),
+        },
+      }
+      resp = json_response(conn, 200)
+      assert MedicationRequest.status(:completed) == resp["data"]["status"]
+    end
+  end
 end

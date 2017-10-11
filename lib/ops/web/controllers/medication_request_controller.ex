@@ -19,4 +19,12 @@ defmodule OPS.Web.MedicationRequestController do
       render(conn, "index.json", medication_requests: paging.entries, paging: paging)
     end
   end
+
+  def update(conn, %{"id" => id, "medication_request" => params}) do
+    with %Page{entries: [medication_request]} <- MedicationRequests.list(%{"id" => id}),
+      {:ok, medication_request} <- MedicationRequests.update(medication_request, params)
+    do
+      render(conn, "show.json", medication_request: medication_request)
+    end
+  end
 end
