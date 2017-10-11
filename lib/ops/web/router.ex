@@ -29,7 +29,7 @@ defmodule OPS.Web.Router do
     post "/medication_dispenses", MedicationDispenseController, :create
     put "/medication_dispenses/:id", MedicationDispenseController, :update
 
-    get "/medication_requests", MedicationRequestController, :index
+    resources "/medication_requests", MedicationRequestController, only: [:index, :update]
     get "/doctor_medication_requests", MedicationRequestController, :doctor_list
     get "/latest_block", BlockController, :latest_block
   end
