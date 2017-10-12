@@ -6,6 +6,7 @@ defmodule OPS.MedicationRequest.DoctorSearch do
 
   @primary_key false
   schema "medication_request_doctor_search" do
+    field :id, Ecto.UUID
     field :employee_id, UUIDsList
     field :person_id, Ecto.UUID
     field :status, :string
