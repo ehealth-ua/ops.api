@@ -22,14 +22,13 @@ defmodule OPS.MedicationDispenses do
     legal_entity_id
     division_id
     medical_program_id
-    payment_id
     status
     is_active
     inserted_by
     updated_by
   )a
 
-  @fields_optional ~w()a
+  @fields_optional ~w(payment_id)a
 
   def list(params) do
     %Search{}
