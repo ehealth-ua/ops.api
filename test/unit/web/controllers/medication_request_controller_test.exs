@@ -53,6 +53,12 @@ defmodule OPS.Web.MedicationRequestControllerTest do
       assert medication_request2.status == hd(resp)["status"]
     end
 
+    test "success search by list of statuses", %{conn: conn} do
+      conn = get conn, medication_request_path(conn, :index, status: "ACTIVE,COMPLETED")
+      resp = json_response(conn, 200)["data"]
+      assert 2 == length(resp)
+    end
+
     test "success search by all possible params", %{conn: conn, data: [_, medication_request2]} do
       conn = get conn, medication_request_path(conn, :index,
         status: medication_request2.status,
