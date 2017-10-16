@@ -20,9 +20,9 @@ defmodule OPS.Web.MedicationRequestController do
     end
   end
 
-  def person_list(conn, params) do
-    with {:ok, ids} <- MedicationRequests.person_list(params) do
-      render(conn, "ids_list.json", ids: ids)
+  def qualify_list(conn, params) do
+    with {:ok, ids} <- MedicationRequests.qualify_list(params) do
+      render(conn, "qualify_list.json", ids: ids)
     end
   end
 

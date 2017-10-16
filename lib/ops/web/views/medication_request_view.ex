@@ -11,7 +11,7 @@ defmodule OPS.Web.MedicationRequestView do
     medication_request
   end
 
-  def render("ids_list.json", %{ids: ids}) do
+  def render("qualify_list.json", %{ids: ids}) do
     ids
   end
 end
