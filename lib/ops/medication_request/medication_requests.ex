@@ -7,7 +7,7 @@ defmodule OPS.MedicationRequests do
   alias OPS.MedicationRequest.Search
   alias OPS.Declarations.Declaration
   alias OPS.MedicationRequest.DoctorSearch
-  alias OPS.MedicationRequest.PersonSearch
+  alias OPS.MedicationRequest.QualifySearch
   import Ecto.Changeset
   use OPS.Search
 
@@ -24,10 +24,10 @@ defmodule OPS.MedicationRequests do
     |> Repo.paginate(params)
   end
 
-  def person_list(params) do
-    %PersonSearch{}
+  def qualify_list(params) do
+    %QualifySearch{}
     |> changeset(params)
-    |> person_search()
+    |> qualify_search()
   end
 
   def update(medication_request, attrs) do
@@ -57,8 +57,13 @@ defmodule OPS.MedicationRequests do
   end
   defp doctor_search(changeset), do: {:error, changeset}
 
-  defp person_search(%Ecto.Changeset{valid?: true, changes: changes}) do
-    filters = Map.to_list(changes)
+  defp qualify_search(%Ecto.Changeset{valid?: true, changes: changes} = changeset) do
+    filters =
+      changes
+      |> Map.take(~w(person_id)a)
+      |> Map.to_list()
+    started_at = get_change(changeset, :started_at)
+    ended_at = get_change(changeset, :ended_at)
     medication_request_statuses = [
       MedicationRequest.status(:active),
       MedicationRequest.status(:completed)
@@ -70,11 +75,17 @@ defmodule OPS.MedicationRequests do
       |> where([mr, md], ^filters)
       |> where([mr, md], mr.status in ^medication_request_statuses)
       |> where([mr, md], md.status == ^MedicationDispense.status(:processed))
-      |> select([mr, md], mr.id)
+      |> where([mr, md], fragment("not (? > ? or ? < ?)",
+        ^started_at,
+        mr.ended_at,
+        ^ended_at,
+        mr.started_at
+      ))
+      |> select([mr, md], mr.medication_id)
       |> Repo.all
     }
   end
-  defp person_search(changeset), do: {:error, changeset}
+  defp qualify_search(changeset), do: {:error, changeset}
 
   defp filter_by_employees(query, []), do: query
   defp filter_by_employees(query, employee_ids) do
@@ -91,9 +102,9 @@ defmodule OPS.MedicationRequests do
   defp changeset(%MedicationRequest{} = medication_request, attrs) do
     cast(medication_request, attrs, MedicationRequest.__schema__(:fields))
   end
-  defp changeset(%PersonSearch{} = search, attrs) do
+  defp changeset(%QualifySearch{} = search, attrs) do
     search
-    |> cast(attrs, ~w(person_id)a)
-    |> validate_required(~w(person_id)a)
+    |> cast(attrs, QualifySearch.__schema__(:fields))
+    |> validate_required(QualifySearch.__schema__(:fields))
   end
 end

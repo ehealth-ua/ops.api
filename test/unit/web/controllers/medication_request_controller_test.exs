@@ -100,26 +100,45 @@ defmodule OPS.Web.MedicationRequestControllerTest do
     end
   end
 
-  describe "search medication requests by person_id" do
+  describe "qualify search medication requests" do
     test "success search", %{conn: conn, data: [medication_request, _]} do
-      %{id: id, person_id: person_id} = medication_request
+      %{person_id: person_id, medication_id: medication_id} = medication_request
       insert(:medication_dispense,
         medication_request: medication_request,
         status: MedicationDispense.status(:processed)
       )
-      conn = get conn, medication_request_path(conn, :person_list, %{"person_id" => person_id})
+      today = Date.utc_today()
+      conn = get conn, medication_request_path(conn, :qualify_list, %{
+        "person_id" => person_id,
+        "started_at" => to_string(Date.add(today, -1)),
+        "ended_at" => to_string(Date.add(today, 1)),
+      })
       resp = json_response(conn, 200)["data"]
-      assert [id] == resp
+      assert [medication_id] == resp
     end
 
     test "empty search", %{conn: conn} do
-      conn = get conn, medication_request_path(conn, :person_list, %{"person_id" => Ecto.UUID.generate()})
+      today = to_string(Date.utc_today())
+      conn = get conn, medication_request_path(conn, :qualify_list, %{
+        "person_id" => Ecto.UUID.generate(),
+        "started_at" => today,
+        "ended_at" => today,
+      })
       resp = json_response(conn, 200)["data"]
       assert [] == resp
     end
 
-    test "validation failed", %{conn: conn} do
-      conn = get conn, medication_request_path(conn, :person_list)
+    test "empty request", %{conn: conn} do
+      conn = get conn, medication_request_path(conn, :qualify_list)
+      assert json_response(conn, 422)
+    end
+
+    test "invalid dates request", %{conn: conn} do
+      conn = get conn, medication_request_path(conn, :qualify_list, %{
+        "person_id" => Ecto.UUID.generate(),
+        "started_at" => "invalid",
+        "endded_at" => "invalid"
+      })
       assert json_response(conn, 422)
     end
   end
