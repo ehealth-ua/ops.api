@@ -8,11 +8,11 @@ services:
 addons:
   postgresql: "9.5"
 elixir:
-  - 1.4.2
+  - 1.5.1
 otp_release:
-  - 19.2
+  - 20.0.4
 notifications:
-  slack: 
+  slack:
     rooms:
       - secure: "u7uYfmURAOxH5f+aZUYDlbKNUHz+7Ekd7U5WsZAYjWXbx+ILnLy3ox4wJsubWxO39zyuNMRYwwASV15b7S1u9hgP0m5kE5yxrzq7H7HkN16b07HUMHjOvNmNn98FC6eZBdMtJ5DW8HhPTr9oUshuYBGTOas+WN+vX5RARKOlW4l/4vlyXgDCKEWt2O+fx/svJ0W+Kq1fpn4DdxFGUkwbcsFOFjjEeslNY4rfb2WEFWoYLsPJgCBW+vfdEaLVu2vlFSSKSoykvbTqt/m5JxB8SLX+9Oel36PdC3JnG5qFAW8RN92EQXOKJ6MxAnyQkd68cUkkPGSVWfEGC6KnfC8kwUwEzz5VMEwA5gk6io0AwlmfSbN7HBSMuyaT5DlFHx6VBPe19tsjiFDCAE9cgOyGOAwujg66AbeZhzLwuo+VYpjH1uhplu40DpIm8kLE7w6r2ACJcz8Amm4T4mWAGTdqpDxcOPTSNwYStfE2h6+VT+nygdtvtEgmjcfxMZ7r1a2V+Hb197y5isTqEWV1YszrwHNCsW4Q1KxqnSOLsCvOgyo6qFdNrpYhEgGK5uc4k/yfo7Im6xxBI1whNQ/B0PdHau4MLudJfX6qHjrSQKqzZ16PWZ76Oa1AcYn1m05Ck6v6e30/6gmsI9YXA0kgn5x3PalK/TLvcBGLfgIo42dlFLg="
     on_success: always
@@ -24,7 +24,7 @@ env:
     - MAIN_BRANCHES="master develop staging" # Branches on which you want version to be incremented
     - RELEASE_BRANCH="master"
     # Docker and GitHub credentials
-    - secure: "wYHL73PB6QlRXcxuh+ZZx5dn6xlRxDsFQSJgdecPaD+epY3PFe9OyHwLfWL9wBNqcd1Iy+6MeqBwQ/E6hBU0tl9Z38dGxT1DMSHebm7fbqZDxVE7T81XgCYtnL3jb8+W3OxKNHl/cArY3E0B7zF0X+euaIhd4BzoaJ9lTBMT0Gxs1AqbKsPOtkqK4EvtJgN9BLS+ppRLFkreyWTiX6VniEYuOVpjotIcWWUmUl/A2fao2DTVJmz8EIVYbB6EnUAhLvzF+sxOV1Q7AKqZthET06OzCtR0cbiMNU9igjzepX5WkWMTx4G24UJ7pHF69e5At/nE8f/CwBFyMyL3LGANXTvVCnVXdjwnorrOmwtZqWgxmMyJFgWGuoKk2Av+yZU/Y5YUGCq1yrSsUgxgxrwduIKDClMsWCKymvixdghhrqvKHEPrzoYHCPEcQmVmWIXPrqxzxgZJRiFNMnbFyIeCRWS/YHtoSsjxssWOwsFzS3SXfJ4U3VkEk04Y1MO7gEMVG6e90rj9I44VGw10IQNHQr1neoE+bh45MUPkkV2T0qJuWvC6T8PwE+49Ho4rFm3GyCWTpT5gUSCKzODzHe3Xbelh2lqlIQzNVBIDPpwL6pyMniIqmfY0X+KfdYQa2Ga5sGrxFB5sBQKpZ/nzPpO7fgkxybeObr97MFNE6pmyFDo="  
+    - secure: "wYHL73PB6QlRXcxuh+ZZx5dn6xlRxDsFQSJgdecPaD+epY3PFe9OyHwLfWL9wBNqcd1Iy+6MeqBwQ/E6hBU0tl9Z38dGxT1DMSHebm7fbqZDxVE7T81XgCYtnL3jb8+W3OxKNHl/cArY3E0B7zF0X+euaIhd4BzoaJ9lTBMT0Gxs1AqbKsPOtkqK4EvtJgN9BLS+ppRLFkreyWTiX6VniEYuOVpjotIcWWUmUl/A2fao2DTVJmz8EIVYbB6EnUAhLvzF+sxOV1Q7AKqZthET06OzCtR0cbiMNU9igjzepX5WkWMTx4G24UJ7pHF69e5At/nE8f/CwBFyMyL3LGANXTvVCnVXdjwnorrOmwtZqWgxmMyJFgWGuoKk2Av+yZU/Y5YUGCq1yrSsUgxgxrwduIKDClMsWCKymvixdghhrqvKHEPrzoYHCPEcQmVmWIXPrqxzxgZJRiFNMnbFyIeCRWS/YHtoSsjxssWOwsFzS3SXfJ4U3VkEk04Y1MO7gEMVG6e90rj9I44VGw10IQNHQr1neoE+bh45MUPkkV2T0qJuWvC6T8PwE+49Ho4rFm3GyCWTpT5gUSCKzODzHe3Xbelh2lqlIQzNVBIDPpwL6pyMniIqmfY0X+KfdYQa2Ga5sGrxFB5sBQKpZ/nzPpO7fgkxybeObr97MFNE6pmyFDo="
     - secure: "VEi4VQNWsL2V04+sqRWUMw8yl7zUDzJ9+Kx8FNaJjxYR+2LA3gRiqw+U/sngFaj5fY7C3lBRhNCQKWXN6A0V1BHjHlpQVJYk3NWcMTTR1XsuSmIrPoMP0Gp741knSvJXcxTIAr9iTZt1mVzUhOxfkQOPWmqvQ5tm5g9FyJzignFki+4uSsB/zO5ziTrVy7/BhlVsAXLSXflPHqjlPVU3wp9nyngtFTJl2zCmCv0OK19RUGhQZKkk/mj7rF2t1KNlbVafMPBDXQReBLi8iuRYyGr4g85wLiljAKX2h8iuI5pkivKO/Bj5sgjenT3VVflrwEphA2DBBZiwUwVONJ0hJybM+7pqYvAbvQMvxNjR9/1hqBtGOjtWhqY0em2mP1eG5bTFOEGyA2yn1b0jMKkR4NauDmoLzPhAYRmon8PyhyuN7gO5ICP5crBe0XEDbkHrMSRfzc7ntqDt3hE9EvLNbWtBpwy5PNuESFc1aV18ZCXgKsXx/xmK2qYDWr5EFR4T7SJV6SXkB5mJQ8CzbCDXERRzJK6fmvus0mPFWdlkuZELAu2wJ0U/XNUAC54HBJ/tNx2NFRMHHvwORydrgZA/l6pfKwLvOga6M/Q6it9dQHEbJe1gt0FD6UbKAg9itR5fXzA8hqDDDRT5OnJQmMNen64YKvvniYNr9x9BKznxpjI="
 branches:
   # Releases are generated automatically, stop infinite build loop
@@ -43,11 +43,11 @@ script:
   # Build Docker container
   - ./bin/build.sh || travis_terminate 1
   # Initialize DB for Docker container
-  - MIX_ENV=dev mix ecto.setup 
+  - MIX_ENV=dev mix ecto.setup
   # Run Docker container
   - sudo ./bin/start.sh || travis_terminate 1
   # Run acceptance tests on Docker container
-  - "CONTAINER_HTTP_HOST=localhost CONTAINER_HTTP_PORT=4000 mix test test/acceptance" 
+  - "CONTAINER_HTTP_HOST=localhost CONTAINER_HTTP_PORT=4000 mix test test/acceptance"
   # Submit Docker container to Docker Hub and create GitHub Release by pushing tag with changelog
   - ./bin/ci/push.sh || travis_terminate 1
   # CD to Dev
