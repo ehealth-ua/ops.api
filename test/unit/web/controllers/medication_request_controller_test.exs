@@ -2,6 +2,7 @@ defmodule OPS.Web.MedicationRequestControllerTest do
   use OPS.Web.ConnCase
 
   alias OPS.MedicationRequest.Schema, as: MedicationRequest
+  alias OPS.MedicationDispense.Schema, as: MedicationDispense
 
   setup %{conn: conn} do
     medication_request1 = insert(:medication_request)
@@ -96,6 +97,30 @@ defmodule OPS.Web.MedicationRequestControllerTest do
       conn = get conn, medication_request_path(conn, :doctor_list, %{"status" => "invalid"})
       resp = json_response(conn, 200)["data"]
       assert 0 == length(resp)
+    end
+  end
+
+  describe "search medication requests by person_id" do
+    test "success search", %{conn: conn, data: [medication_request, _]} do
+      %{id: id, person_id: person_id} = medication_request
+      insert(:medication_dispense,
+        medication_request: medication_request,
+        status: MedicationDispense.status(:processed)
+      )
+      conn = get conn, medication_request_path(conn, :person_list, %{"person_id" => person_id})
+      resp = json_response(conn, 200)["data"]
+      assert [id] == resp
+    end
+
+    test "empty search", %{conn: conn} do
+      conn = get conn, medication_request_path(conn, :person_list, %{"person_id" => Ecto.UUID.generate()})
+      resp = json_response(conn, 200)["data"]
+      assert [] == resp
+    end
+
+    test "validation failed", %{conn: conn} do
+      conn = get conn, medication_request_path(conn, :person_list)
+      assert json_response(conn, 422)
     end
   end
 

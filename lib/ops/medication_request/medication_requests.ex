@@ -2,10 +2,12 @@ defmodule OPS.MedicationRequests do
   @moduledoc false
 
   alias OPS.MedicationRequest.Schema, as: MedicationRequest
+  alias OPS.MedicationDispense.Schema, as: MedicationDispense
   alias OPS.Repo
   alias OPS.MedicationRequest.Search
   alias OPS.Declarations.Declaration
   alias OPS.MedicationRequest.DoctorSearch
+  alias OPS.MedicationRequest.PersonSearch
   import Ecto.Changeset
   use OPS.Search
 
@@ -20,6 +22,12 @@ defmodule OPS.MedicationRequests do
     |> changeset(params)
     |> doctor_search()
     |> Repo.paginate(params)
+  end
+
+  def person_list(params) do
+    %PersonSearch{}
+    |> changeset(params)
+    |> person_search()
   end
 
   def update(medication_request, attrs) do
@@ -49,6 +57,25 @@ defmodule OPS.MedicationRequests do
   end
   defp doctor_search(changeset), do: {:error, changeset}
 
+  defp person_search(%Ecto.Changeset{valid?: true, changes: changes}) do
+    filters = Map.to_list(changes)
+    medication_request_statuses = [
+      MedicationRequest.status(:active),
+      MedicationRequest.status(:completed)
+    ]
+
+    {:ok,
+      MedicationRequest
+      |> join(:left, [mr], md in MedicationDispense, md.medication_request_id == mr.id)
+      |> where([mr, md], ^filters)
+      |> where([mr, md], mr.status in ^medication_request_statuses)
+      |> where([mr, md], md.status == ^MedicationDispense.status(:processed))
+      |> select([mr, md], mr.id)
+      |> Repo.all
+    }
+  end
+  defp person_search(changeset), do: {:error, changeset}
+
   defp filter_by_employees(query, []), do: query
   defp filter_by_employees(query, employee_ids) do
     where(query, [mr], mr.employee_id in ^employee_ids)
@@ -63,5 +90,10 @@ defmodule OPS.MedicationRequests do
   end
   defp changeset(%MedicationRequest{} = medication_request, attrs) do
     cast(medication_request, attrs, MedicationRequest.__schema__(:fields))
+  end
+  defp changeset(%PersonSearch{} = search, attrs) do
+    search
+    |> cast(attrs, ~w(person_id)a)
+    |> validate_required(~w(person_id)a)
   end
 end

@@ -10,4 +10,8 @@ defmodule OPS.Web.MedicationRequestView do
   def render("show.json", %{medication_request: medication_request}) do
     medication_request
   end
+
+  def render("ids_list.json", %{ids: ids}) do
+    ids
+  end
 end
