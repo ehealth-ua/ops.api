@@ -20,6 +20,12 @@ defmodule OPS.Web.MedicationRequestController do
     end
   end
 
+  def person_list(conn, params) do
+    with {:ok, ids} <- MedicationRequests.person_list(params) do
+      render(conn, "ids_list.json", ids: ids)
+    end
+  end
+
   def update(conn, %{"id" => id, "medication_request" => params}) do
     with %Page{entries: [medication_request]} <- MedicationRequests.list(%{"id" => id}),
       {:ok, medication_request} <- MedicationRequests.update(medication_request, params)

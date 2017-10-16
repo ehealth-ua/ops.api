@@ -31,6 +31,7 @@ defmodule OPS.Web.Router do
 
     resources "/medication_requests", MedicationRequestController, only: [:index, :update]
     get "/doctor_medication_requests", MedicationRequestController, :doctor_list
+    get "/person_medication_requests", MedicationRequestController, :person_list
     get "/latest_block", BlockController, :latest_block
   end
 end
