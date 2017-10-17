@@ -24,7 +24,6 @@ defmodule OPS do
       supervisor(OPS.Web.Endpoint, []),
       # Starts a worker by calling: OPS.Worker.start_link(arg1, arg2, arg3)
       # worker(OPS.Worker, [arg1, arg2, arg3]),
-      worker(OPS.DeclarationTerminator, []),
       worker(OPS.Scheduler, []),
     ]
 
