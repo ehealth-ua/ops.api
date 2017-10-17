@@ -56,7 +56,9 @@ config :ops, OPS.Scheduler,
     "DECLARATION_AUTO_APPROVE_SCHEDULE", "* 0-4 * * *"},
   medication_dispense_autotermination: {:system, :string,
     "MEDICATION_DISPENSE_AUTOTERMINATION_SCHEDULE", "* * * * *"},
-  medication_dispense_expiration: {:system, :integer, "MEDICATION_DISPENSE_EXPIRATION", 10}
+  medication_dispense_expiration: {:system, :integer, "MEDICATION_DISPENSE_EXPIRATION", 10},
+  declaration_autotermination: {:system, :string,
+    "DECLARATION_AUTOTERMINATION_SCHEDULE", "* 0-4 * * *"}
 
 # Configures the endpoint
 config :ops, OPS.Web.Endpoint,
@@ -75,11 +77,6 @@ config :ops, OPS.API.IL,
 
 config :ops, :declaration_terminator_user,
   {:system, "DECLARATION_TERMINATOR", "48ca528f-0d05-4811-ac49-a249f5309d3e"}
-
-# Configures declaration terminator
-config :ops, OPS.DeclarationTerminator,
-  frequency: 24 * 60 * 60 * 1000,
-  utc_interval: {0, 4}
 
 # Configures Elixir's Logger
 config :logger, :console,

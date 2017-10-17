@@ -6,7 +6,7 @@ defmodule OPS.Scheduler do
   alias Crontab.CronExpression.Parser
   alias Quantum.Job
   alias OPS.MedicationDispenses
-  import OPS.Declarations, only: [approve_declarations: 0]
+  import OPS.Declarations, only: [approve_declarations: 0, terminate_declarations: 0]
 
   def create_jobs do
     __MODULE__.new_job()
@@ -23,6 +23,13 @@ defmodule OPS.Scheduler do
     |> Job.set_task(fn ->
       MedicationDispenses.terminate(get_config()[:medication_dispense_expiration])
     end)
+    |> __MODULE__.add_job()
+
+    __MODULE__.new_job()
+    |> Job.set_name(:declaration_autotermination)
+    |> Job.set_overlap(false)
+    |> Job.set_schedule(Parser.parse!(get_config()[:declaration_autotermination]))
+    |> Job.set_task(&terminate_declarations/0)
     |> __MODULE__.add_job()
   end
 

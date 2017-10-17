@@ -3,15 +3,21 @@ defmodule OPS.DeclarationTerminatorTest do
 
   use OPS.Web.ConnCase
 
-  alias OPS.DeclarationTerminator
+  alias OPS.Declarations
   alias OPS.Declarations.Declaration
+  alias OPS.Repo
 
-  test "start init genserver" do
-    insert(:declaration)
-    [%Declaration{status: "active"}] = Repo.all(Declaration)
-    {:ok, pid} = DeclarationTerminator.start_link()
-    Process.sleep(100)
-    [%Declaration{status: "closed"}] = Repo.all(Declaration)
-    Process.exit(pid, :kill)
+  test "terminate_declarations/0" do
+    declaration = insert(:declaration, status: Declaration.status(:pending))
+    inserted_at = NaiveDateTime.add(NaiveDateTime.utc_now(), -86_400 * 10, :seconds)
+
+    declaration
+    |> Ecto.Changeset.change(inserted_at: inserted_at)
+    |> Repo.update()
+
+    Declarations.terminate_declarations()
+
+    closed_status = Declaration.status(:closed)
+    assert %{status: ^closed_status} = Repo.get(Declaration, declaration.id)
   end
 end
