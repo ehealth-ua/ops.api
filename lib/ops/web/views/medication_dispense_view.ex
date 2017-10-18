@@ -23,6 +23,7 @@ defmodule OPS.Web.MedicationDispenseView do
       division_id
       medical_program_id
       payment_id
+      party_id
       status
       inserted_at
       inserted_by
