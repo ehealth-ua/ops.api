@@ -102,6 +102,7 @@ defmodule OPS.Declarations do
 
   def approve_declarations do
     with {:ok, response} <- IL.get_global_parameters(),
+         _ <- Logger.info("Global parameters: #{Poison.encode!(response)}"),
          parameters <- Map.fetch!(response, "data"),
          unit <- Map.fetch!(parameters, "verification_request_term_unit"),
          expiration <- Map.fetch!(parameters, "verification_request_expiration")
