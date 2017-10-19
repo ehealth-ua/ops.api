@@ -38,7 +38,7 @@ defmodule OPS.MedicationRequests do
 
   def create(%{"medication_request" => mr}) do
     %MedicationRequest{}
-    |> changeset(mr)
+    |> create_changeset(mr)
     |> Repo.insert()
   end
 
@@ -106,13 +106,17 @@ defmodule OPS.MedicationRequests do
     cast(search, attrs, DoctorSearch.__schema__(:fields))
   end
   defp changeset(%MedicationRequest{} = medication_request, attrs) do
-    medication_request
-    |> cast(attrs, MedicationRequest.__schema__(:fields))
-    |> put_change(:status, MedicationRequest.status(:active))
+    cast(medication_request, attrs, MedicationRequest.__schema__(:fields))
   end
   defp changeset(%QualifySearch{} = search, attrs) do
     search
     |> cast(attrs, QualifySearch.__schema__(:fields))
     |> validate_required(QualifySearch.__schema__(:fields))
+  end
+
+  defp create_changeset(%MedicationRequest{} = medication_request, attrs) do
+    medication_request
+    |> cast(attrs, MedicationRequest.__schema__(:fields))
+    |> put_change(:status, MedicationRequest.status(:active))
   end
 end

@@ -168,6 +168,7 @@ defmodule OPS.Web.MedicationRequestControllerTest do
       }
       assert json_response(conn, 201)
       assert json_response(conn, 201)["data"]["id"] == id
+      assert MedicationRequest.status(:active) == json_response(conn, 201)["data"]["status"]
     end
   end
 end
