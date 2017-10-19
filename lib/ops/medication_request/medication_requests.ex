@@ -106,7 +106,9 @@ defmodule OPS.MedicationRequests do
     cast(search, attrs, DoctorSearch.__schema__(:fields))
   end
   defp changeset(%MedicationRequest{} = medication_request, attrs) do
-    cast(medication_request, attrs, MedicationRequest.__schema__(:fields))
+    medication_request
+    |> cast(attrs, MedicationRequest.__schema__(:fields))
+    |> put_change(:status, MedicationRequest.status(:active))
   end
   defp changeset(%QualifySearch{} = search, attrs) do
     search
