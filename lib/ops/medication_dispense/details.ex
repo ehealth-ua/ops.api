@@ -3,6 +3,8 @@ defmodule OPS.MedicationDispense.Details do
 
   use Ecto.Schema
 
+  @derive {Poison.Encoder, except: ~w(__meta__ medication_dispense)a}
+
   schema "medication_dispense_details" do
     field :medication_id, Ecto.UUID
     field :medication_qty, :float

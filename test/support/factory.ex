@@ -6,6 +6,7 @@ defmodule OPS.Factory do
   alias OPS.Declarations.Declaration
   alias OPS.MedicationDispense.Schema, as: MedicationDispense
   alias OPS.MedicationRequest.Schema, as: MedicationRequest
+  alias OPS.MedicationDispense.Details
 
   def declaration_factory do
     day = 60 * 60 * 24
@@ -66,6 +67,18 @@ defmodule OPS.Factory do
       medication_qty: 0,
       medication_request_requests_id: Ecto.UUID.generate(),
       request_number: ""
+    }
+  end
+
+  def medication_dispense_details_factory do
+    %Details{
+      medication_id: Ecto.UUID.generate(),
+      medication_qty: 10,
+      sell_price: 150,
+      reimbursement_amount: 100,
+      medication_dispense_id: Ecto.UUID.generate(),
+      sell_amount: 30,
+      discount_amount: 0
     }
   end
 end

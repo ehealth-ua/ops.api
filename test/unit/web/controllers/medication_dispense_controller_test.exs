@@ -50,10 +50,12 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
       :medication_dispense
       |> insert()
       |> Repo.preload(:medication_request)
+    insert(:medication_dispense_details, medication_dispense_id: medication_dispense1.id)
     medication_dispense2 =
       :medication_dispense
       |> insert(status: MedicationDispense.status(:processed))
       |> Repo.preload(:medication_request)
+    insert(:medication_dispense_details, medication_dispense_id: medication_dispense2.id)
     conn1 = get conn, medication_dispense_path(conn, :index)
     resp = json_response(conn1, 200)["data"]
     assert 2 == length(resp)

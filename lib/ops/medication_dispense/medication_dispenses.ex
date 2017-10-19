@@ -40,7 +40,8 @@ defmodule OPS.MedicationDispenses do
     entity
     |> super(changes)
     |> join(:left, [md], mr in assoc(md, :medication_request))
-    |> preload([md, mr], [medication_request: mr])
+    |> join(:left, [md, mr], d in assoc(md, :details))
+    |> preload([md, mr, d], [medication_request: mr, details: d])
   end
 
   def create(attrs) do
@@ -56,7 +57,7 @@ defmodule OPS.MedicationDispenses do
                 Repo.insert(item)
              end)
         do
-          Repo.preload(medication_dispense, :medication_request)
+          Repo.preload(medication_dispense, ~w(medication_request details)a)
         end
       end
     else
