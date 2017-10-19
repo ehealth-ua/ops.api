@@ -5,7 +5,10 @@ defmodule OPS.Web.MedicationRequestControllerTest do
   alias OPS.MedicationDispense.Schema, as: MedicationDispense
 
   setup %{conn: conn} do
-    medication_request1 = insert(:medication_request)
+    medication_request1 = insert(:medication_request,
+      request_number: "test",
+      created_at: Date.add(Date.utc_today(), 1)
+    )
     medication_request2 = insert(:medication_request, status: MedicationRequest.status(:completed))
     {:ok,
      conn: put_req_header(conn, "accept", "application/json"),
@@ -45,13 +48,49 @@ defmodule OPS.Web.MedicationRequestControllerTest do
       assert medication_request1.employee_id == hd(resp)["employee_id"]
     end
 
-    test "success search by status", %{conn: conn, data: [_, medication_request2]} do
+    test "success search by status", %{conn: conn, data: data} do
+      statuses =
+        data
+        |> Enum.map(&(Map.get(&1, :status)))
+        |> Enum.join(",")
+      conn = get conn, medication_request_path(conn, :index, status: statuses)
+      resp = json_response(conn, 200)["data"]
+      assert 2 == length(resp)
+    end
+
+    test "success search by request_number", %{conn: conn, data: [medication_request1, _]} do
       conn = get conn, medication_request_path(conn, :index,
-        status: medication_request2.status
+        request_number: medication_request1.request_number
       )
       resp = json_response(conn, 200)["data"]
       assert 1 == length(resp)
-      assert medication_request2.status == hd(resp)["status"]
+      assert medication_request1.request_number == hd(resp)["request_number"]
+    end
+
+    test "success search by created_at", %{conn: conn, data: [medication_request1, _]} do
+      created_at = to_string(medication_request1.created_at)
+      conn = get conn, medication_request_path(conn, :index, created_at: created_at)
+      resp = json_response(conn, 200)["data"]
+      assert 1 == length(resp)
+      assert created_at == hd(resp)["created_at"]
+    end
+
+    test "success search by division_id", %{conn: conn, data: [medication_request1, _]} do
+      conn = get conn, medication_request_path(conn, :index,
+        division_id: medication_request1.division_id
+      )
+      resp = json_response(conn, 200)["data"]
+      assert 1 == length(resp)
+      assert medication_request1.division_id == hd(resp)["division_id"]
+    end
+
+    test "success search by medication_id", %{conn: conn, data: [medication_request1, _]} do
+      conn = get conn, medication_request_path(conn, :index,
+        medication_id: medication_request1.medication_id
+      )
+      resp = json_response(conn, 200)["data"]
+      assert 1 == length(resp)
+      assert medication_request1.medication_id == hd(resp)["medication_id"]
     end
 
     test "success search by list of statuses", %{conn: conn} do

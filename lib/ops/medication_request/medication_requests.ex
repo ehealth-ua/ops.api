@@ -42,6 +42,29 @@ defmodule OPS.MedicationRequests do
     |> Repo.insert()
   end
 
+  def get_search_query(entity, changes) do
+    params =
+      changes
+      |> Map.drop(~w(status created_at)a)
+      |> Map.to_list()
+
+    entity
+    |> where([mr], ^params)
+    |> add_ilike_statuses(Map.get(changes, :status))
+    |> add_created_at(Map.get(changes, :created_at))
+    |> order_by([mr], mr.inserted_at)
+  end
+
+  defp add_ilike_statuses(query, nil), do: query
+  defp add_ilike_statuses(query, values) do
+    where(query, [mr], fragment("? ilike any (?)", mr.status, ^String.split(values, ",")))
+  end
+
+  defp add_created_at(query, nil), do: query
+  defp add_created_at(query, value) do
+    where(query, [mr], fragment("?::date = ?", mr.created_at, ^value))
+  end
+
   defp doctor_search(%Ecto.Changeset{valid?: true, changes: changes} = changeset) do
     employee_ids =
       changeset
