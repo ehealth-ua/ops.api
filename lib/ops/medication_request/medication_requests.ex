@@ -118,5 +118,6 @@ defmodule OPS.MedicationRequests do
     medication_request
     |> cast(attrs, MedicationRequest.__schema__(:fields))
     |> put_change(:status, MedicationRequest.status(:active))
+    |> put_change(:is_active, true)
   end
 end
