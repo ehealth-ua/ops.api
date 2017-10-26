@@ -48,7 +48,7 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
   test "search medication dispenses", %{conn: conn} do
     medication_dispense1 =
       :medication_dispense
-      |> insert()
+      |> insert(dispensed_at: Date.add(Date.utc_today(), -2))
       |> Repo.preload(:medication_request)
     insert(:medication_dispense_details, medication_dispense_id: medication_dispense1.id)
     medication_dispense2 =
@@ -94,12 +94,20 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
     assert medication_dispense2.status == hd(resp)["status"]
 
     conn7 = get conn, medication_dispense_path(conn, :index,
+      dispensed_at: to_string(medication_dispense1.dispensed_at)
+    )
+    resp = json_response(conn7, 200)["data"]
+    assert 1 == length(resp)
+    assert to_string(medication_dispense1.dispensed_at) == hd(resp)["dispensed_at"]
+
+    conn8 = get conn, medication_dispense_path(conn, :index,
       status: medication_dispense2.status,
       legal_entity_id: medication_dispense2.legal_entity_id,
       division_id: medication_dispense2.division_id,
       medication_request_id: medication_dispense2.medication_request_id,
+      dispensed_at: to_string(medication_dispense2.dispensed_at),
     )
-    resp = json_response(conn7, 200)["data"]
+    resp = json_response(conn8, 200)["data"]
     assert 1 == length(resp)
     assert medication_dispense2.status == hd(resp)["status"]
     assert medication_dispense2.legal_entity_id == hd(resp)["legal_entity_id"]
