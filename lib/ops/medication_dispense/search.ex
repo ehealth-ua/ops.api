@@ -11,5 +11,6 @@ defmodule OPS.MedicationDispense.Search do
     field :division_id, Ecto.UUID
     field :status, :string
     field :is_active, :boolean
+    field :dispensed_at, :date
   end
 end
