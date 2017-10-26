@@ -66,7 +66,8 @@ defmodule OPS.Factory do
       dispense_valid_to: Date.utc_today(),
       medication_qty: 0,
       medication_request_requests_id: Ecto.UUID.generate(),
-      request_number: ""
+      request_number: "",
+      legal_entity_id: Ecto.UUID.generate()
     }
   end
 

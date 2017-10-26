@@ -48,6 +48,15 @@ defmodule OPS.Web.MedicationRequestControllerTest do
       assert medication_request1.employee_id == hd(resp)["employee_id"]
     end
 
+    test "success search by legal_entity_id", %{conn: conn, data: [medication_request1, _]} do
+      conn = get conn, medication_request_path(conn, :index,
+        legal_entity_id: medication_request1.legal_entity_id
+      )
+      resp = json_response(conn, 200)["data"]
+      assert 1 == length(resp)
+      assert medication_request1.legal_entity_id == hd(resp)["legal_entity_id"]
+    end
+
     test "success search by status", %{conn: conn, data: data} do
       statuses =
         data
