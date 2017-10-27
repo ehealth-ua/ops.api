@@ -52,13 +52,13 @@ defmodule OPS.MedicationRequests do
   def get_search_query(entity, changes) do
     params =
       changes
-      |> Map.drop(~w(status created_from created_to)a)
+      |> Map.drop(~w(status created_at)a)
       |> Map.to_list()
 
     entity
     |> where([mr], ^params)
     |> add_ilike_statuses(Map.get(changes, :status))
-    |> add_created_at(Map.get(changes, :created_from), Map.get(changes, :created_to))
+    |> add_created_at(Map.get(changes, :created_at))
     |> order_by([mr], mr.inserted_at)
   end
 
@@ -67,15 +67,9 @@ defmodule OPS.MedicationRequests do
     where(query, [mr], fragment("? ilike any (?)", mr.status, ^String.split(values, ",")))
   end
 
-  defp add_created_at(query, nil, nil), do: query
-  defp add_created_at(query, created_from, nil) do
-    where(query, [mr], fragment("?::date >= ?", mr.created_at, ^created_from))
-  end
-  defp add_created_at(query, nil, created_to) do
-    where(query, [mr], fragment("?::date <= ?", mr.created_at, ^created_to))
-  end
-  defp add_created_at(query, created_from, created_to) do
-    where(query, [mr], fragment("?::date BETWEEN ? AND ?", mr.created_at, ^created_from, ^created_to))
+  defp add_created_at(query, nil), do: query
+  defp add_created_at(query, value) do
+    where(query, [mr], fragment("?::date = ?", mr.created_at, ^value))
   end
 
   defp doctor_search(%Ecto.Changeset{valid?: true, changes: changes} = changeset) do
