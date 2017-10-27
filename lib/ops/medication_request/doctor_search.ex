@@ -14,6 +14,6 @@ defmodule OPS.MedicationRequest.DoctorSearch do
     field :request_number, :string
     field :created_from, :date
     field :created_to, :date
-    field :medication_id, :date
+    field :medication_id, Ecto.UUID
   end
 end
