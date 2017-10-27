@@ -132,6 +132,9 @@ defmodule OPS.Web.MedicationRequestControllerTest do
         "employee_id" => "#{medication_request.employee_id},#{Ecto.UUID.generate()}",
         "person_id" => medication_request.person_id,
         "id" => medication_request.id,
+        "created_from" => to_string(medication_request.created_at),
+        "created_to" => to_string(medication_request.created_at),
+        "request_number" => medication_request.request_number
       })
       resp = json_response(conn, 200)["data"]
       assert 1 == length(resp)

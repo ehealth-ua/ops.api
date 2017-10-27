@@ -79,7 +79,7 @@ defmodule OPS.MedicationRequests do
       |> String.split(",")
       |> Enum.filter(&(&1 != ""))
     filters = changes
-      |> Map.delete(:employee_id)
+      |> Map.drop(~w(employee_id created_from created_to)a)
       |> Map.to_list()
 
     MedicationRequest
@@ -90,6 +90,7 @@ defmodule OPS.MedicationRequests do
     )
     |> where([mr], ^filters)
     |> filter_by_employees(employee_ids)
+    |> add_created_at_doctor(Map.get(changes, :created_from), Map.get(changes, :created_to))
   end
   defp doctor_search(changeset), do: {:error, changeset}
 
@@ -177,5 +178,16 @@ defmodule OPS.MedicationRequests do
       updated_at: NaiveDateTime.utc_now()
     ])
     |> Repo.transaction()
+  end
+
+  defp add_created_at_doctor(query, nil, nil), do: query
+  defp add_created_at_doctor(query, created_from, nil) do
+    where(query, [mr], fragment("?::date >= ?", mr.created_at, ^created_from))
+  end
+  defp add_created_at_doctor(query, nil, created_to) do
+    where(query, [mr], fragment("?::date <= ?", mr.created_at, ^created_to))
+  end
+  defp add_created_at_doctor(query, created_from, created_to) do
+    where(query, [mr], fragment("?::date BETWEEN ? AND ?", mr.created_at, ^created_from, ^created_to))
   end
 end
