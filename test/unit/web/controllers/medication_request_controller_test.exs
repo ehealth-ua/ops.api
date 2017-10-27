@@ -76,30 +76,21 @@ defmodule OPS.Web.MedicationRequestControllerTest do
       assert medication_request1.request_number == hd(resp)["request_number"]
     end
 
-    test "success search by created_from", %{conn: conn, data: [medication_request1, _]} do
+    test "success search by created_at", %{conn: conn, data: [medication_request1, _]} do
       created_at = to_string(medication_request1.created_at)
-      conn = get conn, medication_request_path(conn, :index, created_from: created_at)
+      conn = get conn, medication_request_path(conn, :index, created_at: created_at)
       resp = json_response(conn, 200)["data"]
       assert 1 == length(resp)
       assert created_at == hd(resp)["created_at"]
     end
 
-    test "success search by created_to", %{conn: conn, data: [_, medication_request2]} do
-      created_at = to_string(medication_request2.created_at)
-      conn = get conn, medication_request_path(conn, :index, created_to: created_at)
-      resp = json_response(conn, 200)["data"]
-      assert 1 == length(resp)
-      assert created_at == hd(resp)["created_at"]
-    end
-
-    test "success search by created_from and created_to", %{conn: conn} do
-      today = Date.utc_today()
+    test "success search by division_id", %{conn: conn, data: [medication_request1, _]} do
       conn = get conn, medication_request_path(conn, :index,
-        created_from: to_string(today),
-        created_to: to_string(Date.add(today, 1))
+        division_id: medication_request1.division_id
       )
       resp = json_response(conn, 200)["data"]
-      assert 2 == length(resp)
+      assert 1 == length(resp)
+      assert medication_request1.division_id == hd(resp)["division_id"]
     end
 
     test "success search by medication_id", %{conn: conn, data: [medication_request1, _]} do
@@ -141,6 +132,9 @@ defmodule OPS.Web.MedicationRequestControllerTest do
         "employee_id" => "#{medication_request.employee_id},#{Ecto.UUID.generate()}",
         "person_id" => medication_request.person_id,
         "id" => medication_request.id,
+        "created_from" => to_string(medication_request.created_at),
+        "created_to" => to_string(medication_request.created_at),
+        "request_number" => medication_request.request_number
       })
       resp = json_response(conn, 200)["data"]
       assert 1 == length(resp)
