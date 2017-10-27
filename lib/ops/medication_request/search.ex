@@ -11,8 +11,8 @@ defmodule OPS.MedicationRequest.Search do
     field :legal_entity_id, Ecto.UUID
     field :status, :string
     field :request_number, :string
-    field :created_at, :date
-    field :division_id, :string
+    field :created_from, :date
+    field :created_to, :date
     field :medication_id, :string
     field :is_active, :boolean
   end
