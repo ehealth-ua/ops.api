@@ -84,7 +84,6 @@ defmodule OPS.MedicationRequests do
 
     MedicationRequest
     |> join(:left, [mr], d in Declaration,
-      d.employee_id == mr.employee_id and
       d.person_id == mr.person_id and
       d.status == ^Declaration.status(:active)
     )
