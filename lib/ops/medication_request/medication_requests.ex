@@ -138,7 +138,7 @@ defmodule OPS.MedicationRequests do
 
   defp filter_by_employees(query, []), do: query
   defp filter_by_employees(query, employee_ids) do
-    where(query, [mr], mr.employee_id in ^employee_ids)
+    where(query, [mr, d], mr.employee_id in ^employee_ids or d.employee_id in ^employee_ids)
   end
 
   defp changeset(%Search{} = search, attrs) do
