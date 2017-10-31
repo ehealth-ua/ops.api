@@ -128,7 +128,7 @@ defmodule OPS.MedicationRequests do
     case pre_or_qualify do
       :qualify ->
         query
-        |> join(:left, [mr], md in MedicationDispense, md.medication_request_id == mr.id)
+        |> join(:inner, [mr], md in MedicationDispense, md.medication_request_id == mr.id)
         |> where([mr, md], md.status == ^MedicationDispense.status(:processed))
       :prequalify -> query
     end
