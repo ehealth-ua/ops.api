@@ -125,7 +125,7 @@ defmodule OPS.MedicationRequests do
         mr.started_at
       ))
       |> select([mr], mr.medication_id)
-    case pre_or_qualify do
+    query = case pre_or_qualify do
       :qualify ->
         query
         |> join(:inner, [mr], md in MedicationDispense, md.medication_request_id == mr.id)
