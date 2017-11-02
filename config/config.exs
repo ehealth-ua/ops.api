@@ -78,9 +78,6 @@ config :ops, OPS.API.IL,
     timeout: {:system, :integer, "IL_REQUEST_TIMEOUT", 30_000}
   ]
 
-config :ops, :declaration_terminator_user,
-  {:system, "DECLARATION_TERMINATOR", "48ca528f-0d05-4811-ac49-a249f5309d3e"}
-
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

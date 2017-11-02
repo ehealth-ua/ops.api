@@ -61,7 +61,7 @@ defmodule OPS.Web.DeclarationController do
   end
 
   def terminate_person_declarations(conn, %{"id" => person_id}) do
-    user_id = Confex.get_env(:ops, :declaration_terminator_user)
+    user_id = Confex.fetch_env!(:ops, :system_user)
 
     with {:ok, result} <- Declarations.terminate_person_declarations(user_id, person_id) do
       render(conn, "terminated_declarations.json", declarations: result.logged_terminations)

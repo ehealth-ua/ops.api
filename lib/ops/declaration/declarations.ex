@@ -125,7 +125,7 @@ defmodule OPS.Declarations do
       |> where([d], fragment("?::date < now()::date", datetime_add(d.inserted_at, ^value, ^unit)))
       |> where([d], d.status == ^Declaration.status(:pending))
 
-    user_id = Confex.get_env(:ops, :declaration_terminator_user)
+    user_id = Confex.fetch_env!(:ops, :system_user)
     updates = [status: Declaration.status(:active), updated_by: user_id, updated_at: DateTime.utc_now()]
 
     Multi.new()
@@ -140,7 +140,7 @@ defmodule OPS.Declarations do
       |> where([d], fragment("?::date < now()::date", d.end_date))
       |> where([d], not d.status in ^[Declaration.status(:closed), Declaration.status(:terminated)])
 
-    user_id = Confex.get_env(:ops, :declaration_terminator_user)
+    user_id = Confex.fetch_env!(:ops, :system_user)
     updates = [status: Declaration.status(:closed), updated_by: user_id, updated_at: DateTime.utc_now()]
 
     Multi.new()
