@@ -94,7 +94,8 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
     assert medication_dispense2.status == hd(resp)["status"]
 
     conn7 = get conn, medication_dispense_path(conn, :index,
-      dispensed_at: to_string(medication_dispense1.dispensed_at)
+      dispensed_from: to_string(medication_dispense1.dispensed_at),
+      dispensed_to: to_string(medication_dispense1.dispensed_at),
     )
     resp = json_response(conn7, 200)["data"]
     assert 1 == length(resp)
