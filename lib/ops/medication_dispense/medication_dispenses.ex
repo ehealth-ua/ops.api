@@ -37,11 +37,17 @@ defmodule OPS.MedicationDispenses do
   end
 
   def get_search_query(entity, changes) do
+    dispensed_from = Map.get(changes, :dispensed_from)
+    dispensed_to = Map.get(changes, :dispensed_to)
+
+    params = Map.drop(changes, ~w(dispensed_from dispensed_to)a)
+
     entity
-    |> super(changes)
+    |> super(params)
     |> join(:left, [md], mr in assoc(md, :medication_request))
     |> join(:left, [md, mr], d in assoc(md, :details))
     |> preload([md, mr, d], [medication_request: mr, details: d])
+    |> add_dispensed_at_query(dispensed_from, dispensed_to)
   end
 
   def create(attrs) do
@@ -143,5 +149,16 @@ defmodule OPS.MedicationDispenses do
     details
     |> cast(attrs, fields)
     |> validate_required(fields)
+  end
+
+  defp add_dispensed_at_query(query, nil, nil), do: query
+  defp add_dispensed_at_query(query, dispensed_from, nil) do
+    where(query, [md], md.dispensed_at >= ^dispensed_from)
+  end
+  defp add_dispensed_at_query(query, nil, dispensed_to) do
+    where(query, [md], md.dispensed_at <= ^dispensed_to)
+  end
+  defp add_dispensed_at_query(query, dispensed_from, dispensed_to) do
+    where(query, [md], fragment("? BETWEEN ? AND ?", md.dispensed_at, ^dispensed_from, ^dispensed_to))
   end
 end
