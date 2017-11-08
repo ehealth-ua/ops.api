@@ -9,7 +9,6 @@ defmodule OPS.DeclarationTest do
   @create_attrs %{
     "id" => Ecto.UUID.generate(),
     "employee_id" => Ecto.UUID.generate(),
-    "person_id" => Ecto.UUID.generate(),
     "start_date" => "2016-10-10",
     "end_date" => "2016-12-07",
     "status" => "active",
@@ -49,12 +48,14 @@ defmodule OPS.DeclarationTest do
   end
 
   def fixture(:declaration, attrs \\ @create_attrs) do
+    person_id = if Map.has_key?(attrs, "person_id"), do: attrs, else: Ecto.UUID.generate()
     create_attrs =
       attrs
+      |> Map.put("person_id", person_id)
       |> Map.put("id", Ecto.UUID.generate())
       |> Map.put("employee_id", Ecto.UUID.generate())
       |> Map.put("legal_entity_id", Ecto.UUID.generate())
-
+      |> Map.put("declaration_request_id", Ecto.UUID.generate())
 
     {:ok, declaration} = Declarations.create_declaration(create_attrs)
     declaration
@@ -81,6 +82,7 @@ defmodule OPS.DeclarationTest do
       |> Map.put("id", Ecto.UUID.generate())
       |> Map.put("employee_id", Ecto.UUID.generate())
       |> Map.put("legal_entity_id", Ecto.UUID.generate())
+      |> Map.put("person_id", Ecto.UUID.generate())
 
     assert {:ok, %Declaration{} = declaration} = Declarations.create_declaration(create_attrs)
     assert declaration.id == create_attrs["id"]
@@ -104,17 +106,15 @@ defmodule OPS.DeclarationTest do
 
   describe "create_declaration_with_termination_logic/1" do
     test "with valid data creates declaration and terminates other person declarations" do
-      %{id: id1} = fixture(:declaration)
-      %{id: id2} = fixture(:declaration, Map.put(@create_attrs, "person_id", Ecto.UUID.generate()))
-      {:ok, %{new_declaration: %{id: id}}} = Declarations.create_declaration_with_termination_logic(@create_attrs)
+      %{id: id1, person_id: person_id} = fixture(:declaration)
+      params = Map.put(@create_attrs, "person_id", person_id)
+      {:ok, %{new_declaration: %{id: id}}} = Declarations.create_declaration_with_termination_logic(params)
 
-      %{id: ^id} = Declarations.get_declaration!(id)
+      %{id: ^id, status: status} = Declarations.get_declaration!(id)
+      assert "active" == status
 
       %{status: status} = Declarations.get_declaration!(id1)
       assert "terminated" == status
-
-      %{status: status} = Declarations.get_declaration!(id2)
-      assert "active" == status
     end
 
     test "with invalid data doesn't terminate other declarations and returns error changeset" do
@@ -185,8 +185,8 @@ defmodule OPS.DeclarationTest do
       employee_id = "84e30a11-94bd-49fe-8b1f-f5511c5916d6"
 
       dec1 = fixture(:declaration)
-      dec2 = fixture(:declaration)
-      dec3 = fixture(:declaration)
+      dec2 = fixture(:declaration, Map.merge(@create_attrs, %{"status" => "pending_verification"}))
+      dec3 = fixture(:declaration, Map.merge(@create_attrs, %{"status" => "pending_verification"}))
 
       Repo.update_all(Declaration, set: [employee_id: employee_id])
 
@@ -214,8 +214,8 @@ defmodule OPS.DeclarationTest do
       # TODO: make statuses differennt. termination should pick up an terminate declarations
       # in all statuses
       dec1 = fixture(:declaration)
-      dec2 = fixture(:declaration)
-      dec3 = fixture(:declaration)
+      dec2 = fixture(:declaration, Map.merge(@create_attrs, %{"status" => "closed"}))
+      dec3 = fixture(:declaration, Map.merge(@create_attrs, %{"status" => "rejected"}))
 
       Repo.update_all(Declaration, set: [person_id: person_id])
 
