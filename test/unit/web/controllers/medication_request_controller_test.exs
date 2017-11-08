@@ -214,6 +214,7 @@ defmodule OPS.Web.MedicationRequestControllerTest do
         medication_request
         |> Map.put(:id, id)
         |> Map.put(:request_number, id)
+        |> Map.put(:medication_request_requests_id, Ecto.UUID.generate())
       conn = post conn, medication_request_path(conn, :create), %{
         "medication_request" => Map.from_struct(mr)
       }

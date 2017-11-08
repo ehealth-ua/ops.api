@@ -8,7 +8,6 @@ defmodule OPS.Web.DeclarationControllerTest do
   @create_attrs %{
     id: Ecto.UUID.generate(),
     employee_id: Ecto.UUID.generate(),
-    person_id: Ecto.UUID.generate(),
     start_date: "2016-10-10",
     end_date: "2016-12-07",
     status: "active",
@@ -19,7 +18,6 @@ defmodule OPS.Web.DeclarationControllerTest do
     scope: "family_doctor",
     division_id: Ecto.UUID.generate(),
     legal_entity_id: Ecto.UUID.generate(),
-    declaration_request_id: Ecto.UUID.generate()
   }
 
   @update_attrs %{
@@ -47,6 +45,8 @@ defmodule OPS.Web.DeclarationControllerTest do
       |> Map.put(:id, Ecto.UUID.generate())
       |> Map.put(:employee_id, Ecto.UUID.generate())
       |> Map.put(:legal_entity_id, Ecto.UUID.generate())
+      |> Map.put(:person_id, Ecto.UUID.generate())
+      |> Map.put(:declaration_request_id, Ecto.UUID.generate())
 
     {:ok, declaration} = Declarations.create_declaration(create_attrs)
     declaration
@@ -109,14 +109,18 @@ defmodule OPS.Web.DeclarationControllerTest do
   end
 
   test "creates declaration and renders declaration when data is valid", %{conn: conn} do
-    conn = post conn, declaration_path(conn, :create), declaration: @create_attrs
+    params =
+      @create_attrs
+      |> Map.put("declaration_request_id", Ecto.UUID.generate())
+      |> Map.put("person_id", Ecto.UUID.generate())
+    conn = post conn, declaration_path(conn, :create), declaration: params
     assert %{"id" => id, "inserted_at" => inserted_at, "updated_at" => updated_at} = json_response(conn, 201)["data"]
 
     assert id == @create_attrs.id
     conn = get conn, declaration_path(conn, :show, id)
     assert json_response(conn, 200)["data"] == %{
       "id" => id,
-      "person_id" => @create_attrs.person_id,
+      "person_id" => params["person_id"],
       "employee_id" => @create_attrs.employee_id,
       "division_id" => @create_attrs.division_id,
       "legal_entity_id" => @create_attrs.legal_entity_id,
@@ -125,7 +129,7 @@ defmodule OPS.Web.DeclarationControllerTest do
       "end_date" => "2016-12-07",
       "signed_at" => "2016-10-09T23:50:07.000000Z",
       "status" => "active",
-      "declaration_request_id" => @create_attrs.declaration_request_id,
+      "declaration_request_id" => params["declaration_request_id"],
       "inserted_at" => inserted_at,
       "created_by" => @create_attrs.created_by,
       "updated_at" => updated_at,
@@ -142,9 +146,13 @@ defmodule OPS.Web.DeclarationControllerTest do
   end
 
   test "creates declaration and terminates other person declarations when data is valid", %{conn: conn} do
-    %{id: id1} = fixture(:declaration)
-    %{id: id2} = fixture(:declaration, Map.put(@create_attrs, :person_id, Ecto.UUID.generate()))
-    conn = post conn, declaration_path(conn, :create_with_termination_logic), @create_attrs
+    %{id: id1, person_id: person_id} = fixture(:declaration)
+    params =
+      @create_attrs
+      |> Map.put(:person_id, person_id)
+      |> Map.put(:declaration_request_id, Ecto.UUID.generate())
+    %{id: id2} = fixture(:declaration, params)
+    conn = post conn, declaration_path(conn, :create_with_termination_logic), params
     resp = json_response(conn, 200)
     assert Map.has_key?(resp, "data")
     assert Map.has_key?(resp["data"], "id")
@@ -172,7 +180,7 @@ defmodule OPS.Web.DeclarationControllerTest do
   end
 
   test "updates chosen declaration and renders declaration when data is valid", %{conn: conn} do
-    %Declaration{id: id} = declaration = fixture(:declaration)
+    %Declaration{id: id, declaration_request_id: declaration_request_id} = declaration = fixture(:declaration)
     conn = put conn, declaration_path(conn, :update, declaration), declaration: @update_attrs
     assert %{"id" => ^id, "inserted_at" => inserted_at, "updated_at" => updated_at} = json_response(conn, 200)["data"]
 
@@ -188,7 +196,7 @@ defmodule OPS.Web.DeclarationControllerTest do
       "end_date" => "2016-12-08",
       "signed_at" => "2016-10-10T23:50:07.000000Z",
       "status" => "closed",
-      "declaration_request_id" => @create_attrs.declaration_request_id,
+      "declaration_request_id" => declaration_request_id,
       "inserted_at" => inserted_at,
       "created_by" => @update_attrs.created_by,
       "updated_at" => updated_at,
