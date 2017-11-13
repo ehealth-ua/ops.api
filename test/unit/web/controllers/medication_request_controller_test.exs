@@ -112,7 +112,7 @@ defmodule OPS.Web.MedicationRequestControllerTest do
       conn = get conn, medication_request_path(conn, :index,
         status: medication_request2.status,
         person_id: medication_request2.person_id,
-        employee_id: medication_request2.employee_id,
+        employee_id: medication_request2.employee_id
       )
       resp = json_response(conn, 200)["data"]
       assert 1 == length(resp)
@@ -128,14 +128,14 @@ defmodule OPS.Web.MedicationRequestControllerTest do
         employee_id: medication_request.employee_id,
         person_id: medication_request.person_id
       )
-      conn = get conn, medication_request_path(conn, :doctor_list, %{
+      conn = post conn, medication_request_path(conn, :doctor_list), %{
         "employee_id" => "#{medication_request.employee_id},#{Ecto.UUID.generate()}",
         "person_id" => medication_request.person_id,
         "id" => medication_request.id,
         "created_from" => to_string(medication_request.created_at),
         "created_to" => to_string(medication_request.created_at),
         "request_number" => medication_request.request_number
-      })
+      }
       resp = json_response(conn, 200)["data"]
       assert 1 == length(resp)
     end
@@ -145,7 +145,7 @@ defmodule OPS.Web.MedicationRequestControllerTest do
         employee_id: medication_request.employee_id,
         person_id: medication_request.person_id
       )
-      conn = get conn, medication_request_path(conn, :doctor_list, %{"status" => "invalid"})
+      conn = post conn, medication_request_path(conn, :doctor_list), %{"status" => "invalid"}
       resp = json_response(conn, 200)["data"]
       assert 0 == length(resp)
     end
