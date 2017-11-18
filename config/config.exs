@@ -34,7 +34,8 @@ config :ops, OPS.Repo,
   username: {:system, "DB_USER", "postgres"},
   password: {:system, "DB_PASSWORD", "postgres"},
   hostname: {:system, "DB_HOST", "localhost"},
-  port: {:system, :integer, "DB_PORT", 5432}
+  port: {:system, :integer, "DB_PORT", 5432},
+  loggers: [{Ecto.LoggerJSON, :log, [:info]}]
 
 config :ops, OPS.BlockRepo,
   adapter: Ecto.Adapters.Postgres,
@@ -42,7 +43,8 @@ config :ops, OPS.BlockRepo,
   username: {:system, "BLOCK_DB_USER", "postgres"},
   password: {:system, "BLOCK_DB_PASSWORD", "postgres"},
   hostname: {:system, "BLOCK_DB_HOST", "localhost"},
-  port: {:system, :integer, "BLOCK_DB_PORT", 5432}
+  port: {:system, :integer, "BLOCK_DB_PORT", 5432},
+  loggers: [{Ecto.LoggerJSON, :log, [:info]}]
 # This configuration file is loaded before any dependency and
 # is restricted to this project.
 
@@ -79,15 +81,7 @@ config :ops, OPS.API.IL,
   ]
 
 # Configures Elixir's Logger
-config :logger, :console,
-  format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
-
-# Configure JSON Logger back-end
-config :logger_json, :backend,
-  on_init: {OPS, :load_from_system_env, []},
-  json_encoder: Poison,
-  metadata: :all
+config :logger, :console, format: "$message\n"
 
 config :ops, :block_versions, %{
   "v1" => "
