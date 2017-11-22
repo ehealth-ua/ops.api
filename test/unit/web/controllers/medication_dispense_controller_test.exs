@@ -95,7 +95,7 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
 
     conn7 = get conn, medication_dispense_path(conn, :index,
       dispensed_from: to_string(medication_dispense1.dispensed_at),
-      dispensed_to: to_string(medication_dispense1.dispensed_at),
+      dispensed_to: to_string(medication_dispense1.dispensed_at)
     )
     resp = json_response(conn7, 200)["data"]
     assert 1 == length(resp)
@@ -106,7 +106,7 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
       legal_entity_id: medication_dispense2.legal_entity_id,
       division_id: medication_dispense2.division_id,
       medication_request_id: medication_dispense2.medication_request_id,
-      dispensed_at: to_string(medication_dispense2.dispensed_at),
+      dispensed_at: to_string(medication_dispense2.dispensed_at)
     )
     resp = json_response(conn8, 200)["data"]
     assert 1 == length(resp)

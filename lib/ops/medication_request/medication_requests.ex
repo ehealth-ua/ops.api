@@ -9,6 +9,7 @@ defmodule OPS.MedicationRequests do
   alias OPS.MedicationRequest.DoctorSearch
   alias OPS.MedicationRequest.QualifySearch
   import Ecto.Changeset
+  import OPS.AuditLogs, only: [create_audit_logs: 1]
   alias Ecto.Multi
   use OPS.Search
 
@@ -46,7 +47,7 @@ defmodule OPS.MedicationRequests do
   def create(%{"medication_request" => mr}) do
     %MedicationRequest{}
     |> create_changeset(mr)
-    |> Repo.insert()
+    |> Repo.insert_and_log(Map.get(mr, "employee_id"))
   end
 
   def get_search_query(entity, changes) do
@@ -171,12 +172,34 @@ defmodule OPS.MedicationRequests do
       |> where([mr], mr.ended_at <= ^Date.utc_today())
 
     Multi.new()
-    |> Multi.update_all(:medication_requests, query, set: [
-      status: MedicationRequest.status(:expired),
-      updated_by: Confex.fetch_env!(:ops, :system_user),
-      updated_at: NaiveDateTime.utc_now()
-    ])
+    |> Multi.update_all(
+        :medication_requests,
+        query,
+        [set: [
+          status: MedicationRequest.status(:expired),
+          updated_by: Confex.fetch_env!(:ops, :system_user),
+          updated_at: NaiveDateTime.utc_now()
+        ]],
+        returning: [:id, :status, :updated_by, :updated_at]
+      )
+    |> Multi.run(:logged_terminations, &log_changes(&1))
     |> Repo.transaction()
+  end
+
+  defp log_changes(%{medication_requests: {_, medication_requests}}) do
+    changelog =
+      medication_requests
+      |> Enum.map(fn mr ->
+          %{
+            actor_id: mr.updated_by,
+            resource: "medication_requests",
+            resource_id: mr.id,
+            changeset: %{status: mr.status, updated_at: mr.updated_at}
+          }
+         end)
+      |> create_audit_logs()
+
+    {:ok, changelog}
   end
 
   defp add_created_at_doctor(query, nil, nil), do: query

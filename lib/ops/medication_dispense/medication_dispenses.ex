@@ -7,6 +7,7 @@ defmodule OPS.MedicationDispenses do
   alias OPS.MedicationDispense.Search
   alias Ecto.Multi
   import Ecto.Changeset
+  import OPS.AuditLogs, only: [create_audit_logs: 1]
   use OPS.Search
 
   @status_new MedicationDispense.status(:new)
@@ -54,15 +55,15 @@ defmodule OPS.MedicationDispenses do
     dispense_changeset = changeset(%MedicationDispense{}, attrs)
     details = Enum.map(Map.get(attrs, "dispense_details") || [], &details_changeset(%Details{}, &1))
 
-    if dispense_changeset.valid? && Enum.all?(details, & &1.valid?) do
+    if dispense_changeset.valid? && Enum.all?(details, &(&1.valid?)) do
       Repo.transaction fn ->
         inserted_by = Map.get(attrs, "inserted_by")
-        with {:ok, medication_dispense} <- Repo.insert_and_log(dispense_changeset, inserted_by),
-             _ <- Enum.map(details, fn item ->
-                item = change(item, medication_dispense_id: medication_dispense.id)
-                Repo.insert(item)
-             end)
+        with {:ok, medication_dispense} <- Repo.insert_and_log(dispense_changeset, inserted_by)
         do
+          Enum.each(details, fn item ->
+              item = change(item, medication_dispense_id: medication_dispense.id)
+              Repo.insert_and_log(item, inserted_by)
+          end)
           Repo.preload(medication_dispense, ~w(medication_request details)a)
         end
       end
@@ -75,9 +76,10 @@ defmodule OPS.MedicationDispenses do
   end
 
   def update(medication_dispense, attrs) do
-    with {:ok, medication_dispense} <- medication_dispense
-                                       |> changeset(attrs)
-                                       |> Repo.update_and_log(Map.get(attrs, "updated_by"))
+    with {:ok, medication_dispense} <-
+      medication_dispense
+        |> changeset(attrs)
+        |> Repo.update_and_log(Map.get(attrs, "updated_by"))
     do
       {:ok, Repo.preload(medication_dispense, :medication_request, force: true)}
     end
@@ -90,11 +92,30 @@ defmodule OPS.MedicationDispenses do
       |> where([md], md.inserted_at < datetime_add(^NaiveDateTime.utc_now, ^-expiration, "minute"))
 
     Multi.new()
-    |> Multi.update_all(:medication_dispenses, query, set: [
-      status: MedicationDispense.status(:expired),
-      updated_at: NaiveDateTime.utc_now()
-    ])
+    |> Multi.update_all(
+        :medication_dispenses,
+        query,
+        [set: [status: MedicationDispense.status(:expired), updated_at: NaiveDateTime.utc_now()]],
+        returning: [:id, :status, :updated_at, :updated_by]
+      )
+    |> Multi.run(:logged_terminations, &log_changes(&1))
     |> Repo.transaction()
+  end
+
+  defp log_changes(%{medication_dispenses: {_, medication_dispenses}}) do
+    changelog =
+      medication_dispenses
+      |> Enum.map(fn md ->
+          %{
+            actor_id: md.updated_by,
+            resource: "medication_dispenses",
+            resource_id: md.id,
+            changeset: %{status: md.status, updated_at: md.updated_at}
+          }
+         end)
+      |> create_audit_logs()
+
+    {:ok, changelog}
   end
 
   defp changeset(%Search{} = search, attrs) do
