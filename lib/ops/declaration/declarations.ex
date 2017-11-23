@@ -8,10 +8,10 @@ defmodule OPS.Declarations do
   alias Ecto.Multi
   alias OPS.Repo
   alias OPS.Block.API, as: BlockAPI
-  alias OPS.AuditLogs
   alias OPS.Declarations.Declaration
   alias OPS.Declarations.DeclarationSearch
   alias OPS.API.IL
+  import OPS.AuditLogs, only: [create_audit_logs: 1]
   require Logger
 
   def list_declarations(params) do
@@ -32,9 +32,11 @@ defmodule OPS.Declarations do
   end
 
   def update_declaration(%Declaration{} = declaration, attrs) do
+    updated_by = Map.get(attrs, "updated_by") || Map.get(attrs, :updated_by)
+
     declaration
     |> declaration_changeset(attrs)
-    |> Repo.update_and_log(Map.get(attrs, "updated_by", Map.get(attrs, :updated_by)))
+    |> Repo.update_and_log(updated_by)
   end
 
   def delete_declaration(%Declaration{} = declaration) do
@@ -97,9 +99,9 @@ defmodule OPS.Declarations do
     updates = [status: Declaration.status(:terminated), updated_by: user_id, updated_at: DateTime.utc_now()]
 
     Multi.new()
-    |> Multi.update_all(:previous_declarations, query, [set: updates], returning: [:id])
+    |> Multi.update_all(:previous_declarations, query, [set: updates], returning: updated_fields_list(updates))
     |> Multi.insert(:new_declaration, declaration_changeset(%Declaration{seed: block.hash}, declaration_params))
-    |> Multi.run(:logged_terminations, fn multi -> log_updates(user_id, multi.previous_declarations, updates) end)
+    |> Multi.run(:log_declarations_update, &log_status_updates(&1.previous_declarations))
     |> Repo.transaction()
   end
 
@@ -129,8 +131,8 @@ defmodule OPS.Declarations do
     updates = [status: Declaration.status(:active), updated_by: user_id, updated_at: DateTime.utc_now()]
 
     Multi.new()
-    |> Multi.update_all(:declarations, query, [set: updates], returning: [:id])
-    |> Multi.run(:logged_declarations, fn multi -> log_updates(user_id, multi.declarations, updates) end)
+    |> Multi.update_all(:declarations, query, [set: updates], returning: updated_fields_list(updates))
+    |> Multi.run(:logged_declarations, &log_status_updates(&1.declarations))
     |> Repo.transaction()
   end
 
@@ -144,8 +146,8 @@ defmodule OPS.Declarations do
     updates = [status: Declaration.status(:closed), updated_by: user_id, updated_at: DateTime.utc_now()]
 
     Multi.new()
-    |> Multi.update_all(:declarations, query, [set: updates], returning: [:id])
-    |> Multi.run(:logged_terminations, fn multi -> log_updates(user_id, multi.declarations, updates) end)
+    |> Multi.update_all(:declarations, query, [set: updates], returning: updated_fields_list(updates))
+    |> Multi.run(:logged_terminations, &log_status_updates(&1.declarations))
     |> Repo.transaction()
   end
   def terminate_declarations(user_id, employee_id) do
@@ -157,39 +159,36 @@ defmodule OPS.Declarations do
     updates = [status: Declaration.status(:terminated), updated_by: user_id, updated_at: DateTime.utc_now()]
 
     Multi.new
-    |> Multi.update_all(:terminated_declarations, query, [set: updates], returning: [:id])
-    |> Multi.run(:logged_terminations, fn multi -> log_updates(user_id, multi.terminated_declarations, updates) end)
+    |> Multi.update_all(:terminated_declarations, query, [set: updates], returning: updated_fields_list(updates))
+    |> Multi.run(:logged_terminations, &log_status_updates(&1.terminated_declarations))
     |> Repo.transaction()
   end
 
   def terminate_person_declarations(user_id, person_id) do
-    query = from d in Declaration,
-      where: [person_id: ^person_id]
+    query = from d in Declaration, where: [person_id: ^person_id]
 
     updates = [status: "terminated", updated_by: user_id, updated_at: DateTime.utc_now()]
 
     Multi.new
-    |> Multi.update_all(:terminated_declarations, query, [set: updates], returning: [:id])
-    |> Multi.run(:logged_terminations, fn multi -> log_updates(user_id, multi.terminated_declarations, updates) end)
+    |> Multi.update_all(:terminated_declarations, query, [set: updates], returning: updated_fields_list(updates))
+    |> Multi.run(:logged_terminations, &log_status_updates(&1.terminated_declarations))
     |> Repo.transaction()
   end
 
-  def log_updates(user_id, {_, terminated_declarations}, updates) do
-    changeset = Enum.into(updates, %{updated_by: user_id})
+  def log_status_updates({_, declarations}) do
+    {_, changelog} =
+      declarations
+      |> Enum.map(fn decl ->
+          %{
+            actor_id: decl.updated_by,
+            resource: "declarations",
+            resource_id: decl.id,
+            changeset: %{status: decl.status}
+          }
+         end)
+      |> create_audit_logs()
 
-    updates =
-      Enum.reduce terminated_declarations, [], fn declaration, acc ->
-        AuditLogs.create_audit_log(%{
-          actor_id: user_id,
-          resource: "declarations",
-          resource_id: declaration.id,
-          changeset: changeset
-        })
-
-        [declaration.id | acc]
-      end
-
-    {:ok, updates}
+    {:ok, changelog}
   end
 
   def validate_status_transition(changeset) do
@@ -209,4 +208,6 @@ defmodule OPS.Declarations do
       add_error(changeset, :status, "Incorrect status transition.")
     end
   end
+
+  defp updated_fields_list(updates), do: [:id | Keyword.keys(updates)]
 end

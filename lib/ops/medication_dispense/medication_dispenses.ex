@@ -91,26 +91,23 @@ defmodule OPS.MedicationDispenses do
       |> where([md], md.status == ^MedicationDispense.status(:new))
       |> where([md], md.inserted_at < datetime_add(^NaiveDateTime.utc_now, ^-expiration, "minute"))
 
+    updates = [status: MedicationDispense.status(:expired), updated_at: DateTime.utc_now()]
+
     Multi.new()
-    |> Multi.update_all(
-        :medication_dispenses,
-        query,
-        [set: [status: MedicationDispense.status(:expired), updated_at: NaiveDateTime.utc_now()]],
-        returning: [:id, :status, :updated_at, :updated_by]
-      )
+    |> Multi.update_all(:medication_dispenses, query, [set: updates], returning: [:id, :status, :updated_by])
     |> Multi.run(:logged_terminations, &log_changes(&1))
     |> Repo.transaction()
   end
 
   defp log_changes(%{medication_dispenses: {_, medication_dispenses}}) do
-    changelog =
+    {_, changelog} =
       medication_dispenses
       |> Enum.map(fn md ->
           %{
             actor_id: md.updated_by,
             resource: "medication_dispenses",
             resource_id: md.id,
-            changeset: %{status: md.status, updated_at: md.updated_at}
+            changeset: %{status: md.status}
           }
          end)
       |> create_audit_logs()

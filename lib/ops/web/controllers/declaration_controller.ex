@@ -16,9 +16,7 @@ defmodule OPS.Web.DeclarationController do
   end
 
   def create(conn, %{"declaration" => declaration_params}) do
-    result = Declarations.create_declaration(declaration_params)
-
-    with {:ok, %Declaration{} = declaration} <- result do
+    with {:ok, %Declaration{} = declaration} <- Declarations.create_declaration(declaration_params) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", declaration_path(conn, :show, declaration))
@@ -33,8 +31,8 @@ defmodule OPS.Web.DeclarationController do
 
   def update(conn, %{"id" => id, "declaration" => declaration_params}) do
     declaration = Declarations.get_declaration!(id)
-    result = Declarations.update_declaration(declaration, declaration_params)
-    with {:ok, %Declaration{} = declaration} <- result do
+    with {:ok, %Declaration{} = declaration} <- Declarations.update_declaration(declaration, declaration_params)
+    do
       render(conn, "show.json", declaration: declaration)
     end
   end
@@ -55,16 +53,20 @@ defmodule OPS.Web.DeclarationController do
   end
 
   def terminate_declarations(conn, %{"user_id" => user_id, "id" => employee_id}) do
-    with {:ok, result} <- Declarations.terminate_declarations(user_id, employee_id) do
-      render(conn, "terminated_declarations.json", declarations: result.logged_terminations)
+    with {:ok, result} <- Declarations.terminate_declarations(user_id, employee_id),
+         {_, terminated_declarations} = result.terminated_declarations
+    do
+         render(conn, "terminated_declarations.json", declarations: terminated_declarations)
     end
   end
 
   def terminate_person_declarations(conn, %{"id" => person_id}) do
     user_id = Confex.fetch_env!(:ops, :system_user)
 
-    with {:ok, result} <- Declarations.terminate_person_declarations(user_id, person_id) do
-      render(conn, "terminated_declarations.json", declarations: result.logged_terminations)
+    with {:ok, result} <- Declarations.terminate_person_declarations(user_id, person_id),
+         {_, terminated_declarations} = result.terminated_declarations
+    do
+         render(conn, "terminated_declarations.json", declarations: terminated_declarations)
     end
   end
 end

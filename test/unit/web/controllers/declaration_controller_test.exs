@@ -236,8 +236,10 @@ defmodule OPS.Web.DeclarationControllerTest do
     conn = patch conn, "/employees/#{employee_id}/declarations/actions/terminate", payload
 
     response = json_response(conn, 200)
+    response_decl = List.first(response["data"]["terminated_declarations"])
 
-    assert [dec.id] == response["data"]["terminated_declarations"]
+    assert dec.id == response_decl["id"]
+    assert user_id == response_decl["updated_by"]
   end
 
   test "terminates declarations for given person_id", %{conn: conn} do
@@ -245,15 +247,15 @@ defmodule OPS.Web.DeclarationControllerTest do
     person_id = "84e30a11-94bd-49fe-8b1f-f5511c5916d6"
 
     dec = fixture(:declaration)
-
     Repo.update_all(Declaration, set: [person_id: person_id])
 
     conn = patch conn, "/persons/#{person_id}/declarations/actions/terminate", ""
 
     response = json_response(conn, 200)
+    response_decl = List.first(response["data"]["terminated_declarations"])
 
-    assert [dec.id] == response["data"]["terminated_declarations"]
-
+    assert dec.id == response_decl["id"]
     assert user_id == Repo.get(Declaration, dec.id).updated_by
+    assert user_id == response_decl["updated_by"]
   end
 end

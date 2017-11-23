@@ -204,7 +204,7 @@ defmodule OPS.DeclarationTest do
                  and cl.resource_id == ^declaration.id
                  and fragment("?->>?", cl.changeset, "status") == "terminated")
 
-        assert user_id == audit_log.changeset["updated_by"]
+        assert user_id == audit_log.actor_id
       end
     end
   end
@@ -236,7 +236,7 @@ defmodule OPS.DeclarationTest do
                  and cl.resource_id == ^declaration.id
                  and fragment("?->>?", cl.changeset, "status") == "terminated")
 
-        assert user_id == audit_log.changeset["updated_by"]
+        assert user_id == audit_log.actor_id
       end
     end
   end

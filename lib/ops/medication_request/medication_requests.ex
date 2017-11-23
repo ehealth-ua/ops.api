@@ -171,30 +171,25 @@ defmodule OPS.MedicationRequests do
       |> where([mr], mr.status == ^MedicationRequest.status(:active))
       |> where([mr], mr.ended_at <= ^Date.utc_today())
 
-    Multi.new()
-    |> Multi.update_all(
-        :medication_requests,
-        query,
-        [set: [
-          status: MedicationRequest.status(:expired),
+    updates = [status: MedicationRequest.status(:expired),
           updated_by: Confex.fetch_env!(:ops, :system_user),
-          updated_at: NaiveDateTime.utc_now()
-        ]],
-        returning: [:id, :status, :updated_by, :updated_at]
-      )
+          updated_at: DateTime.utc_now()]
+
+    Multi.new()
+    |> Multi.update_all(:medication_requests, query, [set: updates], returning: [:id, :status, :updated_by])
     |> Multi.run(:logged_terminations, &log_changes(&1))
     |> Repo.transaction()
   end
 
   defp log_changes(%{medication_requests: {_, medication_requests}}) do
-    changelog =
+    {_, changelog} =
       medication_requests
       |> Enum.map(fn mr ->
           %{
             actor_id: mr.updated_by,
             resource: "medication_requests",
             resource_id: mr.id,
-            changeset: %{status: mr.status, updated_at: mr.updated_at}
+            changeset: %{status: mr.status}
           }
          end)
       |> create_audit_logs()

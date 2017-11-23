@@ -35,6 +35,14 @@ defmodule OPS.Web.DeclarationView do
   end
 
   def render("terminated_declarations.json", %{declarations: declarations}) do
-    %{terminated_declarations: declarations}
+    %{terminated_declarations: Enum.map(declarations, &sanitize/1)}
+  end
+
+  defp sanitize(%OPS.Declarations.Declaration{} = declaration) do
+    declaration
+    |> Map.from_struct()
+    |> Enum.reduce(%{}, fn ({k, v}, acc) ->
+         if k != :__meta__ and v != nil, do: Map.put(acc, k, v), else: acc
+      end)
   end
 end
