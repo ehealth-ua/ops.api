@@ -11,7 +11,7 @@ defmodule OPS.Declarations do
   alias OPS.Declarations.Declaration
   alias OPS.Declarations.DeclarationSearch
   alias OPS.API.IL
-  import OPS.AuditLogs, only: [create_audit_logs: 1]
+  import OPS.AuditLogs, only: [create_audit_logs: 1, create_audit_log: 1]
   require Logger
 
   def list_declarations(params) do
@@ -25,10 +25,11 @@ defmodule OPS.Declarations do
   # TODO: Make more clearly getting created_by and updated_by parameters
   def create_declaration(attrs \\ %{}) do
     block = BlockAPI.get_latest()
+    created_by = Map.get(attrs, "created_by") || Map.get(attrs, :created_by)
 
     %Declaration{seed: block.hash}
     |> declaration_changeset(attrs)
-    |> Repo.insert_and_log(Map.get(attrs, "created_by", Map.get(attrs, :created_by)))
+    |> Repo.insert_and_log(created_by)
   end
 
   def update_declaration(%Declaration{} = declaration, attrs) do
@@ -100,8 +101,10 @@ defmodule OPS.Declarations do
 
     Multi.new()
     |> Multi.update_all(:previous_declarations, query, [set: updates], returning: updated_fields_list(updates))
-    |> Multi.insert(:new_declaration, declaration_changeset(%Declaration{seed: block.hash}, declaration_params))
+    |> Multi.insert(:new_declaration, declaration_changeset(%Declaration{seed: block.hash}, declaration_params),
+        returning: true)
     |> Multi.run(:log_declarations_update, &log_status_updates(&1.previous_declarations))
+    |> Multi.run(:log_declaration_insert, &log_insert(&1.new_declaration))
     |> Repo.transaction()
   end
 
@@ -175,22 +178,6 @@ defmodule OPS.Declarations do
     |> Repo.transaction()
   end
 
-  def log_status_updates({_, declarations}) do
-    {_, changelog} =
-      declarations
-      |> Enum.map(fn decl ->
-          %{
-            actor_id: decl.updated_by,
-            resource: "declarations",
-            resource_id: decl.id,
-            changeset: %{status: decl.status}
-          }
-         end)
-      |> create_audit_logs()
-
-    {:ok, changelog}
-  end
-
   def validate_status_transition(changeset) do
     from = changeset.data.status
     {_, to} = fetch_field(changeset, :status)
@@ -207,6 +194,40 @@ defmodule OPS.Declarations do
     else
       add_error(changeset, :status, "Incorrect status transition.")
     end
+  end
+
+  defp log_status_updates({_, declarations}) do
+    {_, changelog} =
+      declarations
+      |> Enum.map(fn decl ->
+          %{
+            actor_id: decl.updated_by,
+            resource: "declarations",
+            resource_id: decl.id,
+            changeset: %{status: decl.status}
+          }
+         end)
+      |> create_audit_logs()
+
+    {:ok, changelog}
+  end
+
+  defp log_insert(%OPS.Declarations.Declaration{} = declaration) do
+    changes = %{
+        actor_id: declaration.created_by,
+        resource: "declarations",
+        resource_id: declaration.id,
+        changeset: sanitize_changeset(declaration)
+    }
+
+    create_audit_log(changes)
+    {:ok, declaration}
+  end
+
+  defp sanitize_changeset(declaration) do
+    declaration
+    |> Map.from_struct()
+    |> Map.drop([:__meta__, :inserted_at, :updated_at])
   end
 
   defp updated_fields_list(updates), do: [:id | Keyword.keys(updates)]
