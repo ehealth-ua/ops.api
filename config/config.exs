@@ -81,7 +81,10 @@ config :ops, OPS.API.IL,
   ]
 
 # Configures Elixir's Logger
-config :logger, :console, format: "$message\n"
+config :logger, :console,
+  format: "$message\n",
+  handle_otp_reports: true,
+  level: :info
 
 config :ops, :block_versions, %{
   "v1" => "
