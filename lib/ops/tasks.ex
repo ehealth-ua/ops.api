@@ -4,8 +4,8 @@ defmodule :ops_tasks do
   import Mix.Ecto, warn: false
 
   def migrate! do
-    block_migrations_dir = Path.join(["priv", "block_repo", "migrations"])
-    ops_migrations_dir = Path.join(["priv", "repo", "migrations"])
+    block_migrations_dir = Application.app_dir(:ops, "priv/block_repo/migrations")
+    ops_migrations_dir = Application.app_dir(:ops, "priv/repo/migrations")
 
     load_app()
 
