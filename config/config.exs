@@ -63,7 +63,9 @@ config :ops, OPS.Scheduler,
   declaration_autotermination: {:system, :string,
     "DECLARATION_AUTOTERMINATION_SCHEDULE", "* 0-4 * * *"},
   medication_request_autotermination: {:system, :string,
-    "MEDICATION_REQUEST_AUTOTERMINATION_SCHEDULE", "* * * * *"}
+    "MEDICATION_REQUEST_AUTOTERMINATION_SCHEDULE", "* * * * *"},
+  close_block: {:system, :string,
+    "CLOSE_BLOCK_SCHEDULE", "0 * * * *"}
 
 # Configures the endpoint
 config :ops, OPS.Web.Endpoint,
