@@ -7,6 +7,7 @@ defmodule OPS.Scheduler do
   alias Quantum.Job
   alias OPS.MedicationDispenses
   alias OPS.MedicationRequests
+  alias OPS.Block
   import OPS.Declarations, only: [approve_declarations: 0, terminate_declarations: 0]
 
   def create_jobs do
@@ -40,6 +41,15 @@ defmodule OPS.Scheduler do
     |> Job.set_overlap(false)
     |> Job.set_schedule(Parser.parse!(get_config()[:declaration_autotermination]))
     |> Job.set_task(&terminate_declarations/0)
+    |> __MODULE__.add_job()
+
+    __MODULE__.new_job()
+    |> Job.set_name(:close_block)
+    |> Job.set_overlap(false)
+    |> Job.set_schedule(Parser.parse!(get_config()[:close_block]))
+    |> Job.set_task(fn ->
+      {:ok, block} = API.close_block()
+    end)
     |> __MODULE__.add_job()
   end
 
