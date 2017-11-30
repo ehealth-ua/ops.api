@@ -7,7 +7,7 @@ defmodule OPS.Scheduler do
   alias Quantum.Job
   alias OPS.MedicationDispenses
   alias OPS.MedicationRequests
-  alias OPS.Block
+  alias OPS.Block.API
   import OPS.Declarations, only: [approve_declarations: 0, terminate_declarations: 0]
 
   def create_jobs do
