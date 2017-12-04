@@ -1,7 +1,7 @@
 defmodule OPS.Mixfile do
   use Mix.Project
 
-  @version "1.114.1"
+  @version "1.115.1"
 
   def project do
     [app: :ops,
