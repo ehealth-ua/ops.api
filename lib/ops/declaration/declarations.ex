@@ -11,6 +11,7 @@ defmodule OPS.Declarations do
   alias OPS.Declarations.Declaration
   alias OPS.Declarations.DeclarationSearch
   alias OPS.API.IL
+  alias OPS.EventManager
   import OPS.AuditLogs, only: [create_audit_logs: 1, create_audit_log: 1]
   require Logger
 
@@ -32,8 +33,16 @@ defmodule OPS.Declarations do
     |> Repo.insert_and_log(created_by)
   end
 
-  def update_declaration(%Declaration{} = declaration, attrs) do
+  def update_declaration(%Declaration{status: old_status} = declaration, attrs) do
     updated_by = Map.get(attrs, "updated_by") || Map.get(attrs, :updated_by)
+
+    with {:ok, declaration} <- declaration
+                               |> declaration_changeset(attrs)
+                               |> Repo.update_and_log(updated_by),
+        _ <- EventManager.insert_change_status(declaration, old_status, declaration.status, declaration.updated_by)
+    do
+      {:ok, declaration}
+    end
 
     declaration
     |> declaration_changeset(attrs)
@@ -200,6 +209,7 @@ defmodule OPS.Declarations do
     {_, changelog} =
       declarations
       |> Enum.map(fn decl ->
+          EventManager.insert_change_status(decl, decl.status, decl.updated_by)
           %{
             actor_id: decl.updated_by,
             resource: "declarations",

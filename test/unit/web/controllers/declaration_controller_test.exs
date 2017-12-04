@@ -4,6 +4,8 @@ defmodule OPS.Web.DeclarationControllerTest do
   alias OPS.Declarations
   alias OPS.Declarations.Declaration
   alias OPS.Declarations.DeclarationStatusHistory
+  alias OPS.EventManagerRepo
+  alias OPS.EventManager.Event
 
   @create_attrs %{
     id: Ecto.UUID.generate(),
@@ -166,6 +168,14 @@ defmodule OPS.Web.DeclarationControllerTest do
 
     %{status: status} = Declarations.get_declaration!(id2)
     assert "active" == status
+
+    assert [event1] = EventManagerRepo.all(Event)
+    assert %Event{
+      entity_type: "Declaration",
+      entity_id: ^id1,
+      event_type: "StatusChangeEvent",
+      properties: %{"new_status" => "terminated"},
+    } = event1
   end
 
   test "doesn't terminate other declarations and renders errors when data is invalid", %{conn: conn} do
@@ -207,6 +217,13 @@ defmodule OPS.Web.DeclarationControllerTest do
     assert Enum.all?(declaration_status_hstrs, &(Map.get(&1, :declaration_id) == id))
     assert 2 = Enum.count(declaration_status_hstrs)
     assert ~w(active closed) == Enum.map(declaration_status_hstrs, &(Map.get(&1, :status)))
+    assert [event] = EventManagerRepo.all(Event)
+    assert %Event{
+      entity_type: "Declaration",
+      entity_id: ^id,
+      event_type: "StatusChangeEvent",
+      properties: %{"new_status" => "closed"},
+    } = event
   end
 
   @tag pending: true

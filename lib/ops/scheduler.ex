@@ -48,7 +48,7 @@ defmodule OPS.Scheduler do
     |> Job.set_overlap(false)
     |> Job.set_schedule(Parser.parse!(get_config()[:close_block]))
     |> Job.set_task(fn ->
-      {:ok, block} = API.close_block()
+      {:ok, _block} = API.close_block()
     end)
     |> __MODULE__.add_job()
   end
