@@ -1,4 +1,6 @@
 defmodule OPS.Mixfile do
+  @moduledoc false
+
   use Mix.Project
 
   @version "1.115.1"
