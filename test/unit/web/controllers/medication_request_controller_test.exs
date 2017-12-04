@@ -2,9 +2,10 @@ defmodule OPS.Web.MedicationRequestControllerTest do
   use OPS.Web.ConnCase
 
   alias OPS.MedicationRequests.MedicationRequest
-  alias OPS.MedicationDispense.Schema, as: MedicationDispense
+  alias OPS.MedicationDispenses.MedicationDispense
   alias OPS.EventManagerRepo
   alias OPS.EventManager.Event
+  alias Ecto.UUID
 
   setup %{conn: conn} do
     medication_request1 = insert(:medication_request,
@@ -131,7 +132,7 @@ defmodule OPS.Web.MedicationRequestControllerTest do
         person_id: medication_request.person_id
       )
       conn = post conn, medication_request_path(conn, :doctor_list), %{
-        "employee_id" => "#{medication_request.employee_id},#{Ecto.UUID.generate()}",
+        "employee_id" => "#{medication_request.employee_id},#{UUID.generate()}",
         "person_id" => medication_request.person_id,
         "id" => medication_request.id,
         "created_from" => to_string(medication_request.created_at),
@@ -173,7 +174,7 @@ defmodule OPS.Web.MedicationRequestControllerTest do
     test "empty search", %{conn: conn} do
       today = to_string(Date.utc_today())
       conn = get conn, medication_request_path(conn, :qualify_list, %{
-        "person_id" => Ecto.UUID.generate(),
+        "person_id" => UUID.generate(),
         "started_at" => today,
         "ended_at" => today,
       })
@@ -188,7 +189,7 @@ defmodule OPS.Web.MedicationRequestControllerTest do
 
     test "invalid dates request", %{conn: conn} do
       conn = get conn, medication_request_path(conn, :qualify_list, %{
-        "person_id" => Ecto.UUID.generate(),
+        "person_id" => UUID.generate(),
         "started_at" => "invalid",
         "endded_at" => "invalid"
       })
@@ -203,7 +204,7 @@ defmodule OPS.Web.MedicationRequestControllerTest do
       conn = patch conn, medication_request_path(conn, :update, id), %{
         "medication_request" => %{
           "status" => status,
-          "updated_by" => Ecto.UUID.generate(),
+          "updated_by" => UUID.generate(),
         },
       }
       resp = json_response(conn, 200)
@@ -220,12 +221,12 @@ defmodule OPS.Web.MedicationRequestControllerTest do
 
   describe "create medication request" do
     test "creates with valid data", %{conn: conn, data: [medication_request, _]} do
-      id = Ecto.UUID.generate()
+      id = UUID.generate()
       mr =
         medication_request
         |> Map.put(:id, id)
         |> Map.put(:request_number, id)
-        |> Map.put(:medication_request_requests_id, Ecto.UUID.generate())
+        |> Map.put(:medication_request_requests_id, UUID.generate())
       conn = post conn, medication_request_path(conn, :create), %{
         "medication_request" => Map.from_struct(mr)
       }
@@ -251,7 +252,7 @@ defmodule OPS.Web.MedicationRequestControllerTest do
     test "empty search", %{conn: conn} do
       today = to_string(Date.utc_today())
       conn = get conn, medication_request_path(conn, :prequalify_list, %{
-        "person_id" => Ecto.UUID.generate(),
+        "person_id" => UUID.generate(),
         "started_at" => today,
         "ended_at" => today,
       })
@@ -266,7 +267,7 @@ defmodule OPS.Web.MedicationRequestControllerTest do
 
     test "invalid dates request", %{conn: conn} do
       conn = get conn, medication_request_path(conn, :prequalify_list, %{
-        "person_id" => Ecto.UUID.generate(),
+        "person_id" => UUID.generate(),
         "started_at" => "invalid",
         "endded_at" => "invalid"
       })

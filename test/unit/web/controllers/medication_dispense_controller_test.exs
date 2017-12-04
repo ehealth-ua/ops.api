@@ -1,25 +1,26 @@
 defmodule OPS.Web.MedicationDispenseControllerTest do
   use OPS.Web.ConnCase
 
-  alias OPS.MedicationDispense.Schema, as: MedicationDispense
+  alias OPS.MedicationDispenses.MedicationDispense
+  alias Ecto.UUID
 
   @create_attrs %{
-    id: Ecto.UUID.generate(),
-    medication_request_id: Ecto.UUID.generate(),
+    id: UUID.generate(),
+    medication_request_id: UUID.generate(),
     dispensed_at: "2017-08-17",
-    party_id: Ecto.UUID.generate(),
-    legal_entity_id: Ecto.UUID.generate(),
-    payment_id: Ecto.UUID.generate(),
-    employee_id: Ecto.UUID.generate(),
-    division_id: Ecto.UUID.generate(),
-    medical_program_id: Ecto.UUID.generate(),
+    party_id: UUID.generate(),
+    legal_entity_id: UUID.generate(),
+    payment_id: UUID.generate(),
+    employee_id: UUID.generate(),
+    division_id: UUID.generate(),
+    medical_program_id: UUID.generate(),
     status: MedicationDispense.status(:new),
     is_active: true,
-    inserted_by: Ecto.UUID.generate(),
-    updated_by: Ecto.UUID.generate(),
+    inserted_by: UUID.generate(),
+    updated_by: UUID.generate(),
     dispense_details: [
       %{
-        medication_id: Ecto.UUID.generate(),
+        medication_id: UUID.generate(),
         medication_qty: 10,
         sell_price: 18.65,
         reimbursement_amount: 0,
@@ -30,15 +31,15 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
   }
 
   @update_attrs %{
-    medication_request_id: Ecto.UUID.generate(),
-    party_id: Ecto.UUID.generate(),
+    medication_request_id: UUID.generate(),
+    party_id: UUID.generate(),
     dispensed_at: "2017-08-01",
     status: MedicationDispense.status(:rejected),
-    inserted_by: Ecto.UUID.generate(),
-    updated_by: Ecto.UUID.generate(),
+    inserted_by: UUID.generate(),
+    updated_by: UUID.generate(),
     is_active: false,
-    legal_entity_id: Ecto.UUID.generate(),
-    division_id: Ecto.UUID.generate(),
+    legal_entity_id: UUID.generate(),
+    division_id: UUID.generate(),
   }
 
   setup %{conn: conn} do

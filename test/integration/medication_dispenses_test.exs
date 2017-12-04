@@ -3,18 +3,27 @@ defmodule OPS.MedicationDispensesTest do
 
   use OPS.Web.ConnCase
 
-  alias OPS.MedicationDispense.Schema, as: MedicationDispense
+  alias OPS.MedicationDispenses.MedicationDispense
   alias OPS.MedicationDispenses
   alias OPS.MedicationDispenseStatusHistory
+  alias OPS.EventManagerRepo
+  alias OPS.EventManager.Event
   alias OPS.Repo
 
   test "terminate/1" do
-    insert(:medication_dispense)
+    %{id: id} = insert(:medication_dispense)
     assert 1 == count_by_status(MedicationDispense.status(:new))
 
     MedicationDispenses.terminate(0)
     assert 0 == count_by_status(MedicationDispense.status(:new))
     assert 1 == count_by_status(MedicationDispense.status(:expired))
+    assert [event] = EventManagerRepo.all(Event)
+    assert %Event{
+      entity_type: "MedicationDispense",
+      entity_id: ^id,
+      event_type: "StatusChangeEvent",
+      properties: %{"new_status" => "EXPIRED"}
+    } = event
   end
 
   test "status history" do

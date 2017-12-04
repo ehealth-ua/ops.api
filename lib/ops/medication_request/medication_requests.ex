@@ -2,7 +2,7 @@ defmodule OPS.MedicationRequests do
   @moduledoc false
 
   alias OPS.MedicationRequests.MedicationRequest
-  alias OPS.MedicationDispense.Schema, as: MedicationDispense
+  alias OPS.MedicationDispenses.MedicationDispense
   alias OPS.Repo
   alias OPS.MedicationRequest.Search
   alias OPS.Declarations.Declaration

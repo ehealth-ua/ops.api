@@ -14,6 +14,6 @@ defmodule OPS.MedicationDispense.Details do
     field :sell_amount, :float
     field :discount_amount, :float
 
-    belongs_to :medication_dispense, OPS.MedicationDispense.Schema, define_field: false
+    belongs_to :medication_dispense, OPS.MedicationDispenses.MedicationDispense, define_field: false
   end
 end
