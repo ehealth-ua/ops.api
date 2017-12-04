@@ -1,5 +1,4 @@
 defmodule OPS.API.ResponseDecoder do
-
   @moduledoc """
   HTTPPoison JSON to Elixir data decoder and formatter
   """
