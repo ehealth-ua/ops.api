@@ -5,7 +5,7 @@ defmodule OPS.Factory do
 
   alias OPS.Declarations.Declaration
   alias OPS.MedicationDispense.Schema, as: MedicationDispense
-  alias OPS.MedicationRequest.Schema, as: MedicationRequest
+  alias OPS.MedicationRequests.MedicationRequest
   alias OPS.MedicationDispense.Details
 
   def declaration_factory do

@@ -1,4 +1,4 @@
-defmodule OPS.MedicationRequest.Schema do
+defmodule OPS.MedicationRequests.MedicationRequest do
   @moduledoc false
 
   use Ecto.Schema

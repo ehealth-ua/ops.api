@@ -1,8 +1,10 @@
 defmodule OPS.Web.MedicationRequestControllerTest do
   use OPS.Web.ConnCase
 
-  alias OPS.MedicationRequest.Schema, as: MedicationRequest
+  alias OPS.MedicationRequests.MedicationRequest
   alias OPS.MedicationDispense.Schema, as: MedicationDispense
+  alias OPS.EventManagerRepo
+  alias OPS.EventManager.Event
 
   setup %{conn: conn} do
     medication_request1 = insert(:medication_request,
@@ -147,7 +149,7 @@ defmodule OPS.Web.MedicationRequestControllerTest do
       )
       conn = post conn, medication_request_path(conn, :doctor_list), %{"status" => "invalid"}
       resp = json_response(conn, 200)["data"]
-      assert 0 == length(resp)
+      assert Enum.empty?(resp)
     end
   end
 
@@ -196,14 +198,23 @@ defmodule OPS.Web.MedicationRequestControllerTest do
 
   describe "update medication request" do
     test "success update", %{conn: conn, data: [medication_request, _]} do
-      conn = patch conn, medication_request_path(conn, :update, medication_request.id), %{
+      id = medication_request.id
+      status = MedicationRequest.status(:completed)
+      conn = patch conn, medication_request_path(conn, :update, id), %{
         "medication_request" => %{
-          "status" => MedicationRequest.status(:completed),
+          "status" => status,
           "updated_by" => Ecto.UUID.generate(),
         },
       }
       resp = json_response(conn, 200)
-      assert MedicationRequest.status(:completed) == resp["data"]["status"]
+      assert status == resp["data"]["status"]
+      assert [event] = EventManagerRepo.all(Event)
+      assert %Event{
+        entity_type: "MedicationRequest",
+        entity_id: ^id,
+        event_type: "StatusChangeEvent",
+        properties: %{"new_status" => ^status}
+      } = event
     end
   end
 
