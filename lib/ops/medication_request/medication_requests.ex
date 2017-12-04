@@ -1,8 +1,8 @@
 defmodule OPS.MedicationRequests do
   @moduledoc false
 
-  alias OPS.MedicationRequest.Schema, as: MedicationRequest
-  alias OPS.MedicationDispense.Schema, as: MedicationDispense
+  alias OPS.MedicationRequests.MedicationRequest
+  alias OPS.MedicationDispenses.MedicationDispense
   alias OPS.Repo
   alias OPS.MedicationRequest.Search
   alias OPS.Declarations.Declaration
@@ -11,6 +11,7 @@ defmodule OPS.MedicationRequests do
   import Ecto.Changeset
   import OPS.AuditLogs, only: [create_audit_logs: 1]
   alias Ecto.Multi
+  alias OPS.EventManager
   use OPS.Search
 
   def list(params) do
@@ -38,10 +39,15 @@ defmodule OPS.MedicationRequests do
     |> prequalify_search()
   end
 
-  def update(medication_request, attrs) do
-    medication_request
-    |> changeset(attrs)
-    |> Repo.update_and_log(Map.get(attrs, "updated_by"))
+  def update(%MedicationRequest{status: old_status} = medication_request, attrs) do
+    with {:ok, medication_request} <- medication_request
+                                      |> changeset(attrs)
+                                      |> Repo.update_and_log(Map.get(attrs, "updated_by")),
+         author_id <- medication_request.updated_by,
+         _ <- EventManager.insert_change_status(medication_request, old_status, medication_request.status, author_id)
+    do
+      {:ok, medication_request}
+    end
   end
 
   def create(%{"medication_request" => mr}) do
@@ -171,12 +177,17 @@ defmodule OPS.MedicationRequests do
       |> where([mr], mr.status == ^MedicationRequest.status(:active))
       |> where([mr], mr.ended_at <= ^Date.utc_today())
 
-    updates = [status: MedicationRequest.status(:expired),
-          updated_by: Confex.fetch_env!(:ops, :system_user),
-          updated_at: DateTime.utc_now()]
+    new_status = MedicationRequest.status(:expired)
+    author_id = Confex.fetch_env!(:ops, :system_user)
+    updates = [
+      status: new_status,
+      updated_by: author_id,
+      updated_at: DateTime.utc_now()
+    ]
 
     Multi.new()
     |> Multi.update_all(:medication_requests, query, [set: updates], returning: [:id, :status, :updated_by])
+    |> Multi.run(:insert_events, &(insert_events(&1, new_status, author_id)))
     |> Multi.run(:logged_terminations, &log_changes(&1))
     |> Repo.transaction()
   end
@@ -195,6 +206,14 @@ defmodule OPS.MedicationRequests do
       |> create_audit_logs()
 
     {:ok, changelog}
+  end
+
+  defp insert_events(multi, status, author_id) do
+    {_, medication_requests} = multi.medication_requests
+    Enum.each(medication_requests, fn medication_request ->
+      EventManager.insert_change_status(medication_request, status, author_id)
+    end)
+    {:ok, medication_requests}
   end
 
   defp add_created_at_doctor(query, nil, nil), do: query

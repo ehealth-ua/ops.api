@@ -4,8 +4,8 @@ defmodule OPS.Factory do
   use ExMachina.Ecto, repo: OPS.Repo
 
   alias OPS.Declarations.Declaration
-  alias OPS.MedicationDispense.Schema, as: MedicationDispense
-  alias OPS.MedicationRequest.Schema, as: MedicationRequest
+  alias OPS.MedicationDispenses.MedicationDispense
+  alias OPS.MedicationRequests.MedicationRequest
   alias OPS.MedicationDispense.Details
 
   def declaration_factory do

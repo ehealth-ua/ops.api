@@ -17,6 +17,7 @@ defmodule OPS do
       # Start the Ecto repository
       supervisor(OPS.Repo, []),
       supervisor(OPS.BlockRepo, []),
+      supervisor(OPS.EventManagerRepo, []),
       # Start the endpoint when the application starts
       supervisor(OPS.Web.Endpoint, []),
       # Starts a worker by calling: OPS.Worker.start_link(arg1, arg2, arg3)

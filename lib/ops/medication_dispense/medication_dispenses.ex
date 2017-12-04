@@ -1,11 +1,12 @@
 defmodule OPS.MedicationDispenses do
   @moduledoc false
 
-  alias OPS.MedicationDispense.Schema, as: MedicationDispense
+  alias OPS.MedicationDispenses.MedicationDispense
   alias OPS.MedicationDispense.Details
   alias OPS.Repo
   alias OPS.MedicationDispense.Search
   alias Ecto.Multi
+  alias OPS.EventManager
   import Ecto.Changeset
   import OPS.AuditLogs, only: [create_audit_logs: 1]
   use OPS.Search
@@ -75,11 +76,14 @@ defmodule OPS.MedicationDispenses do
     end
   end
 
-  def update(medication_dispense, attrs) do
+  def update(%MedicationDispense{status: old_status} = medication_dispense, attrs) do
     with {:ok, medication_dispense} <-
       medication_dispense
         |> changeset(attrs)
-        |> Repo.update_and_log(Map.get(attrs, "updated_by"))
+        |> Repo.update_and_log(Map.get(attrs, "updated_by")),
+      author_id <- medication_dispense.updated_by,
+      status <- medication_dispense.status,
+      _ <- EventManager.insert_change_status(medication_dispense, old_status, status, author_id)
     do
       {:ok, Repo.preload(medication_dispense, :medication_request, force: true)}
     end
@@ -91,10 +95,17 @@ defmodule OPS.MedicationDispenses do
       |> where([md], md.status == ^MedicationDispense.status(:new))
       |> where([md], md.inserted_at < datetime_add(^NaiveDateTime.utc_now, ^-expiration, "minute"))
 
-    updates = [status: MedicationDispense.status(:expired), updated_at: DateTime.utc_now()]
+    new_status = MedicationDispense.status(:expired)
+    author_id = Confex.fetch_env!(:ops, :system_user)
+    updates = [
+      status: new_status,
+      updated_at: DateTime.utc_now(),
+      updated_by: author_id,
+    ]
 
     Multi.new()
     |> Multi.update_all(:medication_dispenses, query, [set: updates], returning: [:id, :status, :updated_by])
+    |> Multi.run(:insert_events, &(insert_events(&1, new_status, author_id)))
     |> Multi.run(:logged_terminations, &log_changes(&1))
     |> Repo.transaction()
   end
@@ -167,6 +178,14 @@ defmodule OPS.MedicationDispenses do
     details
     |> cast(attrs, fields)
     |> validate_required(fields)
+  end
+
+  defp insert_events(multi, status, author_id) do
+    {_, medication_dispenses} = multi.medication_dispenses
+    Enum.each(medication_dispenses, fn medication_dispense ->
+      EventManager.insert_change_status(medication_dispense, status, author_id)
+    end)
+    {:ok, medication_dispenses}
   end
 
   defp add_dispensed_at_query(query, nil, nil), do: query

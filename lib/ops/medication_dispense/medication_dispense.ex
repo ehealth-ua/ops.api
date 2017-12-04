@@ -1,4 +1,4 @@
-defmodule OPS.MedicationDispense.Schema do
+defmodule OPS.MedicationDispenses.MedicationDispense do
   @moduledoc false
 
   use Ecto.Schema
@@ -28,7 +28,7 @@ defmodule OPS.MedicationDispense.Schema do
     field :updated_by, Ecto.UUID
 
     has_many :details, OPS.MedicationDispense.Details, foreign_key: :medication_dispense_id
-    belongs_to :medication_request, OPS.MedicationRequest.Schema, define_field: false
+    belongs_to :medication_request, OPS.MedicationRequests.MedicationRequest, define_field: false
 
     timestamps(type: :utc_datetime)
   end

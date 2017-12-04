@@ -82,8 +82,21 @@ defmodule OPS.Mixfile do
   #
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
-    ["ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
-     "ecto.reset": ["ecto.drop", "ecto.setup"],
-     "test":       ["ecto.drop", "ecto.create --quiet", "ecto.migrate", "test"]]
+    [
+      "ecto.setup": [
+        "ecto.create",
+        "ecto.create --repo OPS.EventManagerRepo",
+        "ecto.migrate",
+        "run priv/repo/seeds.exs"
+      ],
+      "ecto.reset": ["ecto.drop", "ecto.setup"],
+      "test": [
+        "ecto.drop",
+        "ecto.create --quiet",
+        "ecto.create --quiet --repo OPS.EventManagerRepo",
+        "ecto.migrate",
+        "test"
+      ]
+    ]
   end
 end

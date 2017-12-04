@@ -3,12 +3,14 @@ defmodule OPS.MedicationRequestsTest do
 
   use OPS.Web.ConnCase
 
-  alias OPS.MedicationRequest.Schema, as: MedicationRequest
+  alias OPS.MedicationRequests.MedicationRequest
   alias OPS.MedicationRequests
+  alias OPS.EventManagerRepo
+  alias OPS.EventManager.Event
   alias OPS.Repo
 
   test "terminate/1" do
-    insert(:medication_request, ended_at: "2017-01-01")
+    %{id: id} = insert(:medication_request, ended_at: "2017-01-01")
 
     assert 1 == count_by_status(MedicationRequest.status(:active))
 
@@ -16,6 +18,13 @@ defmodule OPS.MedicationRequestsTest do
 
     assert 0 == count_by_status(MedicationRequest.status(:active))
     assert 1 == count_by_status(MedicationRequest.status(:expired))
+    assert [event] = EventManagerRepo.all(Event)
+    assert %Event{
+      entity_type: "MedicationRequest",
+      entity_id: ^id,
+      event_type: "StatusChangeEvent",
+      properties: %{"new_status" => "EXPIRED"}
+    } = event
   end
 
   defp count_by_status(status) do
