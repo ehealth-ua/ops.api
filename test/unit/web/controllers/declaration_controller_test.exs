@@ -174,7 +174,7 @@ defmodule OPS.Web.DeclarationControllerTest do
       entity_type: "Declaration",
       entity_id: ^id1,
       event_type: "StatusChangeEvent",
-      properties: %{"new_status" => "terminated"},
+      properties: %{"status" => %{"new_value" => "terminated"}},
     } = event1
   end
 
@@ -222,7 +222,7 @@ defmodule OPS.Web.DeclarationControllerTest do
       entity_type: "Declaration",
       entity_id: ^id,
       event_type: "StatusChangeEvent",
-      properties: %{"new_status" => "closed"},
+      properties: %{"status" => %{"new_value" => "closed"}},
     } = event
   end
 
