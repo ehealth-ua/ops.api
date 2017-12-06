@@ -22,7 +22,7 @@ defmodule OPS.MedicationDispensesTest do
       entity_type: "MedicationDispense",
       entity_id: ^id,
       event_type: "StatusChangeEvent",
-      properties: %{"new_status" => "EXPIRED"}
+      properties: %{"status" => %{"new_value" => "EXPIRED"}}
     } = event
   end
 

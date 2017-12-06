@@ -214,7 +214,7 @@ defmodule OPS.Web.MedicationRequestControllerTest do
         entity_type: "MedicationRequest",
         entity_id: ^id,
         event_type: "StatusChangeEvent",
-        properties: %{"new_status" => ^status}
+        properties: %{"status" => %{"new_value" => ^status}},
       } = event
     end
   end
