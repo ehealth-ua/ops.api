@@ -124,7 +124,7 @@ defmodule OPS.GeneratingSeedsTest do
 
     {:ok, v1_block} = BlockAPI.close_block()
 
-    assert "v1" == v1_block.version
+    assert "v2" == v1_block.version
 
     d3 = insert(:declaration, seed: v1_block.hash)
     d4 = insert(:declaration, seed: v1_block.hash)
@@ -138,19 +138,19 @@ defmodule OPS.GeneratingSeedsTest do
     "
 
     block_versions = Application.get_env(:ops, :block_versions)
-    Application.put_env(:ops, :block_versions, Map.put_new(block_versions, "v2", new_query))
-    Application.put_env(:ops, :current_block_version, "v2")
+    Application.put_env(:ops, :block_versions, Map.put_new(block_versions, "v3", new_query))
+    Application.put_env(:ops, :current_block_version, "v3")
     on_exit fn ->
-      Application.put_env(:ops, :current_block_version, "v1")
+      Application.put_env(:ops, :current_block_version, "v2")
     end
 
-    {:ok, v2_block} = BlockAPI.close_block()
+    {:ok, v3_block} = BlockAPI.close_block()
 
-    d5 = insert(:declaration, seed: v2_block.hash)
-    d6 = insert(:declaration, seed: v2_block.hash)
+    d5 = insert(:declaration, seed: v3_block.hash)
+    d6 = insert(:declaration, seed: v3_block.hash)
 
-    assert "v2" == v2_block.version
-    assert "#{d3.id}#{d4.id}" == v2_block.hash
+    assert "v3" == v3_block.version
+    assert "#{d3.id}#{d4.id}" == v3_block.hash
     assert "#{d3.id}#{d4.id}" == d5.seed
     assert "#{d3.id}#{d4.id}" == d6.seed
 
