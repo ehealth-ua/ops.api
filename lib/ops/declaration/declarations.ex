@@ -162,13 +162,18 @@ defmodule OPS.Declarations do
     |> Multi.run(:logged_terminations, &log_status_updates(&1.declarations))
     |> Repo.transaction()
   end
-  def terminate_declarations(user_id, employee_id) do
+  def terminate_declarations(user_id, employee_id, reason \\ "") do
     query =
       Declaration
       |> where([d], d.status in ^[Declaration.status(:active), Declaration.status(:pending)])
       |> where([d], d.employee_id == ^employee_id)
 
-    updates = [status: Declaration.status(:terminated), updated_by: user_id, updated_at: DateTime.utc_now()]
+    updates = [
+      status: Declaration.status(:terminated),
+      reason: reason,
+      updated_by: user_id,
+      updated_at: DateTime.utc_now()
+    ]
 
     Multi.new
     |> Multi.update_all(:terminated_declarations, query, [set: updates], returning: updated_fields_list(updates))
@@ -176,10 +181,18 @@ defmodule OPS.Declarations do
     |> Repo.transaction()
   end
 
-  def terminate_person_declarations(user_id, person_id) do
-    query = from d in Declaration, where: [person_id: ^person_id]
+  def terminate_person_declarations(user_id, person_id, reason \\ "") do
+    query =
+      Declaration
+      |> where([d], d.status in ^[Declaration.status(:active), Declaration.status(:pending)])
+      |> where([d], d.person_id == ^person_id)
 
-    updates = [status: "terminated", updated_by: user_id, updated_at: DateTime.utc_now()]
+    updates = [
+      status: Declaration.status(:terminated),
+      reason: reason,
+      updated_by: user_id,
+      updated_at: DateTime.utc_now()
+    ]
 
     Multi.new
     |> Multi.update_all(:terminated_declarations, query, [set: updates], returning: updated_fields_list(updates))
