@@ -27,24 +27,6 @@ config :ops,
   ecto_repos: [OPS.Repo, OPS.BlockRepo, OPS.EventManagerRepo],
   env: Mix.env()
 
-# Configure your database
-config :ops, OPS.Repo,
-  adapter: Ecto.Adapters.Postgres,
-  database: {:system, "DB_NAME", "ops_dev"},
-  username: {:system, "DB_USER", "postgres"},
-  password: {:system, "DB_PASSWORD", "postgres"},
-  hostname: {:system, "DB_HOST", "localhost"},
-  port: {:system, :integer, "DB_PORT", 5432},
-  loggers: [{Ecto.LoggerJSON, :log, [:info]}]
-
-config :ops, OPS.BlockRepo,
-  adapter: Ecto.Adapters.Postgres,
-  database: {:system, "BLOCK_DB_NAME", "seed_dev"},
-  username: {:system, "BLOCK_DB_USER", "postgres"},
-  password: {:system, "BLOCK_DB_PASSWORD", "postgres"},
-  hostname: {:system, "BLOCK_DB_HOST", "localhost"},
-  port: {:system, :integer, "BLOCK_DB_PORT", 5432},
-  loggers: [{Ecto.LoggerJSON, :log, [:info]}]
 # This configuration file is loaded before any dependency and
 # is restricted to this project.
 
@@ -117,6 +99,9 @@ config :ops, :block_versions, %{
 
 # Must be adjusted every time current_block_version is appended with new version
 config :ops, :current_block_version, "v1"
+
+config :ecto_trail,
+  table_name: "audit_log"
 
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment

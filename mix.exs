@@ -54,17 +54,16 @@ defmodule OPS.Mixfile do
      {:scrivener_ecto, "~> 1.2"},
      {:postgrex, "~> 0.13.2"},
      {:cowboy, "~> 1.1"},
-     {:httpoison, "~> 0.11"},
-     {:phoenix, "~> 1.3.0-rc"},
+     {:httpoison, "~> 1.0"},
+     {:phoenix, "~> 1.3.0"},
      {:eview, "~> 0.12.0"},
      {:phoenix_ecto, "~> 3.2"},
      {:ecto_trail, ">= 0.0.0"},
-     {:quantum, "~> 2.0.4"},
+     {:quantum, "~> 2.2.0"},
      {:plug_logger_json, "~> 0.5"},
      {:ecto_logger_json, "~> 0.1"},
      {:ex_machina, "~> 2.0", only: [:dev, :test]},
      {:excoveralls, ">= 0.5.0", only: [:dev, :test]},
-     {:dogma, ">= 0.1.12", only: [:dev, :test]},
      {:credo, ">= 0.5.1", only: [:dev, :test]}]
   end
 
@@ -88,6 +87,7 @@ defmodule OPS.Mixfile do
       "ecto.setup": [
         "ecto.create",
         "ecto.create --repo OPS.EventManagerRepo",
+        "ecto.create --repo OPS.BlockRepo",
         "ecto.migrate",
         "run priv/repo/seeds.exs"
       ],
@@ -96,6 +96,7 @@ defmodule OPS.Mixfile do
         "ecto.drop",
         "ecto.create --quiet",
         "ecto.create --quiet --repo OPS.EventManagerRepo",
+        "ecto.create --quiet --repo OPS.BlockRepo",
         "ecto.migrate",
         "test"
       ]

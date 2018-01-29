@@ -6,12 +6,22 @@ config :ex_unit, capture_log: true
 
 # Configure your databases
 config :ops, OPS.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  username: "postgres",
+  password: "postgres",
+  database: "ops_test",
+  hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox,
-  database: {:system, "DB_NAME", "ops_test"}
+  ownership_timeout: 120_000_000
 
 config :ops, OPS.BlockRepo,
+  adapter: Ecto.Adapters.Postgres,
+  username: "postgres",
+  password: "postgres",
+  database: "seed_test",
+  hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox,
-  database: {:system, "BLOCK_DB_NAME", "seed_test"}
+  ownership_timeout: 120_000_000
 
 config :ops, OPS.EventManagerRepo,
   adapter: Ecto.Adapters.Postgres,

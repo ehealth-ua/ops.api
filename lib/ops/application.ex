@@ -40,9 +40,9 @@ defmodule OPS do
     :ok
   end
 
-  # Loads configuration in `:on_init` callbacks and replaces `{:system, ..}` tuples via Confex
+  # Loads configuration in `:init` callbacks and replaces `{:system, ..}` tuples via Confex
   @doc false
-  def load_from_system_env(config) do
-    {:ok, Resolver.resolve!(config)}
+  def init(_key, config) do
+    Resolver.resolve(config)
   end
 end
