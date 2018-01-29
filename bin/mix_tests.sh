@@ -22,16 +22,6 @@ cd $TRAVIS_BUILD_DIR
             mix_test=1;
        fi;
 
-  # Check code style
-  echo "- mix dogma;"
-        mix dogma
-      if [ "$?" -eq 0 ]; then
-     				echo "mix dogma successfully completed"
-   				else 
-   	 				echo "mix dogma finished with errors, exited with 1"
-   	 				mix_test=1;
-      fi;
-
 
 if [ "${mix_test}" == "1" ]; then
   echo "finished with errors"

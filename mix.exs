@@ -64,7 +64,6 @@ defmodule OPS.Mixfile do
      {:ecto_logger_json, "~> 0.1"},
      {:ex_machina, "~> 2.0", only: [:dev, :test]},
      {:excoveralls, ">= 0.5.0", only: [:dev, :test]},
-     {:dogma, ">= 0.1.12", only: [:dev, :test]},
      {:credo, ">= 0.5.1", only: [:dev, :test]}]
   end
 
