@@ -36,11 +36,11 @@ defmodule OPS.Declarations do
   def update_declaration(%Declaration{status: old_status} = declaration, attrs) do
     updated_by = Map.get(attrs, "updated_by") || Map.get(attrs, :updated_by)
 
-    with {:ok, declaration} <- declaration
-                               |> declaration_changeset(attrs)
-                               |> Repo.update_and_log(updated_by),
-        _ <- EventManager.insert_change_status(declaration, old_status, declaration.status, declaration.updated_by)
-    do
+    with {:ok, declaration} <-
+           declaration
+           |> declaration_changeset(attrs)
+           |> Repo.update_and_log(updated_by),
+         _ <- EventManager.insert_change_status(declaration, old_status, declaration.status, declaration.updated_by) do
       {:ok, declaration}
     end
 
@@ -81,16 +81,19 @@ defmodule OPS.Declarations do
     |> validate_required(fields)
     |> validate_status_transition()
     |> validate_inclusion(:scope, ["family_doctor"])
-    |> validate_inclusion(:status, Enum.map(
-      ~w(
+    |> validate_inclusion(
+      :status,
+      Enum.map(
+        ~w(
         active
         closed
         terminated
         rejected
         pending
       )a,
-      &Declaration.status/1
-    ))
+        &Declaration.status/1
+      )
+    )
   end
 
   defp declaration_changeset(%DeclarationSearch{} = declaration, attrs) do
@@ -100,7 +103,8 @@ defmodule OPS.Declarations do
   end
 
   def create_declaration_with_termination_logic(%{"person_id" => person_id} = declaration_params) do
-    query = Declaration
+    query =
+      Declaration
       |> where([d], d.person_id == ^person_id)
       |> where([d], d.status in ^[Declaration.status(:active), Declaration.status(:pending)])
 
@@ -110,8 +114,11 @@ defmodule OPS.Declarations do
 
     Multi.new()
     |> Multi.update_all(:previous_declarations, query, [set: updates], returning: updated_fields_list(updates))
-    |> Multi.insert(:new_declaration, declaration_changeset(%Declaration{seed: block.hash}, declaration_params),
-        returning: true)
+    |> Multi.insert(
+      :new_declaration,
+      declaration_changeset(%Declaration{seed: block.hash}, declaration_params),
+      returning: true
+    )
     |> Multi.run(:log_declarations_update, &log_status_updates(&1.previous_declarations))
     |> Multi.run(:log_declaration_insert, &log_insert(&1.new_declaration))
     |> Repo.transaction()
@@ -122,18 +129,19 @@ defmodule OPS.Declarations do
          _ <- Logger.info("Global parameters: #{Poison.encode!(response)}"),
          parameters <- Map.fetch!(response, "data"),
          unit <- Map.fetch!(parameters, "verification_request_term_unit"),
-         expiration <- Map.fetch!(parameters, "verification_request_expiration")
-    do
+         expiration <- Map.fetch!(parameters, "verification_request_expiration") do
       unit =
         unit
-        |> String.downcase
+        |> String.downcase()
         |> String.replace_trailing("s", "")
+
       do_approve_declarations(expiration, unit)
     end
   end
 
   defp do_approve_declarations(value, unit) do
     Logger.info("approve all declarations with inserted_at + #{value} #{unit} < now()")
+
     query =
       Declaration
       |> where([d], fragment("?::date < now()::date", datetime_add(d.inserted_at, ^value, ^unit)))
@@ -152,7 +160,7 @@ defmodule OPS.Declarations do
     query =
       Declaration
       |> where([d], fragment("?::date < now()::date", d.end_date))
-      |> where([d], not d.status in ^[Declaration.status(:closed), Declaration.status(:terminated)])
+      |> where([d], d.status not in ^[Declaration.status(:closed), Declaration.status(:terminated)])
 
     user_id = Confex.fetch_env!(:ops, :system_user)
     updates = [status: Declaration.status(:closed), updated_by: user_id, updated_at: DateTime.utc_now()]
@@ -162,6 +170,7 @@ defmodule OPS.Declarations do
     |> Multi.run(:logged_terminations, &log_status_updates(&1.declarations))
     |> Repo.transaction()
   end
+
   def terminate_declarations(user_id, employee_id) do
     query =
       Declaration
@@ -170,18 +179,18 @@ defmodule OPS.Declarations do
 
     updates = [status: Declaration.status(:terminated), updated_by: user_id, updated_at: DateTime.utc_now()]
 
-    Multi.new
+    Multi.new()
     |> Multi.update_all(:terminated_declarations, query, [set: updates], returning: updated_fields_list(updates))
     |> Multi.run(:logged_terminations, &log_status_updates(&1.terminated_declarations))
     |> Repo.transaction()
   end
 
   def terminate_person_declarations(user_id, person_id) do
-    query = from d in Declaration, where: [person_id: ^person_id]
+    query = from(d in Declaration, where: [person_id: ^person_id])
 
     updates = [status: "terminated", updated_by: user_id, updated_at: DateTime.utc_now()]
 
-    Multi.new
+    Multi.new()
     |> Multi.update_all(:terminated_declarations, query, [set: updates], returning: updated_fields_list(updates))
     |> Multi.run(:logged_terminations, &log_status_updates(&1.terminated_declarations))
     |> Repo.transaction()
@@ -209,14 +218,15 @@ defmodule OPS.Declarations do
     {_, changelog} =
       declarations
       |> Enum.map(fn decl ->
-          EventManager.insert_change_status(decl, decl.status, decl.updated_by)
-          %{
-            actor_id: decl.updated_by,
-            resource: "declarations",
-            resource_id: decl.id,
-            changeset: %{status: decl.status}
-          }
-         end)
+        EventManager.insert_change_status(decl, decl.status, decl.updated_by)
+
+        %{
+          actor_id: decl.updated_by,
+          resource: "declarations",
+          resource_id: decl.id,
+          changeset: %{status: decl.status}
+        }
+      end)
       |> create_audit_logs()
 
     {:ok, changelog}
@@ -224,10 +234,10 @@ defmodule OPS.Declarations do
 
   defp log_insert(%OPS.Declarations.Declaration{} = declaration) do
     changes = %{
-        actor_id: declaration.created_by,
-        resource: "declarations",
-        resource_id: declaration.id,
-        changeset: sanitize_changeset(declaration)
+      actor_id: declaration.created_by,
+      resource: "declarations",
+      resource_id: declaration.id,
+      changeset: sanitize_changeset(declaration)
     }
 
     create_audit_log(changes)

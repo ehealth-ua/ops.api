@@ -19,7 +19,7 @@ defmodule OPS.DeclarationTest do
     "scope" => "family_doctor",
     "division_id" => Ecto.UUID.generate(),
     "legal_entity_id" => Ecto.UUID.generate(),
-    "declaration_request_id" => Ecto.UUID.generate(),
+    "declaration_request_id" => Ecto.UUID.generate()
   }
 
   @update_attrs %{
@@ -34,12 +34,12 @@ defmodule OPS.DeclarationTest do
     "is_active" => false,
     "scope" => "family_doctor",
     "division_id" => Ecto.UUID.generate(),
-    "legal_entity_id" => Ecto.UUID.generate(),
+    "legal_entity_id" => Ecto.UUID.generate()
   }
 
-   @invalid_attrs %{
-     "division_id" => "invalid"
-   }
+  @invalid_attrs %{
+    "division_id" => "invalid"
+  }
 
   setup do
     {:ok, initial_block} = insert_initial_block()
@@ -49,6 +49,7 @@ defmodule OPS.DeclarationTest do
 
   def fixture(:declaration, attrs \\ @create_attrs) do
     person_id = if Map.has_key?(attrs, "person_id"), do: attrs, else: Ecto.UUID.generate()
+
     create_attrs =
       attrs
       |> Map.put("person_id", person_id)
@@ -120,8 +121,9 @@ defmodule OPS.DeclarationTest do
     test "with invalid data doesn't terminate other declarations and returns error changeset" do
       %{id: id} = fixture(:declaration)
       invalid_attrs = Map.put(@invalid_attrs, "person_id", "person_id")
-      assert {:error, _transaction_step, %Ecto.Changeset{}, _}
-        = Declarations.create_declaration_with_termination_logic(invalid_attrs)
+
+      assert {:error, _transaction_step, %Ecto.Changeset{}, _} =
+               Declarations.create_declaration_with_termination_logic(invalid_attrs)
 
       %{status: status} = Declarations.get_declaration!(id)
       assert "active" == status
@@ -192,20 +194,24 @@ defmodule OPS.DeclarationTest do
 
       OPS.Declarations.terminate_declarations(user_id, employee_id)
 
-      Enum.each [dec1, dec2, dec3], fn declaration ->
+      Enum.each([dec1, dec2, dec3], fn declaration ->
         declaration = Repo.get(Declaration, declaration.id)
 
         assert "terminated" == declaration.status
         assert user_id == declaration.updated_by
 
-        audit_log = Repo.one!(
-          from cl in Changelog,
-          where: cl.resource == "declarations"
-                 and cl.resource_id == ^declaration.id
-                 and fragment("?->>?", cl.changeset, "status") == "terminated")
+        audit_log =
+          Repo.one!(
+            from(
+              cl in Changelog,
+              where:
+                cl.resource == "declarations" and cl.resource_id == ^declaration.id and
+                  fragment("?->>?", cl.changeset, "status") == "terminated"
+            )
+          )
 
         assert user_id == audit_log.actor_id
-      end
+      end)
     end
   end
 
@@ -224,20 +230,24 @@ defmodule OPS.DeclarationTest do
 
       OPS.Declarations.terminate_person_declarations(user_id, person_id)
 
-      Enum.each [dec1, dec2, dec3], fn declaration ->
+      Enum.each([dec1, dec2, dec3], fn declaration ->
         declaration = Repo.get(Declaration, declaration.id)
 
         assert "terminated" == declaration.status
         assert user_id == declaration.updated_by
 
-        audit_log = Repo.one!(
-          from cl in Changelog,
-          where: cl.resource == "declarations"
-                 and cl.resource_id == ^declaration.id
-                 and fragment("?->>?", cl.changeset, "status") == "terminated")
+        audit_log =
+          Repo.one!(
+            from(
+              cl in Changelog,
+              where:
+                cl.resource == "declarations" and cl.resource_id == ^declaration.id and
+                  fragment("?->>?", cl.changeset, "status") == "terminated"
+            )
+          )
 
         assert user_id == audit_log.actor_id
-      end
+      end)
     end
   end
 end

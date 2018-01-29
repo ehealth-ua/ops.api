@@ -7,7 +7,7 @@ defmodule OPS.Web.DeclarationController do
   alias OPS.Declarations
   alias OPS.Declarations.Declaration
 
-  action_fallback OPS.Web.FallbackController
+  action_fallback(OPS.Web.FallbackController)
 
   def index(conn, params) do
     with %Page{} = paging <- Declarations.list_declarations(params) do
@@ -31,14 +31,15 @@ defmodule OPS.Web.DeclarationController do
 
   def update(conn, %{"id" => id, "declaration" => declaration_params}) do
     declaration = Declarations.get_declaration!(id)
-    with {:ok, %Declaration{} = declaration} <- Declarations.update_declaration(declaration, declaration_params)
-    do
+
+    with {:ok, %Declaration{} = declaration} <- Declarations.update_declaration(declaration, declaration_params) do
       render(conn, "show.json", declaration: declaration)
     end
   end
 
   def delete(conn, %{"id" => id}) do
     declaration = Declarations.get_declaration!(id)
+
     with {:ok, %Declaration{}} <- Declarations.delete_declaration(declaration) do
       send_resp(conn, :no_content, "")
     end
@@ -48,15 +49,16 @@ defmodule OPS.Web.DeclarationController do
     case Declarations.create_declaration_with_termination_logic(declaration_params) do
       {:ok, %{new_declaration: declaration}} ->
         render(conn, "show.json", declaration: declaration)
-      {:error, _transaction_step, changeset, _} -> {:error, changeset}
+
+      {:error, _transaction_step, changeset, _} ->
+        {:error, changeset}
     end
   end
 
   def terminate_declarations(conn, %{"user_id" => user_id, "id" => employee_id}) do
     with {:ok, result} <- Declarations.terminate_declarations(user_id, employee_id),
-         {_, terminated_declarations} = result.terminated_declarations
-    do
-         render(conn, "terminated_declarations.json", declarations: terminated_declarations)
+         {_, terminated_declarations} = result.terminated_declarations do
+      render(conn, "terminated_declarations.json", declarations: terminated_declarations)
     end
   end
 
@@ -64,9 +66,8 @@ defmodule OPS.Web.DeclarationController do
     user_id = Confex.fetch_env!(:ops, :system_user)
 
     with {:ok, result} <- Declarations.terminate_person_declarations(user_id, person_id),
-         {_, terminated_declarations} = result.terminated_declarations
-    do
-         render(conn, "terminated_declarations.json", declarations: terminated_declarations)
+         {_, terminated_declarations} = result.terminated_declarations do
+      render(conn, "terminated_declarations.json", declarations: terminated_declarations)
     end
   end
 end

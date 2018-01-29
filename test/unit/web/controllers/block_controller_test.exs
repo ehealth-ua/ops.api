@@ -14,9 +14,9 @@ defmodule OPS.Web.BlockControllerTest do
   test "gets latest block", %{conn: conn} do
     {:ok, block} = BlockAPI.close_block()
 
-    assert 2 = BlockRepo.one(from b in Block, select: count(1))
+    assert 2 = BlockRepo.one(from(b in Block, select: count(1)))
 
-    conn = get conn, "/latest_block"
+    conn = get(conn, "/latest_block")
 
     %{
       "block_start" => block_start,
