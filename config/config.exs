@@ -46,14 +46,6 @@ config :ops, OPS.BlockRepo,
   port: {:system, :integer, "BLOCK_DB_PORT", 5432},
   loggers: [{Ecto.LoggerJSON, :log, [:info]}]
 
-config :ops, OPS.EventManagerRepo,
-  adapter: Ecto.Adapters.Postgres,
-  database: {:system, "EVENT_MANAGER_DB_NAME", "event_manager_dev"},
-  username: {:system, "EVENT_MANAGER_DB_USER", "postgres"},
-  password: {:system, "EVENT_MANAGER_DB_PASSWORD", "postgres"},
-  hostname: {:system, "EVENT_MANAGER_DB_HOST", "localhost"},
-  port: {:system, :integer, "EVENT_MANAGER_DB_PORT", 5432},
-  loggers: [{Ecto.LoggerJSON, :log, [:info]}]
 # This configuration file is loaded before any dependency and
 # is restricted to this project.
 
