@@ -6,9 +6,9 @@ defmodule OPS.VerificationFailure.Schema do
   use Ecto.Schema
 
   schema "verification_failures" do
-    field :resolved, :boolean
+    field(:resolved, :boolean)
 
-    belongs_to :block, Block, foreign_key: :block_id
+    belongs_to(:block, Block, foreign_key: :block_id)
 
     timestamps(type: :utc_datetime)
   end

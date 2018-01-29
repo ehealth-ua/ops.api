@@ -3,8 +3,8 @@ defmodule OPS.MedicationDispenseStatusHistory do
   use Ecto.Schema
 
   schema "medication_dispense_status_hstr" do
-    field :medication_dispense_id, Ecto.UUID
-    field :status, :string
+    field(:medication_dispense_id, Ecto.UUID)
+    field(:status, :string)
 
     timestamps(type: :utc_datetime, updated_at: false)
   end

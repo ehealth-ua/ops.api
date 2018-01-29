@@ -4,7 +4,7 @@ defmodule OPS.Search do
   """
 
   defmacro __using__(_) do
-    quote  do
+    quote do
       import Ecto.{Query, Changeset}, warn: false
       import OPS.Search
 
@@ -32,17 +32,21 @@ defmodule OPS.Search do
           |> Map.to_list()
 
         query =
-          from e in entity,
+          from(
+            e in entity,
             where: ^params,
             order_by: [desc: :inserted_at]
+          )
+
         add_status_where(query, statuses)
       end
-      def get_search_query(entity, _changes), do: from e in entity, order_by: [desc: :inserted_at]
+
+      def get_search_query(entity, _changes), do: from(e in entity, order_by: [desc: :inserted_at])
 
       defp add_status_where(query, [""]), do: query
       defp add_status_where(query, statuses), do: query |> where([e], e.status in ^statuses)
 
-      defoverridable [get_search_query: 2]
+      defoverridable get_search_query: 2
     end
   end
 

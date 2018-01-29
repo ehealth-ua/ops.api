@@ -6,7 +6,7 @@ defmodule OPS.Web.MedicationRequestController do
   alias Scrivener.Page
   alias OPS.MedicationRequests
 
-  action_fallback OPS.Web.FallbackController
+  action_fallback(OPS.Web.FallbackController)
 
   def index(conn, params) do
     with %Page{} = paging <- MedicationRequests.list(params) do
@@ -33,8 +33,7 @@ defmodule OPS.Web.MedicationRequestController do
   end
 
   def create(conn, params) do
-    with {:ok, medication_request} <- MedicationRequests.create(params)
-    do
+    with {:ok, medication_request} <- MedicationRequests.create(params) do
       conn
       |> put_status(:created)
       |> render("show.json", medication_request: medication_request)
@@ -43,8 +42,7 @@ defmodule OPS.Web.MedicationRequestController do
 
   def update(conn, %{"id" => id, "medication_request" => params}) do
     with %Page{entries: [medication_request]} <- MedicationRequests.list(%{"id" => id}),
-      {:ok, medication_request} <- MedicationRequests.update(medication_request, params)
-    do
+         {:ok, medication_request} <- MedicationRequests.update(medication_request, params) do
       render(conn, "show.json", medication_request: medication_request)
     end
   end

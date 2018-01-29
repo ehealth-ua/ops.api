@@ -12,7 +12,7 @@ cd $TRAVIS_BUILD_DIR
       fi;
 
   # Run static code analysis 
-  echo "- mix credo --strict ; "
+  echo "- mix credo --strict"
         mix credo --strict 
 
        if [ "$?" -eq 0 ]; then
@@ -23,13 +23,13 @@ cd $TRAVIS_BUILD_DIR
        fi;
 
   # Check code style
-  echo "- mix dogma;"
-        mix dogma
+  echo "- mix format --check-formatted"
+        mix format --check-formatted
       if [ "$?" -eq 0 ]; then
-     				echo "mix dogma successfully completed"
-   				else 
-   	 				echo "mix dogma finished with errors, exited with 1"
-   	 				mix_test=1;
+        echo "mix format successfully completed"
+          else
+            echo "mix format finished with errors, exited with 1"
+            mix_test=1;
       fi;
 
 

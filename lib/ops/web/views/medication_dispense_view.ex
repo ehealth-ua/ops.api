@@ -8,11 +8,12 @@ defmodule OPS.Web.MedicationDispenseView do
   end
 
   def render("show.json", %{medication_dispense: medication_dispense}) do
-    medication_request = render_one(
-      Map.get(medication_dispense, :medication_request),
-      OPS.Web.MedicationRequestView,
-      "show.json"
-    )
+    medication_request =
+      render_one(
+        Map.get(medication_dispense, :medication_request),
+        OPS.Web.MedicationRequestView,
+        "show.json"
+      )
 
     medication_dispense
     |> Map.from_struct()
