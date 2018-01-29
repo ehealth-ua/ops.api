@@ -220,17 +220,15 @@ defmodule OPS.DeclarationTest do
       user_id = Confex.fetch_env!(:ops, :system_user)
       person_id = "84e30a11-94bd-49fe-8b1f-f5511c5916d6"
 
-      # TODO: make statuses different. termination should pick up an terminate declarations
       # in all statuses
-      dec1 = fixture(:declaration)
-      dec2 = fixture(:declaration, Map.merge(@create_attrs, %{"status" => "closed"}))
-      dec3 = fixture(:declaration, Map.merge(@create_attrs, %{"status" => "rejected"}))
-
-      Repo.update_all(Declaration, set: [person_id: person_id])
+      dec1 = insert(:declaration, person_id: person_id)
+      dec2 = insert(:declaration, person_id: person_id, status: Declaration.status(:pending))
+      dec3 = insert(:declaration, person_id: person_id, status: Declaration.status(:closed))
+      dec4 = insert(:declaration, person_id: person_id, status: Declaration.status(:rejected))
 
       OPS.Declarations.terminate_person_declarations(user_id, person_id)
 
-      Enum.each([dec1, dec2, dec3], fn declaration ->
+      Enum.each([dec1, dec2], fn declaration ->
         declaration = Repo.get(Declaration, declaration.id)
 
         assert "terminated" == declaration.status
@@ -247,6 +245,12 @@ defmodule OPS.DeclarationTest do
           )
 
         assert user_id == audit_log.actor_id
+      end)
+
+      Enum.each([dec3, dec4], fn declaration ->
+        declaration = Repo.get(Declaration, declaration.id)
+        assert "terminated" != declaration.status
+        assert user_id != declaration.updated_by
       end)
     end
   end

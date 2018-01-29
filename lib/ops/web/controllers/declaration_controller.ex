@@ -55,19 +55,22 @@ defmodule OPS.Web.DeclarationController do
     end
   end
 
-  def terminate_declarations(conn, %{"user_id" => user_id, "id" => employee_id}) do
-    with {:ok, result} <- Declarations.terminate_declarations(user_id, employee_id),
+  def terminate_declarations(conn, %{"user_id" => user_id, "id" => employee_id} = attrs) do
+    with {:ok, result} <- Declarations.terminate_declarations(user_id, employee_id, attrs["reason"]),
          {_, terminated_declarations} = result.terminated_declarations do
       render(conn, "terminated_declarations.json", declarations: terminated_declarations)
     end
   end
 
-  def terminate_person_declarations(conn, %{"id" => person_id}) do
-    user_id = Confex.fetch_env!(:ops, :system_user)
+  def terminate_person_declarations(conn, %{"id" => person_id} = attrs) do
+    user_id = fetch_user_id(attrs)
 
-    with {:ok, result} <- Declarations.terminate_person_declarations(user_id, person_id),
+    with {:ok, result} <- Declarations.terminate_person_declarations(user_id, person_id, attrs["reason"]),
          {_, terminated_declarations} = result.terminated_declarations do
       render(conn, "terminated_declarations.json", declarations: terminated_declarations)
     end
   end
+
+  defp fetch_user_id(%{"user_id" => user_id}) when byte_size(user_id) > 0, do: user_id
+  defp fetch_user_id(_), do: Confex.fetch_env!(:ops, :system_user)
 end

@@ -259,7 +259,7 @@ defmodule OPS.Web.DeclarationControllerTest do
     dec = fixture(:declaration)
     Repo.update_all(Declaration, set: [employee_id: employee_id])
 
-    payload = %{employee_id: employee_id, user_id: user_id}
+    payload = %{employee_id: employee_id, user_id: user_id, reason: "Manual"}
     conn = patch(conn, "/employees/#{employee_id}/declarations/actions/terminate", payload)
 
     response = json_response(conn, 200)
@@ -267,6 +267,20 @@ defmodule OPS.Web.DeclarationControllerTest do
 
     assert dec.id == response_decl["id"]
     assert user_id == response_decl["updated_by"]
+    assert "Manual" == response_decl["reason"]
+  end
+
+  test "no declarations for terminating", %{conn: conn} do
+    user_id = "ab4b2245-55c9-46eb-9ac6-c751020a46e3"
+    employee_id = "84e30a11-94bd-49fe-8b1f-f5511c5916d6"
+    payload = %{employee_id: employee_id, user_id: user_id}
+
+    resp =
+      conn
+      |> patch("/employees/#{employee_id}/declarations/actions/terminate", payload)
+      |> json_response(200)
+
+    assert [] == resp["data"]["terminated_declarations"]
   end
 
   test "terminates declarations for given person_id", %{conn: conn} do
@@ -276,7 +290,7 @@ defmodule OPS.Web.DeclarationControllerTest do
     dec = fixture(:declaration)
     Repo.update_all(Declaration, set: [person_id: person_id])
 
-    conn = patch(conn, "/persons/#{person_id}/declarations/actions/terminate", "")
+    conn = patch(conn, "/persons/#{person_id}/declarations/actions/terminate", %{reason: "Person died"})
 
     response = json_response(conn, 200)
     response_decl = List.first(response["data"]["terminated_declarations"])
@@ -284,5 +298,24 @@ defmodule OPS.Web.DeclarationControllerTest do
     assert dec.id == response_decl["id"]
     assert user_id == Repo.get(Declaration, dec.id).updated_by
     assert user_id == response_decl["updated_by"]
+    assert "Person died" == response_decl["reason"]
+  end
+
+  test "terminates declarations for given person_id with updated_by param", %{conn: conn} do
+    user_id = Ecto.UUID.generate()
+    person_id = "84e30a11-94bd-49fe-8b1f-f5511c5916d6"
+
+    dec = fixture(:declaration)
+    Repo.update_all(Declaration, set: [person_id: person_id])
+    payload = %{reason: "Person died", user_id: user_id}
+    conn = patch(conn, "/persons/#{person_id}/declarations/actions/terminate", payload)
+
+    response = json_response(conn, 200)
+    response_decl = List.first(response["data"]["terminated_declarations"])
+
+    assert dec.id == response_decl["id"]
+    assert user_id == Repo.get(Declaration, dec.id).updated_by
+    assert user_id == response_decl["updated_by"]
+    assert "Person died" == response_decl["reason"]
   end
 end
