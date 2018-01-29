@@ -48,7 +48,7 @@ defmodule OPS.MedicationDispenses do
     |> super(params)
     |> join(:left, [md], mr in assoc(md, :medication_request))
     |> join(:left, [md, mr], d in assoc(md, :details))
-    |> preload([md, mr, d], [medication_request: mr, details: d])
+    |> preload([md, mr, d], medication_request: mr, details: d)
     |> add_dispensed_at_query(dispensed_from, dispensed_to)
   end
 
@@ -56,35 +56,35 @@ defmodule OPS.MedicationDispenses do
     dispense_changeset = changeset(%MedicationDispense{}, attrs)
     details = Enum.map(Map.get(attrs, "dispense_details") || [], &details_changeset(%Details{}, &1))
 
-    if dispense_changeset.valid? && Enum.all?(details, &(&1.valid?)) do
-      Repo.transaction fn ->
+    if dispense_changeset.valid? && Enum.all?(details, & &1.valid?) do
+      Repo.transaction(fn ->
         inserted_by = Map.get(attrs, "inserted_by")
-        with {:ok, medication_dispense} <- Repo.insert_and_log(dispense_changeset, inserted_by)
-        do
+
+        with {:ok, medication_dispense} <- Repo.insert_and_log(dispense_changeset, inserted_by) do
           Enum.each(details, fn item ->
-              item = change(item, medication_dispense_id: medication_dispense.id)
-              Repo.insert_and_log(item, inserted_by)
+            item = change(item, medication_dispense_id: medication_dispense.id)
+            Repo.insert_and_log(item, inserted_by)
           end)
+
           Repo.preload(medication_dispense, ~w(medication_request details)a)
         end
-      end
+      end)
     else
       case !dispense_changeset.valid? do
         true -> {:error, dispense_changeset}
-        false -> {:error, Enum.find(details, & Kernel.!(&1.valid?))}
+        false -> {:error, Enum.find(details, &Kernel.!(&1.valid?))}
       end
     end
   end
 
   def update(%MedicationDispense{status: old_status} = medication_dispense, attrs) do
     with {:ok, medication_dispense} <-
-      medication_dispense
-        |> changeset(attrs)
-        |> Repo.update_and_log(Map.get(attrs, "updated_by")),
-      author_id <- medication_dispense.updated_by,
-      status <- medication_dispense.status,
-      _ <- EventManager.insert_change_status(medication_dispense, old_status, status, author_id)
-    do
+           medication_dispense
+           |> changeset(attrs)
+           |> Repo.update_and_log(Map.get(attrs, "updated_by")),
+         author_id <- medication_dispense.updated_by,
+         status <- medication_dispense.status,
+         _ <- EventManager.insert_change_status(medication_dispense, old_status, status, author_id) do
       {:ok, Repo.preload(medication_dispense, :medication_request, force: true)}
     end
   end
@@ -93,19 +93,20 @@ defmodule OPS.MedicationDispenses do
     query =
       MedicationDispense
       |> where([md], md.status == ^MedicationDispense.status(:new))
-      |> where([md], md.inserted_at < datetime_add(^NaiveDateTime.utc_now, ^-expiration, "minute"))
+      |> where([md], md.inserted_at < datetime_add(^NaiveDateTime.utc_now(), ^(-expiration), "minute"))
 
     new_status = MedicationDispense.status(:expired)
     author_id = Confex.fetch_env!(:ops, :system_user)
+
     updates = [
       status: new_status,
       updated_at: DateTime.utc_now(),
-      updated_by: author_id,
+      updated_by: author_id
     ]
 
     Multi.new()
     |> Multi.update_all(:medication_dispenses, query, [set: updates], returning: [:id, :status, :updated_by])
-    |> Multi.run(:insert_events, &(insert_events(&1, new_status, author_id)))
+    |> Multi.run(:insert_events, &insert_events(&1, new_status, author_id))
     |> Multi.run(:logged_terminations, &log_changes(&1))
     |> Repo.transaction()
   end
@@ -114,13 +115,13 @@ defmodule OPS.MedicationDispenses do
     {_, changelog} =
       medication_dispenses
       |> Enum.map(fn md ->
-          %{
-            actor_id: md.updated_by,
-            resource: "medication_dispenses",
-            resource_id: md.id,
-            changeset: %{status: md.status}
-          }
-         end)
+        %{
+          actor_id: md.updated_by,
+          resource: "medication_dispenses",
+          resource_id: md.id,
+          changeset: %{status: md.status}
+        }
+      end)
       |> create_audit_logs()
 
     {:ok, changelog}
@@ -136,15 +137,18 @@ defmodule OPS.MedicationDispenses do
     |> cast(attrs, @fields_required ++ @fields_optional)
     |> validate_required(@fields_required)
     |> validate_status_transition()
-    |> validate_inclusion(:status, Enum.map(
-      ~w(
+    |> validate_inclusion(
+      :status,
+      Enum.map(
+        ~w(
         new
         processed
         rejected
         expired
       )a,
-      &MedicationDispense.status/1
-    ))
+        &MedicationDispense.status/1
+      )
+    )
   end
 
   defp validate_status_transition(changeset) do
@@ -155,7 +159,7 @@ defmodule OPS.MedicationDispenses do
       {nil, @status_new},
       {@status_new, @status_processed},
       {@status_new, @status_rejected},
-      {@status_new, @status_expired},
+      {@status_new, @status_expired}
     ]
 
     if {from, to} in valid_transitions do
@@ -182,19 +186,24 @@ defmodule OPS.MedicationDispenses do
 
   defp insert_events(multi, status, author_id) do
     {_, medication_dispenses} = multi.medication_dispenses
+
     Enum.each(medication_dispenses, fn medication_dispense ->
       EventManager.insert_change_status(medication_dispense, status, author_id)
     end)
+
     {:ok, medication_dispenses}
   end
 
   defp add_dispensed_at_query(query, nil, nil), do: query
+
   defp add_dispensed_at_query(query, dispensed_from, nil) do
     where(query, [md], md.dispensed_at >= ^dispensed_from)
   end
+
   defp add_dispensed_at_query(query, nil, dispensed_to) do
     where(query, [md], md.dispensed_at <= ^dispensed_to)
   end
+
   defp add_dispensed_at_query(query, dispensed_from, dispensed_to) do
     where(query, [md], fragment("? BETWEEN ? AND ?", md.dispensed_at, ^dispensed_from, ^dispensed_to))
   end

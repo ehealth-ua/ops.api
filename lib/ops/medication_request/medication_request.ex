@@ -17,28 +17,28 @@ defmodule OPS.MedicationRequests.MedicationRequest do
 
   @primary_key {:id, :binary_id, autogenerate: false}
   schema "medication_requests" do
-    field :request_number, :string
-    field :created_at, :date
-    field :started_at, :date
-    field :ended_at, :date
-    field :dispense_valid_from, :date
-    field :dispense_valid_to, :date
-    field :person_id, Ecto.UUID
-    field :employee_id, Ecto.UUID
-    field :division_id, Ecto.UUID
-    field :medication_id, Ecto.UUID
-    field :medication_qty, :float
-    field :status, :string
-    field :is_active, :boolean
-    field :rejected_at, :date
-    field :rejected_by, Ecto.UUID
-    field :reject_reason, :string
-    field :medication_request_requests_id, Ecto.UUID
-    field :medical_program_id, Ecto.UUID
-    field :inserted_by, Ecto.UUID
-    field :updated_by, Ecto.UUID
-    field :verification_code, :string
-    field :legal_entity_id, Ecto.UUID
+    field(:request_number, :string)
+    field(:created_at, :date)
+    field(:started_at, :date)
+    field(:ended_at, :date)
+    field(:dispense_valid_from, :date)
+    field(:dispense_valid_to, :date)
+    field(:person_id, Ecto.UUID)
+    field(:employee_id, Ecto.UUID)
+    field(:division_id, Ecto.UUID)
+    field(:medication_id, Ecto.UUID)
+    field(:medication_qty, :float)
+    field(:status, :string)
+    field(:is_active, :boolean)
+    field(:rejected_at, :date)
+    field(:rejected_by, Ecto.UUID)
+    field(:reject_reason, :string)
+    field(:medication_request_requests_id, Ecto.UUID)
+    field(:medical_program_id, Ecto.UUID)
+    field(:inserted_by, Ecto.UUID)
+    field(:updated_by, Ecto.UUID)
+    field(:verification_code, :string)
+    field(:legal_entity_id, Ecto.UUID)
 
     timestamps()
   end

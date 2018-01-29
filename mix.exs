@@ -3,36 +3,37 @@ defmodule OPS.Mixfile do
 
   use Mix.Project
 
-  @version "1.118.1"
+  @version "1.120.1"
 
   def project do
-    [app: :ops,
-     description: "Add description to your package.",
-     package: package(),
-     version: @version,
-     elixir: "~> 1.5",
-     elixirc_paths: elixirc_paths(Mix.env),
-     compilers: [:phoenix] ++ Mix.compilers,
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     aliases: aliases(),
-     deps: deps(),
-     test_coverage: [tool: ExCoveralls],
-     preferred_cli_env: [coveralls: :test],
-     docs: [source_ref: "v#\{@version\}", main: "readme", extras: ["README.md"]]]
+    [
+      app: :ops,
+      description: "Add description to your package.",
+      package: package(),
+      version: @version,
+      elixir: "~> 1.5",
+      elixirc_paths: elixirc_paths(Mix.env()),
+      compilers: [:phoenix] ++ Mix.compilers(),
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
+      aliases: aliases(),
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [coveralls: :test],
+      docs: [source_ref: "v#\{@version\}", main: "readme", extras: ["README.md"]]
+    ]
   end
 
   # Configuration for the OTP application
   #
   # Type "mix help compile.app" for more information
   def application do
-    [extra_applications: [:logger, :runtime_tools],
-     mod: {OPS, []}]
+    [extra_applications: [:logger, :runtime_tools], mod: {OPS, []}]
   end
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_),     do: ["lib"]
+  defp elixirc_paths(_), do: ["lib"]
 
   # Dependencies can be Hex packages:
   #
@@ -48,33 +49,36 @@ defmodule OPS.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:distillery, "~> 1.4.0"},
-     {:confex, "~> 3.2"},
-     {:ecto, "~> 2.1"},
-     {:scrivener_ecto, "~> 1.2"},
-     {:postgrex, "~> 0.13.2"},
-     {:cowboy, "~> 1.1"},
-     {:httpoison, "~> 0.11"},
-     {:phoenix, "~> 1.3.0-rc"},
-     {:eview, "~> 0.12.0"},
-     {:phoenix_ecto, "~> 3.2"},
-     {:ecto_trail, ">= 0.0.0"},
-     {:quantum, "~> 2.0.4"},
-     {:plug_logger_json, "~> 0.5"},
-     {:ecto_logger_json, "~> 0.1"},
-     {:ex_machina, "~> 2.0", only: [:dev, :test]},
-     {:excoveralls, ">= 0.5.0", only: [:dev, :test]},
-     {:dogma, ">= 0.1.12", only: [:dev, :test]},
-     {:credo, ">= 0.5.1", only: [:dev, :test]}]
+    [
+      {:distillery, "~> 1.4.0"},
+      {:confex, "~> 3.2"},
+      {:ecto, "~> 2.1"},
+      {:scrivener_ecto, "~> 1.2"},
+      {:postgrex, "~> 0.13.2"},
+      {:cowboy, "~> 1.1"},
+      {:httpoison, "~> 1.0"},
+      {:phoenix, "~> 1.3.0"},
+      {:eview, "~> 0.12.0"},
+      {:phoenix_ecto, "~> 3.2"},
+      {:ecto_trail, ">= 0.0.0"},
+      {:quantum, "~> 2.2.0"},
+      {:plug_logger_json, "~> 0.5"},
+      {:ecto_logger_json, "~> 0.1"},
+      {:ex_machina, "~> 2.0", only: [:dev, :test]},
+      {:excoveralls, ">= 0.5.0", only: [:dev, :test]},
+      {:credo, ">= 0.5.1", only: [:dev, :test]}
+    ]
   end
 
   # Settings for publishing in Hex package manager:
   defp package do
-    [contributors: ["Nebo #15"],
-     maintainers: ["Nebo #15"],
-     licenses: ["LISENSE.md"],
-     links: %{github: "https://github.com/Nebo15/ops.api"},
-     files: ~w(lib LICENSE.md mix.exs README.md)]
+    [
+      contributors: ["Nebo #15"],
+      maintainers: ["Nebo #15"],
+      licenses: ["LISENSE.md"],
+      links: %{github: "https://github.com/Nebo15/ops.api"},
+      files: ~w(lib LICENSE.md mix.exs README.md)
+    ]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
@@ -88,14 +92,16 @@ defmodule OPS.Mixfile do
       "ecto.setup": [
         "ecto.create",
         "ecto.create --repo OPS.EventManagerRepo",
+        "ecto.create --repo OPS.BlockRepo",
         "ecto.migrate",
         "run priv/repo/seeds.exs"
       ],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "test": [
+      test: [
         "ecto.drop",
         "ecto.create --quiet",
         "ecto.create --quiet --repo OPS.EventManagerRepo",
+        "ecto.create --quiet --repo OPS.BlockRepo",
         "ecto.migrate",
         "test"
       ]

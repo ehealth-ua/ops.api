@@ -11,22 +11,8 @@ cd $TRAVIS_BUILD_DIR
             mix_test=1 ;
       fi;
 
-
-  # Submit code coverage report to Coveralls
-  # Add --pro if you using private repo.
-  echo "- mix coveralls.travis --exclude pending ;"  
-        mix coveralls.travis --exclude pending 
-
-      if [ "$?" -eq 0 ]; then
-            echo "mix coveralls.travis successfully completed"
-          else 
-            echo "mix coveralls.travis finished with errors , exited with 1"
-            mix_test=1;
-      fi;
-
-
   # Run static code analysis 
-  echo "- mix credo --strict ; "
+  echo "- mix credo --strict"
         mix credo --strict 
 
        if [ "$?" -eq 0 ]; then
@@ -37,13 +23,13 @@ cd $TRAVIS_BUILD_DIR
        fi;
 
   # Check code style
-  echo "- mix dogma;"
-        mix dogma
+  echo "- mix format --check-formatted"
+        mix format --check-formatted
       if [ "$?" -eq 0 ]; then
-     				echo "mix dogma successfully completed"
-   				else 
-   	 				echo "mix dogma finished with errors, exited with 1"
-   	 				mix_test=1;
+        echo "mix format successfully completed"
+          else
+            echo "mix format finished with errors, exited with 1"
+            mix_test=1;
       fi;
 
 

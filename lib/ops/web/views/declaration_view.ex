@@ -15,22 +15,22 @@ defmodule OPS.Web.DeclarationView do
 
   def render("declaration_in_list.json", %{declaration: declaration}) do
     %{
-       id: declaration.id,
-       person_id: declaration.person_id,
-       employee_id: declaration.employee_id,
-       division_id: declaration.division_id,
-       legal_entity_id: declaration.legal_entity_id,
-       scope: declaration.scope,
-       start_date: declaration.start_date,
-       end_date: declaration.end_date,
-       signed_at: declaration.signed_at,
-       status: declaration.status,
-       declaration_request_id: declaration.declaration_request_id,
-       inserted_at: declaration.inserted_at,
-       created_by: declaration.created_by,
-       updated_at: declaration.updated_at,
-       updated_by: declaration.updated_by,
-       is_active: declaration.is_active
+      id: declaration.id,
+      person_id: declaration.person_id,
+      employee_id: declaration.employee_id,
+      division_id: declaration.division_id,
+      legal_entity_id: declaration.legal_entity_id,
+      scope: declaration.scope,
+      start_date: declaration.start_date,
+      end_date: declaration.end_date,
+      signed_at: declaration.signed_at,
+      status: declaration.status,
+      declaration_request_id: declaration.declaration_request_id,
+      inserted_at: declaration.inserted_at,
+      created_by: declaration.created_by,
+      updated_at: declaration.updated_at,
+      updated_by: declaration.updated_by,
+      is_active: declaration.is_active
     }
   end
 
@@ -41,8 +41,8 @@ defmodule OPS.Web.DeclarationView do
   defp sanitize(%OPS.Declarations.Declaration{} = declaration) do
     declaration
     |> Map.from_struct()
-    |> Enum.reduce(%{}, fn ({k, v}, acc) ->
-         if k != :__meta__ and v != nil, do: Map.put(acc, k, v), else: acc
-      end)
+    |> Enum.reduce(%{}, fn {k, v}, acc ->
+      if k != :__meta__ and v != nil, do: Map.put(acc, k, v), else: acc
+    end)
   end
 end

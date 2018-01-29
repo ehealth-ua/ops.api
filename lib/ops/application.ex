@@ -22,7 +22,7 @@ defmodule OPS do
       supervisor(OPS.Web.Endpoint, []),
       # Starts a worker by calling: OPS.Worker.start_link(arg1, arg2, arg3)
       # worker(OPS.Worker, [arg1, arg2, arg3]),
-      worker(OPS.Scheduler, []),
+      worker(OPS.Scheduler, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
@@ -40,9 +40,9 @@ defmodule OPS do
     :ok
   end
 
-  # Loads configuration in `:on_init` callbacks and replaces `{:system, ..}` tuples via Confex
+  # Loads configuration in `:init` callbacks and replaces `{:system, ..}` tuples via Confex
   @doc false
-  def load_from_system_env(config) do
-    {:ok, Resolver.resolve!(config)}
+  def init(_key, config) do
+    Resolver.resolve(config)
   end
 end

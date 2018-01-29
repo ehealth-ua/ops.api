@@ -63,6 +63,7 @@ defmodule OPS.GeneratingSeedsTest do
     # Recalculate hash and update block
     new_hash =
       OPS.Block.API.calculated_hash(block_under_test.version, block_under_test.block_start, block_under_test.block_end)
+
     {:ok, _} = OPS.BlockRepo.update(Ecto.Changeset.change(block_under_test, %{hash: new_hash}))
 
     # second_hash is found to be mangled

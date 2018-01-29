@@ -14,30 +14,30 @@ defmodule OPS.Web.Router do
   require Logger
 
   pipeline :api do
-    plug :accepts, ["json"]
-    plug :put_secure_browser_headers
+    plug(:accepts, ["json"])
+    plug(:put_secure_browser_headers)
 
     # You can allow JSONP requests by uncommenting this line:
     # plug :allow_jsonp
   end
 
   scope "/", OPS.Web do
-    pipe_through :api
+    pipe_through(:api)
 
-    resources "/declarations", DeclarationController
-    post "/declarations/with_termination", DeclarationController, :create_with_termination_logic
-    patch "/employees/:id/declarations/actions/terminate", DeclarationController, :terminate_declarations
-    patch "/persons/:id/declarations/actions/terminate", DeclarationController, :terminate_person_declarations
+    resources("/declarations", DeclarationController)
+    post("/declarations/with_termination", DeclarationController, :create_with_termination_logic)
+    patch("/employees/:id/declarations/actions/terminate", DeclarationController, :terminate_declarations)
+    patch("/persons/:id/declarations/actions/terminate", DeclarationController, :terminate_person_declarations)
 
-    get "/medication_dispenses", MedicationDispenseController, :index
-    post "/medication_dispenses", MedicationDispenseController, :create
-    put "/medication_dispenses/:id", MedicationDispenseController, :update
+    get("/medication_dispenses", MedicationDispenseController, :index)
+    post("/medication_dispenses", MedicationDispenseController, :create)
+    put("/medication_dispenses/:id", MedicationDispenseController, :update)
 
-    resources "/medication_requests", MedicationRequestController, only: [:index, :update, :create]
-    post "/doctor_medication_requests", MedicationRequestController, :doctor_list
-    get "/qualify_medication_requests", MedicationRequestController, :qualify_list
-    get "/prequalify_medication_requests", MedicationRequestController, :prequalify_list
-    get "/latest_block", BlockController, :latest_block
+    resources("/medication_requests", MedicationRequestController, only: [:index, :update, :create])
+    post("/doctor_medication_requests", MedicationRequestController, :doctor_list)
+    get("/qualify_medication_requests", MedicationRequestController, :qualify_list)
+    get("/prequalify_medication_requests", MedicationRequestController, :prequalify_list)
+    get("/latest_block", BlockController, :latest_block)
   end
 
   defp handle_errors(%Plug.Conn{status: 500} = conn, %{kind: kind, reason: reason, stack: stacktrace}) do

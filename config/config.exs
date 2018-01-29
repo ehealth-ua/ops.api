@@ -27,24 +27,6 @@ config :ops,
   ecto_repos: [OPS.Repo, OPS.BlockRepo, OPS.EventManagerRepo],
   env: Mix.env()
 
-# Configure your database
-config :ops, OPS.Repo,
-  adapter: Ecto.Adapters.Postgres,
-  database: {:system, "DB_NAME", "ops_dev"},
-  username: {:system, "DB_USER", "postgres"},
-  password: {:system, "DB_PASSWORD", "postgres"},
-  hostname: {:system, "DB_HOST", "localhost"},
-  port: {:system, :integer, "DB_PORT", 5432},
-  loggers: [{Ecto.LoggerJSON, :log, [:info]}]
-
-config :ops, OPS.BlockRepo,
-  adapter: Ecto.Adapters.Postgres,
-  database: {:system, "BLOCK_DB_NAME", "seed_dev"},
-  username: {:system, "BLOCK_DB_USER", "postgres"},
-  password: {:system, "BLOCK_DB_PASSWORD", "postgres"},
-  hostname: {:system, "BLOCK_DB_HOST", "localhost"},
-  port: {:system, :integer, "BLOCK_DB_PORT", 5432},
-  loggers: [{Ecto.LoggerJSON, :log, [:info]}]
 # This configuration file is loaded before any dependency and
 # is restricted to this project.
 
@@ -55,17 +37,12 @@ config :ops,
   system_user: {:system, "EHEALTH_SYSTEM_USER", "4261eacf-8008-4e62-899f-de1e2f7065f0"}
 
 config :ops, OPS.Scheduler,
-  declaration_auto_approve: {:system, :string,
-    "DECLARATION_AUTO_APPROVE_SCHEDULE", "0 0-4 * * *"},
-  medication_dispense_autotermination: {:system, :string,
-    "MEDICATION_DISPENSE_AUTOTERMINATION_SCHEDULE", "* * * * *"},
+  declaration_auto_approve: {:system, :string, "DECLARATION_AUTO_APPROVE_SCHEDULE", "0 0-4 * * *"},
+  medication_dispense_autotermination: {:system, :string, "MEDICATION_DISPENSE_AUTOTERMINATION_SCHEDULE", "* * * * *"},
   medication_dispense_expiration: {:system, :integer, "MEDICATION_DISPENSE_EXPIRATION", 10},
-  declaration_autotermination: {:system, :string,
-    "DECLARATION_AUTOTERMINATION_SCHEDULE", "0 0-4 * * *"},
-  medication_request_autotermination: {:system, :string,
-    "MEDICATION_REQUEST_AUTOTERMINATION_SCHEDULE", "* * * * *"},
-  close_block: {:system, :string,
-    "CLOSE_BLOCK_SCHEDULE", "0 * * * *"}
+  declaration_autotermination: {:system, :string, "DECLARATION_AUTOTERMINATION_SCHEDULE", "0 0-4 * * *"},
+  medication_request_autotermination: {:system, :string, "MEDICATION_REQUEST_AUTOTERMINATION_SCHEDULE", "* * * * *"},
+  close_block: {:system, :string, "CLOSE_BLOCK_SCHEDULE", "0 * * * *"}
 
 # Configures the endpoint
 config :ops, OPS.Web.Endpoint,
@@ -75,7 +52,8 @@ config :ops, OPS.Web.Endpoint,
 
 # Configures IL endpoint
 config :ops, OPS.API.IL,
-  endpoint: {:system, "IL_ENDPOINT", "http://api-svc.il"}, # TODO: update Chart configs
+  # TODO: update Chart configs
+  endpoint: {:system, "IL_ENDPOINT", "http://api-svc.il"},
   timeouts: [
     connect_timeout: {:system, :integer, "IL_REQUEST_TIMEOUT", 30_000},
     recv_timeout: {:system, :integer, "IL_REQUEST_TIMEOUT", 30_000},
@@ -143,10 +121,12 @@ config :ops, :block_versions, %{
 # Must be adjusted every time current_block_version is appended with new version
 config :ops, :current_block_version, "v2"
 
+config :ecto_trail, table_name: "audit_log"
+
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
 # by uncommenting the line below and defining dev.exs, test.exs and such.
 # Configuration from the imported file will override the ones defined
 # here (which is why it is important to import them last).
 #
-import_config "#{Mix.env}.exs"
+import_config "#{Mix.env()}.exs"

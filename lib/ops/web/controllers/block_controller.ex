@@ -5,7 +5,7 @@ defmodule OPS.Web.BlockController do
 
   alias OPS.Block.API, as: BlockAPI
 
-  action_fallback OPS.Web.FallbackController
+  action_fallback(OPS.Web.FallbackController)
 
   def latest_block(conn, _) do
     block = BlockAPI.get_latest()
