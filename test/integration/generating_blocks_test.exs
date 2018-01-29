@@ -141,9 +141,10 @@ defmodule OPS.GeneratingSeedsTest do
     block_versions = Application.get_env(:ops, :block_versions)
     Application.put_env(:ops, :block_versions, Map.put_new(block_versions, "v3", new_query))
     Application.put_env(:ops, :current_block_version, "v3")
-    on_exit fn ->
+
+    on_exit(fn ->
       Application.put_env(:ops, :current_block_version, "v2")
-    end
+    end)
 
     {:ok, v3_block} = BlockAPI.close_block()
 
