@@ -288,4 +288,22 @@ defmodule OPS.Web.DeclarationControllerTest do
     assert user_id == response_decl["updated_by"]
     assert "Person died" == response_decl["reason"]
   end
+
+  test "terminates declarations for given person_id with updated_by param", %{conn: conn} do
+    user_id = Ecto.UUID.generate()
+    person_id = "84e30a11-94bd-49fe-8b1f-f5511c5916d6"
+
+    dec = fixture(:declaration)
+    Repo.update_all(Declaration, set: [person_id: person_id])
+    payload = %{reason: "Person died", user_id: user_id}
+    conn = patch conn, "/persons/#{person_id}/declarations/actions/terminate", payload
+
+    response = json_response(conn, 200)
+    response_decl = List.first(response["data"]["terminated_declarations"])
+
+    assert dec.id == response_decl["id"]
+    assert user_id == Repo.get(Declaration, dec.id).updated_by
+    assert user_id == response_decl["updated_by"]
+    assert "Person died" == response_decl["reason"]
+  end
 end

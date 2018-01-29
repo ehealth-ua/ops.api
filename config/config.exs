@@ -118,6 +118,9 @@ config :ops, :block_versions, %{
 # Must be adjusted every time current_block_version is appended with new version
 config :ops, :current_block_version, "v1"
 
+config :ecto_trail,
+  table_name: "audit_log"
+
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
 # by uncommenting the line below and defining dev.exs, test.exs and such.
