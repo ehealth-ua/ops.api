@@ -12,19 +12,20 @@ defmodule OPS.Factory do
     day = 60 * 60 * 24
     start_date = NaiveDateTime.utc_now() |> NaiveDateTime.add(-10 * day, :seconds)
     end_date = NaiveDateTime.add(start_date, day, :seconds)
+
     %Declaration{
       id: Ecto.UUID.generate(),
-      declaration_request_id: Ecto.UUID.generate,
+      declaration_request_id: Ecto.UUID.generate(),
       start_date: start_date,
       end_date: end_date,
       status: Declaration.status(:active),
       signed_at: start_date,
-      created_by: Ecto.UUID.generate,
-      updated_by: Ecto.UUID.generate,
-      employee_id: Ecto.UUID.generate,
-      person_id: Ecto.UUID.generate,
-      division_id: Ecto.UUID.generate,
-      legal_entity_id: Ecto.UUID.generate,
+      created_by: Ecto.UUID.generate(),
+      updated_by: Ecto.UUID.generate(),
+      employee_id: Ecto.UUID.generate(),
+      person_id: Ecto.UUID.generate(),
+      division_id: Ecto.UUID.generate(),
+      legal_entity_id: Ecto.UUID.generate(),
       is_active: true,
       scope: "",
       seed: "some seed"
@@ -35,16 +36,16 @@ defmodule OPS.Factory do
     %MedicationDispense{
       id: Ecto.UUID.generate(),
       status: MedicationDispense.status(:new),
-      inserted_by: Ecto.UUID.generate,
-      updated_by: Ecto.UUID.generate,
+      inserted_by: Ecto.UUID.generate(),
+      updated_by: Ecto.UUID.generate(),
       is_active: true,
-      dispensed_at: to_string(Date.utc_today),
+      dispensed_at: to_string(Date.utc_today()),
       party_id: Ecto.UUID.generate(),
       legal_entity_id: Ecto.UUID.generate(),
       payment_id: Ecto.UUID.generate(),
       division_id: Ecto.UUID.generate(),
       medical_program_id: Ecto.UUID.generate(),
-      medication_request: build(:medication_request),
+      medication_request: build(:medication_request)
     }
   end
 
@@ -52,8 +53,8 @@ defmodule OPS.Factory do
     %MedicationRequest{
       id: Ecto.UUID.generate(),
       status: MedicationRequest.status(:active),
-      inserted_by: Ecto.UUID.generate,
-      updated_by: Ecto.UUID.generate,
+      inserted_by: Ecto.UUID.generate(),
+      updated_by: Ecto.UUID.generate(),
       is_active: true,
       person_id: Ecto.UUID.generate(),
       employee_id: Ecto.UUID.generate(),
@@ -66,7 +67,7 @@ defmodule OPS.Factory do
       dispense_valid_to: Date.utc_today(),
       medication_qty: 0,
       medication_request_requests_id: Ecto.UUID.generate(),
-      request_number: to_string(:rand.uniform),
+      request_number: to_string(:rand.uniform()),
       legal_entity_id: Ecto.UUID.generate()
     }
   end

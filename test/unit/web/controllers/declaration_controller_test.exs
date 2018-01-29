@@ -19,7 +19,7 @@ defmodule OPS.Web.DeclarationControllerTest do
     is_active: true,
     scope: "family_doctor",
     division_id: Ecto.UUID.generate(),
-    legal_entity_id: Ecto.UUID.generate(),
+    legal_entity_id: Ecto.UUID.generate()
   }
 
   @update_attrs %{
@@ -34,12 +34,12 @@ defmodule OPS.Web.DeclarationControllerTest do
     is_active: false,
     scope: "family_doctor",
     division_id: Ecto.UUID.generate(),
-    legal_entity_id: Ecto.UUID.generate(),
+    legal_entity_id: Ecto.UUID.generate()
   }
 
-   @invalid_attrs %{
-     division_id: "invalid"
-   }
+  @invalid_attrs %{
+    division_id: "invalid"
+  }
 
   def fixture(:declaration, attrs \\ @create_attrs) do
     create_attrs =
@@ -61,7 +61,7 @@ defmodule OPS.Web.DeclarationControllerTest do
   end
 
   test "lists all entries on index", %{conn: conn} do
-    conn = get conn, declaration_path(conn, :index)
+    conn = get(conn, declaration_path(conn, :index))
     assert json_response(conn, 200)["data"] == []
   end
 
@@ -69,7 +69,7 @@ defmodule OPS.Web.DeclarationControllerTest do
     %{employee_id: doctor_id_1} = fixture(:declaration)
     %{employee_id: doctor_id_2} = fixture(:declaration)
 
-    conn = get conn, declaration_path(conn, :index) <> "?employee_id=#{doctor_id_1}"
+    conn = get(conn, declaration_path(conn, :index) <> "?employee_id=#{doctor_id_1}")
 
     assert [resp_declaration] = json_response(conn, 200)["data"]
     assert doctor_id_1 == resp_declaration["employee_id"]
@@ -80,7 +80,7 @@ defmodule OPS.Web.DeclarationControllerTest do
     %{employee_id: employee_id, legal_entity_id: legal_entity_id, id: id} = fixture(:declaration)
     fixture(:declaration)
 
-    conn = get conn, declaration_path(conn, :index), [legal_entity_id: legal_entity_id, employee_id: employee_id]
+    conn = get(conn, declaration_path(conn, :index), legal_entity_id: legal_entity_id, employee_id: employee_id)
 
     assert [resp_declaration] = json_response(conn, 200)["data"]
     assert id == resp_declaration["id"]
@@ -89,14 +89,14 @@ defmodule OPS.Web.DeclarationControllerTest do
   end
 
   test "ignore invalid search params", %{conn: conn} do
-    conn = get conn, declaration_path(conn, :index) <> "?created_by=nil"
+    conn = get(conn, declaration_path(conn, :index) <> "?created_by=nil")
     assert [] == json_response(conn, 200)["data"]
   end
 
   test "search declarations by status", %{conn: conn} do
     %{id: id} = fixture(:declaration, Map.put(@create_attrs, :status, "terminated"))
 
-    conn = get conn, declaration_path(conn, :index), [id: id, status: "active"]
+    conn = get(conn, declaration_path(conn, :index), id: id, status: "active")
 
     assert length(json_response(conn, 200)["data"]) == 0
   end
@@ -105,7 +105,7 @@ defmodule OPS.Web.DeclarationControllerTest do
     fixture(:declaration)
     fixture(:declaration, Map.put(@create_attrs, :status, "pending_verification"))
 
-    conn = get conn, declaration_path(conn, :index), [status: "active,pending_verification"]
+    conn = get(conn, declaration_path(conn, :index), status: "active,pending_verification")
 
     assert length(json_response(conn, 200)["data"]) == 2
   end
@@ -115,46 +115,51 @@ defmodule OPS.Web.DeclarationControllerTest do
       @create_attrs
       |> Map.put("declaration_request_id", Ecto.UUID.generate())
       |> Map.put("person_id", Ecto.UUID.generate())
-    conn = post conn, declaration_path(conn, :create), declaration: params
+
+    conn = post(conn, declaration_path(conn, :create), declaration: params)
     assert %{"id" => id, "inserted_at" => inserted_at, "updated_at" => updated_at} = json_response(conn, 201)["data"]
 
     assert id == @create_attrs.id
-    conn = get conn, declaration_path(conn, :show, id)
+    conn = get(conn, declaration_path(conn, :show, id))
+
     assert json_response(conn, 200)["data"] == %{
-      "id" => id,
-      "person_id" => params["person_id"],
-      "employee_id" => @create_attrs.employee_id,
-      "division_id" => @create_attrs.division_id,
-      "legal_entity_id" => @create_attrs.legal_entity_id,
-      "scope" => "family_doctor",
-      "start_date" => "2016-10-10",
-      "end_date" => "2016-12-07",
-      "signed_at" => "2016-10-09T23:50:07.000000Z",
-      "status" => "active",
-      "declaration_request_id" => params["declaration_request_id"],
-      "inserted_at" => inserted_at,
-      "created_by" => @create_attrs.created_by,
-      "updated_at" => updated_at,
-      "updated_by" => @create_attrs.updated_by,
-      "is_active" => true
-    }
+             "id" => id,
+             "person_id" => params["person_id"],
+             "employee_id" => @create_attrs.employee_id,
+             "division_id" => @create_attrs.division_id,
+             "legal_entity_id" => @create_attrs.legal_entity_id,
+             "scope" => "family_doctor",
+             "start_date" => "2016-10-10",
+             "end_date" => "2016-12-07",
+             "signed_at" => "2016-10-09T23:50:07.000000Z",
+             "status" => "active",
+             "declaration_request_id" => params["declaration_request_id"],
+             "inserted_at" => inserted_at,
+             "created_by" => @create_attrs.created_by,
+             "updated_at" => updated_at,
+             "updated_by" => @create_attrs.updated_by,
+             "is_active" => true
+           }
+
     declaration_status_hstr = Repo.one!(DeclarationStatusHistory)
     assert declaration_status_hstr.declaration_id == id
   end
 
   test "does not create declaration and renders errors when data is invalid", %{conn: conn} do
-    conn = post conn, declaration_path(conn, :create), declaration: @invalid_attrs
+    conn = post(conn, declaration_path(conn, :create), declaration: @invalid_attrs)
     assert json_response(conn, 422)["errors"] != %{}
   end
 
   test "creates declaration and terminates other person declarations when data is valid", %{conn: conn} do
     %{id: id1, person_id: person_id} = fixture(:declaration)
+
     params =
       @create_attrs
       |> Map.put(:person_id, person_id)
       |> Map.put(:declaration_request_id, Ecto.UUID.generate())
+
     %{id: id2} = fixture(:declaration, params)
-    conn = post conn, declaration_path(conn, :create_with_termination_logic), params
+    conn = post(conn, declaration_path(conn, :create_with_termination_logic), params)
     resp = json_response(conn, 200)
     assert Map.has_key?(resp, "data")
     assert Map.has_key?(resp["data"], "id")
@@ -170,18 +175,19 @@ defmodule OPS.Web.DeclarationControllerTest do
     assert "active" == status
 
     assert [event1] = EventManagerRepo.all(Event)
+
     assert %Event{
-      entity_type: "Declaration",
-      entity_id: ^id1,
-      event_type: "StatusChangeEvent",
-      properties: %{"status" => %{"new_value" => "terminated"}},
-    } = event1
+             entity_type: "Declaration",
+             entity_id: ^id1,
+             event_type: "StatusChangeEvent",
+             properties: %{"status" => %{"new_value" => "terminated"}}
+           } = event1
   end
 
   test "doesn't terminate other declarations and renders errors when data is invalid", %{conn: conn} do
     %{id: id} = fixture(:declaration)
     invalid_attrs = Map.put(@invalid_attrs, :person_id, "person_id")
-    conn = post conn, declaration_path(conn, :create_with_termination_logic), invalid_attrs
+    conn = post(conn, declaration_path(conn, :create_with_termination_logic), invalid_attrs)
     resp = json_response(conn, 422)
     assert Map.has_key?(resp, "error")
 
@@ -191,55 +197,59 @@ defmodule OPS.Web.DeclarationControllerTest do
 
   test "updates chosen declaration and renders declaration when data is valid", %{conn: conn} do
     %Declaration{id: id, declaration_request_id: declaration_request_id} = declaration = fixture(:declaration)
-    conn = put conn, declaration_path(conn, :update, declaration), declaration: @update_attrs
+    conn = put(conn, declaration_path(conn, :update, declaration), declaration: @update_attrs)
     assert %{"id" => ^id, "inserted_at" => inserted_at, "updated_at" => updated_at} = json_response(conn, 200)["data"]
 
-    conn = get conn, declaration_path(conn, :show, id)
+    conn = get(conn, declaration_path(conn, :show, id))
+
     assert json_response(conn, 200)["data"] == %{
-      "id" => id,
-      "person_id" => @update_attrs.person_id,
-      "employee_id" => @update_attrs.employee_id,
-      "division_id" => @update_attrs.division_id,
-      "legal_entity_id" => @update_attrs.legal_entity_id,
-      "scope" => "family_doctor",
-      "start_date" => "2016-10-11",
-      "end_date" => "2016-12-08",
-      "signed_at" => "2016-10-10T23:50:07.000000Z",
-      "status" => "closed",
-      "declaration_request_id" => declaration_request_id,
-      "inserted_at" => inserted_at,
-      "created_by" => @update_attrs.created_by,
-      "updated_at" => updated_at,
-      "updated_by" => @update_attrs.updated_by,
-      "is_active" => false
-    }
+             "id" => id,
+             "person_id" => @update_attrs.person_id,
+             "employee_id" => @update_attrs.employee_id,
+             "division_id" => @update_attrs.division_id,
+             "legal_entity_id" => @update_attrs.legal_entity_id,
+             "scope" => "family_doctor",
+             "start_date" => "2016-10-11",
+             "end_date" => "2016-12-08",
+             "signed_at" => "2016-10-10T23:50:07.000000Z",
+             "status" => "closed",
+             "declaration_request_id" => declaration_request_id,
+             "inserted_at" => inserted_at,
+             "created_by" => @update_attrs.created_by,
+             "updated_at" => updated_at,
+             "updated_by" => @update_attrs.updated_by,
+             "is_active" => false
+           }
+
     declaration_status_hstrs = Repo.all(DeclarationStatusHistory)
     assert Enum.all?(declaration_status_hstrs, &(Map.get(&1, :declaration_id) == id))
     assert 2 = Enum.count(declaration_status_hstrs)
-    assert ~w(active closed) == Enum.map(declaration_status_hstrs, &(Map.get(&1, :status)))
+    assert ~w(active closed) == Enum.map(declaration_status_hstrs, &Map.get(&1, :status))
     assert [event] = EventManagerRepo.all(Event)
+
     assert %Event{
-      entity_type: "Declaration",
-      entity_id: ^id,
-      event_type: "StatusChangeEvent",
-      properties: %{"status" => %{"new_value" => "closed"}},
-    } = event
+             entity_type: "Declaration",
+             entity_id: ^id,
+             event_type: "StatusChangeEvent",
+             properties: %{"status" => %{"new_value" => "closed"}}
+           } = event
   end
 
   @tag pending: true
   test "does not update chosen declaration and renders errors when data is invalid", %{conn: conn} do
     declaration = fixture(:declaration)
-    conn = put conn, declaration_path(conn, :update, declaration), declaration: @invalid_attrs
+    conn = put(conn, declaration_path(conn, :update, declaration), declaration: @invalid_attrs)
     assert json_response(conn, 422)["errors"] != %{}
   end
 
   test "deletes chosen declaration", %{conn: conn} do
     declaration = fixture(:declaration)
-    conn = delete conn, declaration_path(conn, :delete, declaration)
+    conn = delete(conn, declaration_path(conn, :delete, declaration))
     assert response(conn, 204)
-    assert_error_sent 404, fn ->
-      get conn, declaration_path(conn, :show, declaration)
-    end
+
+    assert_error_sent(404, fn ->
+      get(conn, declaration_path(conn, :show, declaration))
+    end)
   end
 
   test "terminates declarations for given employee_id", %{conn: conn} do

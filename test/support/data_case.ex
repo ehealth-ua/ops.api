@@ -46,7 +46,7 @@ defmodule OPS.DataCase do
     {:ok, port_string} = :inet.port(port)
     :erlang.port_close(port)
     ref = make_ref()
-    {:ok, _pid} = Plug.Adapters.Cowboy.http module, [], port: port_string, ref: ref
+    {:ok, _pid} = Plug.Adapters.Cowboy.http(module, [], port: port_string, ref: ref)
     {:ok, port_string, ref}
   end
 

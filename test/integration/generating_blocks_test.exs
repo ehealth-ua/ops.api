@@ -63,6 +63,7 @@ defmodule OPS.GeneratingSeedsTest do
     # Recalculate hash and update block
     new_hash =
       OPS.Block.API.calculated_hash(block_under_test.version, block_under_test.block_start, block_under_test.block_end)
+
     {:ok, _} = OPS.BlockRepo.update(Ecto.Changeset.change(block_under_test, %{hash: new_hash}))
 
     # second_hash is found to be mangled
@@ -140,9 +141,10 @@ defmodule OPS.GeneratingSeedsTest do
     block_versions = Application.get_env(:ops, :block_versions)
     Application.put_env(:ops, :block_versions, Map.put_new(block_versions, "v2", new_query))
     Application.put_env(:ops, :current_block_version, "v2")
-    on_exit fn ->
+
+    on_exit(fn ->
       Application.put_env(:ops, :current_block_version, "v1")
-    end
+    end)
 
     {:ok, v2_block} = BlockAPI.close_block()
 

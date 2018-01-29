@@ -33,10 +33,11 @@ defmodule OPS.SendingNotificationTest do
       {:ok, port, ref} = start_microservices(IL)
 
       System.put_env("IL_ENDPOINT", "http://localhost:#{port}")
-      on_exit fn ->
+
+      on_exit(fn ->
         System.put_env("IL_ENDPOINT", "http://localhost:4040")
         stop_microservices(ref)
-      end
+      end)
 
       {:ok, initial_block} = insert_initial_block()
 

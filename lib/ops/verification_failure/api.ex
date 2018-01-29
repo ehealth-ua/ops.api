@@ -5,6 +5,6 @@ defmodule OPS.VerificationFailure.API do
   alias OPS.VerificationFailure.Schema, as: VerificationFailure
 
   def mark_as_mangled!(block) do
-    BlockRepo.insert! %VerificationFailure{block_id: block.id}
+    BlockRepo.insert!(%VerificationFailure{block_id: block.id})
   end
 end
