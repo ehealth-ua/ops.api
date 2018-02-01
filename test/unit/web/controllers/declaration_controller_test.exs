@@ -298,6 +298,7 @@ defmodule OPS.Web.DeclarationControllerTest do
     assert dec.id == response_decl["id"]
     assert user_id == Repo.get(Declaration, dec.id).updated_by
     assert user_id == response_decl["updated_by"]
+    refute Map.has_key?(response_decl, "is_active")
     assert "Person died" == response_decl["reason"]
   end
 

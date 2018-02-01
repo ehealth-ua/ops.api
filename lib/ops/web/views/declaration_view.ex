@@ -5,6 +5,8 @@ defmodule OPS.Web.DeclarationView do
 
   alias OPS.Web.DeclarationView
 
+  @fields_termination_declaration ~w(id status reason updated_by updated_at)a
+
   def render("index.json", %{declarations: declarations}) do
     render_many(declarations, DeclarationView, "declaration_in_list.json")
   end
@@ -39,10 +41,6 @@ defmodule OPS.Web.DeclarationView do
   end
 
   defp sanitize(%OPS.Declarations.Declaration{} = declaration) do
-    declaration
-    |> Map.from_struct()
-    |> Enum.reduce(%{}, fn {k, v}, acc ->
-      if k != :__meta__ and v != nil, do: Map.put(acc, k, v), else: acc
-    end)
+    Map.take(declaration, @fields_termination_declaration)
   end
 end
