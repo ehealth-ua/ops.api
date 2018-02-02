@@ -5,7 +5,7 @@ defmodule OPS.Web.DeclarationView do
 
   alias OPS.Web.DeclarationView
 
-  @fields_termination_declaration ~w(id status reason updated_by updated_at)a
+  @fields_termination_declaration ~w(id status reason reason_description updated_by updated_at)a
 
   def render("index.json", %{declarations: declarations}) do
     render_many(declarations, DeclarationView, "declaration_in_list.json")
