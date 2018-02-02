@@ -256,18 +256,21 @@ defmodule OPS.Web.DeclarationControllerTest do
     user_id = "ab4b2245-55c9-46eb-9ac6-c751020a46e3"
     employee_id = "84e30a11-94bd-49fe-8b1f-f5511c5916d6"
 
-    dec = fixture(:declaration)
-    Repo.update_all(Declaration, set: [employee_id: employee_id])
+    %{id: id} = insert(:declaration, employee_id: employee_id)
 
-    payload = %{employee_id: employee_id, user_id: user_id, reason: "Manual"}
-    conn = patch(conn, "/employees/#{employee_id}/declarations/actions/terminate", payload)
+    payload = %{employee_id: employee_id, user_id: user_id, reason: "Manual", reason_description: "Employee dies"}
 
-    response = json_response(conn, 200)
-    response_decl = List.first(response["data"]["terminated_declarations"])
+    response_decl =
+      conn
+      |> patch("/employees/#{employee_id}/declarations/actions/terminate", payload)
+      |> json_response(200)
+      |> get_in(["data", "terminated_declarations"])
+      |> List.first()
 
-    assert dec.id == response_decl["id"]
+    assert id == response_decl["id"]
     assert user_id == response_decl["updated_by"]
     assert "Manual" == response_decl["reason"]
+    assert "Employee dies" == response_decl["reason_description"]
   end
 
   test "no declarations for terminating", %{conn: conn} do
@@ -287,19 +290,22 @@ defmodule OPS.Web.DeclarationControllerTest do
     user_id = Confex.fetch_env!(:ops, :system_user)
     person_id = "84e30a11-94bd-49fe-8b1f-f5511c5916d6"
 
-    dec = fixture(:declaration)
-    Repo.update_all(Declaration, set: [person_id: person_id])
+    %{id: id} = insert(:declaration, person_id: person_id)
+    payload = %{reason: "Manual", reason_description: "Person cheater"}
 
-    conn = patch(conn, "/persons/#{person_id}/declarations/actions/terminate", %{reason: "Person died"})
+    response_decl =
+      conn
+      |> patch("/persons/#{person_id}/declarations/actions/terminate", payload)
+      |> json_response(200)
+      |> get_in(["data", "terminated_declarations"])
+      |> List.first()
 
-    response = json_response(conn, 200)
-    response_decl = List.first(response["data"]["terminated_declarations"])
-
-    assert dec.id == response_decl["id"]
-    assert user_id == Repo.get(Declaration, dec.id).updated_by
+    assert id == response_decl["id"]
+    assert user_id == Repo.get(Declaration, id).updated_by
     assert user_id == response_decl["updated_by"]
     refute Map.has_key?(response_decl, "is_active")
-    assert "Person died" == response_decl["reason"]
+    assert "Manual" == response_decl["reason"]
+    assert "Person cheater" == response_decl["reason_description"]
   end
 
   test "terminates declarations for given person_id with updated_by param", %{conn: conn} do

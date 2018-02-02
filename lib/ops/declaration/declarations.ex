@@ -171,7 +171,7 @@ defmodule OPS.Declarations do
     |> Repo.transaction()
   end
 
-  def terminate_declarations(user_id, employee_id, reason \\ "") do
+  def terminate_declarations(user_id, employee_id, attrs \\ %{}) do
     query =
       Declaration
       |> where([d], d.status in ^[Declaration.status(:active), Declaration.status(:pending)])
@@ -179,7 +179,8 @@ defmodule OPS.Declarations do
 
     updates = [
       status: Declaration.status(:terminated),
-      reason: reason,
+      reason: Map.get(attrs, "reason"),
+      reason_description: Map.get(attrs, "reason_description"),
       updated_by: user_id,
       updated_at: DateTime.utc_now()
     ]
@@ -190,7 +191,7 @@ defmodule OPS.Declarations do
     |> Repo.transaction()
   end
 
-  def terminate_person_declarations(user_id, person_id, reason \\ "") do
+  def terminate_person_declarations(user_id, person_id, attrs \\ %{}) do
     query =
       Declaration
       |> where([d], d.status in ^[Declaration.status(:active), Declaration.status(:pending)])
@@ -198,7 +199,8 @@ defmodule OPS.Declarations do
 
     updates = [
       status: Declaration.status(:terminated),
-      reason: reason,
+      reason: Map.get(attrs, "reason"),
+      reason_description: Map.get(attrs, "reason_description"),
       updated_by: user_id,
       updated_at: DateTime.utc_now()
     ]
