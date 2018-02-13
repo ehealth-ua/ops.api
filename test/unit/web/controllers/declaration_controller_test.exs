@@ -86,6 +86,8 @@ defmodule OPS.Web.DeclarationControllerTest do
     assert id == resp_declaration["id"]
     assert employee_id == resp_declaration["employee_id"]
     assert legal_entity_id == resp_declaration["legal_entity_id"]
+    assert Map.has_key?(resp_declaration, "reason")
+    assert Map.has_key?(resp_declaration, "reason_description")
   end
 
   test "ignore invalid search params", %{conn: conn} do
@@ -133,6 +135,8 @@ defmodule OPS.Web.DeclarationControllerTest do
              "end_date" => "2016-12-07",
              "signed_at" => "2016-10-09T23:50:07.000000Z",
              "status" => "active",
+             "reason" => nil,
+             "reason_description" => nil,
              "declaration_request_id" => params["declaration_request_id"],
              "inserted_at" => inserted_at,
              "created_by" => @create_attrs.created_by,
@@ -212,6 +216,9 @@ defmodule OPS.Web.DeclarationControllerTest do
              "start_date" => "2016-10-11",
              "end_date" => "2016-12-08",
              "signed_at" => "2016-10-10T23:50:07.000000Z",
+             "status" => "closed",
+             "reason" => nil,
+             "reason_description" => nil,
              "status" => "closed",
              "declaration_request_id" => declaration_request_id,
              "inserted_at" => inserted_at,

@@ -5,6 +5,27 @@ defmodule OPS.Web.DeclarationView do
 
   alias OPS.Web.DeclarationView
 
+  @fields_declaration_in_list ~w(
+    id
+    person_id
+    employee_id
+    division_id
+    legal_entity_id
+    scope
+    start_date
+    end_date
+    signed_at
+    status
+    declaration_request_id
+    reason
+    reason_description
+    inserted_at
+    created_by
+    updated_at
+    updated_by
+    is_active
+  )a
+
   @fields_termination_declaration ~w(id status reason reason_description updated_by updated_at)a
 
   def render("index.json", %{declarations: declarations}) do
@@ -16,24 +37,7 @@ defmodule OPS.Web.DeclarationView do
   end
 
   def render("declaration_in_list.json", %{declaration: declaration}) do
-    %{
-      id: declaration.id,
-      person_id: declaration.person_id,
-      employee_id: declaration.employee_id,
-      division_id: declaration.division_id,
-      legal_entity_id: declaration.legal_entity_id,
-      scope: declaration.scope,
-      start_date: declaration.start_date,
-      end_date: declaration.end_date,
-      signed_at: declaration.signed_at,
-      status: declaration.status,
-      declaration_request_id: declaration.declaration_request_id,
-      inserted_at: declaration.inserted_at,
-      created_by: declaration.created_by,
-      updated_at: declaration.updated_at,
-      updated_by: declaration.updated_by,
-      is_active: declaration.is_active
-    }
+    Map.take(declaration, @fields_declaration_in_list)
   end
 
   def render("terminated_declarations.json", %{declarations: declarations}) do
