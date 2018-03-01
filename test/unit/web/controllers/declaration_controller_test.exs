@@ -340,14 +340,14 @@ defmodule OPS.Web.DeclarationControllerTest do
       employee_id2 = UUID.generate()
       insert(:declaration, employee_id: employee_id1)
       insert(:declaration, employee_id: employee_id2)
-      conn = get(conn, declaration_path(conn, :declarations_count, ids: Enum.join([employee_id1, employee_id2], ",")))
+      conn = post(conn, declaration_path(conn, :declarations_count, ids: [employee_id1, employee_id2]))
 
       assert resp = json_response(conn, 200)
       assert %{"count" => 2} == resp["data"]
     end
 
     test "no ids parameter sent", %{conn: conn} do
-      conn = get(conn, declaration_path(conn, :declarations_count))
+      conn = post(conn, declaration_path(conn, :declarations_count))
       assert json_response(conn, 422)
     end
   end
