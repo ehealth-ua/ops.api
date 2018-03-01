@@ -72,8 +72,7 @@ defmodule OPS.Web.DeclarationController do
   end
 
   def declarations_count(conn, %{"ids" => employee_ids}) do
-    with employee_ids <- String.split(employee_ids, ","),
-         count <- Declarations.count_by_employee_ids(employee_ids) do
+    with count <- Declarations.count_by_employee_ids(employee_ids) do
       render(conn, "declarations_count.json", count: count)
     end
   end
