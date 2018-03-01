@@ -21,6 +21,14 @@ defmodule OPS.Declarations do
     |> search(params, Declaration)
   end
 
+  def count_by_employee_ids(ids) do
+    Declaration
+    |> select([d], fragment("count(*)"))
+    |> where([d], d.employee_id in ^ids)
+    |> where([d], d.status in ^[Declaration.status(:active)])
+    |> Repo.one!()
+  end
+
   def get_declaration!(id), do: Repo.get!(Declaration, id)
 
   # TODO: Make more clearly getting created_by and updated_by parameters

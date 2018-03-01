@@ -6,35 +6,36 @@ defmodule OPS.Web.DeclarationControllerTest do
   alias OPS.Declarations.DeclarationStatusHistory
   alias OPS.EventManagerRepo
   alias OPS.EventManager.Event
+  alias Ecto.UUID
 
   @create_attrs %{
-    id: Ecto.UUID.generate(),
-    employee_id: Ecto.UUID.generate(),
+    id: UUID.generate(),
+    employee_id: UUID.generate(),
     start_date: "2016-10-10",
     end_date: "2016-12-07",
     status: "active",
     signed_at: "2016-10-09T23:50:07.000000Z",
-    created_by: Ecto.UUID.generate(),
-    updated_by: Ecto.UUID.generate(),
+    created_by: UUID.generate(),
+    updated_by: UUID.generate(),
     is_active: true,
     scope: "family_doctor",
-    division_id: Ecto.UUID.generate(),
-    legal_entity_id: Ecto.UUID.generate()
+    division_id: UUID.generate(),
+    legal_entity_id: UUID.generate()
   }
 
   @update_attrs %{
-    employee_id: Ecto.UUID.generate(),
-    person_id: Ecto.UUID.generate(),
+    employee_id: UUID.generate(),
+    person_id: UUID.generate(),
     start_date: "2016-10-11",
     end_date: "2016-12-08",
     status: "closed",
     signed_at: "2016-10-10T23:50:07.000000Z",
-    created_by: Ecto.UUID.generate(),
-    updated_by: Ecto.UUID.generate(),
+    created_by: UUID.generate(),
+    updated_by: UUID.generate(),
     is_active: false,
     scope: "family_doctor",
-    division_id: Ecto.UUID.generate(),
-    legal_entity_id: Ecto.UUID.generate()
+    division_id: UUID.generate(),
+    legal_entity_id: UUID.generate()
   }
 
   @invalid_attrs %{
@@ -44,11 +45,11 @@ defmodule OPS.Web.DeclarationControllerTest do
   def fixture(:declaration, attrs \\ @create_attrs) do
     create_attrs =
       attrs
-      |> Map.put(:id, Ecto.UUID.generate())
-      |> Map.put(:employee_id, Ecto.UUID.generate())
-      |> Map.put(:legal_entity_id, Ecto.UUID.generate())
-      |> Map.put(:person_id, Ecto.UUID.generate())
-      |> Map.put(:declaration_request_id, Ecto.UUID.generate())
+      |> Map.put(:id, UUID.generate())
+      |> Map.put(:employee_id, UUID.generate())
+      |> Map.put(:legal_entity_id, UUID.generate())
+      |> Map.put(:person_id, UUID.generate())
+      |> Map.put(:declaration_request_id, UUID.generate())
 
     {:ok, declaration} = Declarations.create_declaration(create_attrs)
     declaration
@@ -115,8 +116,8 @@ defmodule OPS.Web.DeclarationControllerTest do
   test "creates declaration and renders declaration when data is valid", %{conn: conn} do
     params =
       @create_attrs
-      |> Map.put("declaration_request_id", Ecto.UUID.generate())
-      |> Map.put("person_id", Ecto.UUID.generate())
+      |> Map.put("declaration_request_id", UUID.generate())
+      |> Map.put("person_id", UUID.generate())
 
     conn = post(conn, declaration_path(conn, :create), declaration: params)
     assert %{"id" => id, "inserted_at" => inserted_at, "updated_at" => updated_at} = json_response(conn, 201)["data"]
@@ -160,7 +161,7 @@ defmodule OPS.Web.DeclarationControllerTest do
     params =
       @create_attrs
       |> Map.put(:person_id, person_id)
-      |> Map.put(:declaration_request_id, Ecto.UUID.generate())
+      |> Map.put(:declaration_request_id, UUID.generate())
 
     %{id: id2} = fixture(:declaration, params)
     conn = post(conn, declaration_path(conn, :create_with_termination_logic), params)
@@ -316,7 +317,7 @@ defmodule OPS.Web.DeclarationControllerTest do
   end
 
   test "terminates declarations for given person_id with updated_by param", %{conn: conn} do
-    user_id = Ecto.UUID.generate()
+    user_id = UUID.generate()
     person_id = "84e30a11-94bd-49fe-8b1f-f5511c5916d6"
 
     dec = fixture(:declaration)
@@ -331,5 +332,23 @@ defmodule OPS.Web.DeclarationControllerTest do
     assert user_id == Repo.get(Declaration, dec.id).updated_by
     assert user_id == response_decl["updated_by"]
     assert "Person died" == response_decl["reason"]
+  end
+
+  describe "count declarations" do
+    test "success count declarations by employee_ids", %{conn: conn} do
+      employee_id1 = UUID.generate()
+      employee_id2 = UUID.generate()
+      insert(:declaration, employee_id: employee_id1)
+      insert(:declaration, employee_id: employee_id2)
+      conn = get(conn, declaration_path(conn, :declarations_count, ids: [employee_id1, employee_id2]))
+
+      assert resp = json_response(conn, 200)
+      assert %{"count" => 2} == resp["data"]
+    end
+
+    test "no ids parameter sent", %{conn: conn} do
+      conn = get(conn, declaration_path(conn, :declarations_count))
+      assert json_response(conn, 422)
+    end
   end
 end

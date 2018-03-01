@@ -44,6 +44,8 @@ defmodule OPS.Web.DeclarationView do
     %{terminated_declarations: Enum.map(declarations, &sanitize/1)}
   end
 
+  def render("declarations_count.json", %{count: count}), do: %{count: count}
+
   defp sanitize(%OPS.Declarations.Declaration{} = declaration) do
     Map.take(declaration, @fields_termination_declaration)
   end
