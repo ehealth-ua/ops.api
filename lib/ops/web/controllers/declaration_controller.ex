@@ -71,6 +71,16 @@ defmodule OPS.Web.DeclarationController do
     end
   end
 
+  def declarations_count(conn, %{"ids" => employee_ids}) do
+    with count <- Declarations.count_by_employee_ids(employee_ids) do
+      render(conn, "declarations_count.json", count: count)
+    end
+  end
+
+  def declarations_count(_, _) do
+    {:error, {:"422", "missed \"ids\" parameter"}}
+  end
+
   defp fetch_user_id(%{"user_id" => user_id}) when byte_size(user_id) > 0, do: user_id
   defp fetch_user_id(_), do: Confex.fetch_env!(:ops, :system_user)
 end

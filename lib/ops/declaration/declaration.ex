@@ -26,6 +26,7 @@ defmodule OPS.Declarations.Declaration do
     field(:seed, :string)
     field(:reason, :string)
     field(:reason_description, :string)
+    field(:overlimit, :boolean)
 
     timestamps(type: :utc_datetime)
   end
