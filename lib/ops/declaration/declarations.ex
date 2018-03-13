@@ -82,6 +82,7 @@ defmodule OPS.Declarations do
       legal_entity_id
       declaration_request_id
       seed
+      overlimit
     )a
 
     declaration
