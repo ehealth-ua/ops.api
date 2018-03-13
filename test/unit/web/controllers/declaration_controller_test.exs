@@ -162,14 +162,15 @@ defmodule OPS.Web.DeclarationControllerTest do
       @create_attrs
       |> Map.put(:person_id, person_id)
       |> Map.put(:declaration_request_id, UUID.generate())
+      |> Map.put(:overlimit, true)
 
     %{id: id2} = fixture(:declaration, params)
     conn = post(conn, declaration_path(conn, :create_with_termination_logic), params)
     resp = json_response(conn, 200)
     assert Map.has_key?(resp, "data")
     assert Map.has_key?(resp["data"], "id")
-    id = resp["data"]["id"]
-    assert id
+    assert id = resp["data"]["id"]
+    assert %{overlimit: true} = Repo.get(Declaration, id)
 
     %{id: ^id} = Declarations.get_declaration!(id)
 
