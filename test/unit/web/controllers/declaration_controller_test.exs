@@ -1,4 +1,6 @@
 defmodule OPS.Web.DeclarationControllerTest do
+  @moduledoc false
+
   use OPS.Web.ConnCase
 
   alias OPS.Declarations
@@ -221,7 +223,6 @@ defmodule OPS.Web.DeclarationControllerTest do
              "status" => "closed",
              "reason" => nil,
              "reason_description" => nil,
-             "status" => "closed",
              "declaration_request_id" => declaration_request_id,
              "inserted_at" => inserted_at,
              "created_by" => @update_attrs.created_by,
@@ -350,6 +351,45 @@ defmodule OPS.Web.DeclarationControllerTest do
     test "no ids parameter sent", %{conn: conn} do
       conn = post(conn, declaration_path(conn, :declarations_count))
       assert json_response(conn, 422)
+    end
+  end
+
+  describe "terminate declaration" do
+    test "invalid declaration id", %{conn: conn} do
+      assert_raise Ecto.NoResultsError, fn ->
+        patch(conn, declaration_path(conn, :terminate_declaration, UUID.generate()))
+      end
+    end
+
+    test "no reason and updated field", %{conn: conn} do
+      declaration = insert(:declaration)
+      conn = patch(conn, declaration_path(conn, :terminate_declaration, declaration.id))
+
+      assert %{"error" => %{"invalid" => [%{"entry" => "$.reason"}, %{"entry" => "$.updated_by"}]}} =
+               json_response(conn, 422)
+    end
+
+    test "success terminate declaration", %{conn: conn} do
+      declaration = insert(:declaration, status: Declaration.status(:active))
+      updated_by = UUID.generate()
+
+      conn =
+        patch(conn, declaration_path(conn, :terminate_declaration, declaration.id), %{
+          "reason" => "manual_person",
+          "updated_by" => updated_by
+        })
+
+      declaration_id = declaration.id
+      terminated = Declaration.status(:terminated)
+
+      assert %{
+               "data" => %{
+                 "updated_by" => ^updated_by,
+                 "id" => ^declaration_id,
+                 "reason" => "manual_person",
+                 "status" => ^terminated
+               }
+             } = json_response(conn, 200)
     end
   end
 end

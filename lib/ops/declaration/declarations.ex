@@ -51,10 +51,6 @@ defmodule OPS.Declarations do
          _ <- EventManager.insert_change_status(declaration, old_status, declaration.status, declaration.updated_by) do
       {:ok, declaration}
     end
-
-    declaration
-    |> declaration_changeset(attrs)
-    |> Repo.update_and_log(updated_by)
   end
 
   def delete_declaration(%Declaration{} = declaration) do
@@ -111,6 +107,17 @@ defmodule OPS.Declarations do
     cast(declaration, attrs, fields)
   end
 
+  defp terminate_changeset(%Declaration{} = declaration, attrs) do
+    fields_required = ~w(status updated_by reason)a
+    fields_optional = ~w(reason_description)a
+
+    declaration
+    |> cast(attrs, fields_required ++ fields_optional)
+    |> validate_required(fields_required)
+    |> validate_changed(:updated_by)
+    |> validate_status_transition()
+  end
+
   def create_declaration_with_termination_logic(%{"person_id" => person_id} = declaration_params) do
     query =
       Declaration
@@ -163,6 +170,15 @@ defmodule OPS.Declarations do
     |> Multi.update_all(:declarations, query, [set: updates], returning: updated_fields_list(updates))
     |> Multi.run(:logged_declarations, &log_status_updates(&1.declarations))
     |> Repo.transaction()
+  end
+
+  def terminate_declaration(id, attrs) do
+    attrs = Map.put(attrs, "status", Declaration.status(:terminated))
+
+    with %Declaration{} = declaration <- get_declaration!(id),
+         %Ecto.Changeset{valid?: true} = changeset <- terminate_changeset(declaration, attrs) do
+      Repo.update_and_log(changeset, attrs["updated_by"])
+    end
   end
 
   def terminate_declarations do
@@ -275,4 +291,12 @@ defmodule OPS.Declarations do
   end
 
   defp updated_fields_list(updates), do: [:id | Keyword.keys(updates)]
+
+  defp validate_changed(%Ecto.Changeset{changes: changes} = changeset, field) do
+    if Map.has_key?(changes, field) do
+      changeset
+    else
+      add_error(changeset, field, "can't be blank", validation: :required)
+    end
+  end
 end
