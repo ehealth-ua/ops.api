@@ -62,6 +62,12 @@ defmodule OPS.Web.DeclarationController do
     end
   end
 
+  def terminate_declaration(conn, %{"id" => id} = attrs) do
+    with {:ok, %Declaration{} = declaration} <- Declarations.terminate_declaration(id, attrs) do
+      render(conn, "show.json", declaration: declaration)
+    end
+  end
+
   def terminate_person_declarations(conn, %{"id" => person_id} = attrs) do
     user_id = fetch_user_id(attrs)
 
