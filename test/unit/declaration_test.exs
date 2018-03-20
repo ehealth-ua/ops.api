@@ -57,6 +57,7 @@ defmodule OPS.DeclarationTest do
       |> Map.put("employee_id", Ecto.UUID.generate())
       |> Map.put("legal_entity_id", Ecto.UUID.generate())
       |> Map.put("declaration_request_id", Ecto.UUID.generate())
+      |> Map.put("declaration_number", to_string(Enum.random(1..1000)))
 
     {:ok, declaration} = Declarations.create_declaration(create_attrs)
     declaration
@@ -78,14 +79,18 @@ defmodule OPS.DeclarationTest do
   end
 
   test "create_declaration/1 with valid data creates a declaration" do
+    declaration_number = to_string(Enum.random(1..1000))
+
     create_attrs =
       @create_attrs
       |> Map.put("id", Ecto.UUID.generate())
       |> Map.put("employee_id", Ecto.UUID.generate())
       |> Map.put("legal_entity_id", Ecto.UUID.generate())
       |> Map.put("person_id", Ecto.UUID.generate())
+      |> Map.put("declaration_number", declaration_number)
 
     assert {:ok, %Declaration{} = declaration} = Declarations.create_declaration(create_attrs)
+    assert declaration_number == declaration.declaration_number
     assert declaration.id == create_attrs["id"]
     assert declaration.person_id == create_attrs["person_id"]
     assert declaration.start_date
@@ -108,7 +113,12 @@ defmodule OPS.DeclarationTest do
   describe "create_declaration_with_termination_logic/1" do
     test "with valid data creates declaration and terminates other person declarations" do
       %{id: id1, person_id: person_id} = fixture(:declaration)
-      params = Map.put(@create_attrs, "person_id", person_id)
+
+      params =
+        @create_attrs
+        |> Map.put("person_id", person_id)
+        |> Map.put("declaration_number", to_string(Enum.random(1..1000)))
+
       {:ok, %{new_declaration: %{id: id}}} = Declarations.create_declaration_with_termination_logic(params)
 
       %{id: ^id, status: status} = Declarations.get_declaration!(id)
@@ -133,7 +143,12 @@ defmodule OPS.DeclarationTest do
   describe "update_declaration/2" do
     test "updates the declaration when data is valid" do
       declaration = fixture(:declaration)
-      assert {:ok, declaration} = Declarations.update_declaration(declaration, @update_attrs)
+      declaration_number = declaration.declaration_number
+
+      assert {:ok, declaration} =
+               Declarations.update_declaration(declaration, Map.put(@update_attrs, "declaration_number", "1234567890"))
+
+      assert declaration.declaration_number == declaration_number
       assert %Declaration{} = declaration
 
       assert declaration.person_id == @update_attrs["person_id"]

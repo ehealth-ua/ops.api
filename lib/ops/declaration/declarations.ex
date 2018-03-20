@@ -81,6 +81,9 @@ defmodule OPS.Declarations do
       overlimit
     )a
 
+    # declaration_number shouldn't be updated
+    fields = if declaration.declaration_number, do: fields, else: fields ++ [:declaration_number]
+
     declaration
     |> cast(attrs, fields)
     |> validate_required(fields)

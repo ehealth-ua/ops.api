@@ -52,6 +52,7 @@ defmodule OPS.Web.DeclarationControllerTest do
       |> Map.put(:legal_entity_id, UUID.generate())
       |> Map.put(:person_id, UUID.generate())
       |> Map.put(:declaration_request_id, UUID.generate())
+      |> Map.put(:declaration_number, to_string(Enum.random(1..1000)))
 
     {:ok, declaration} = Declarations.create_declaration(create_attrs)
     declaration
@@ -120,6 +121,7 @@ defmodule OPS.Web.DeclarationControllerTest do
       @create_attrs
       |> Map.put("declaration_request_id", UUID.generate())
       |> Map.put("person_id", UUID.generate())
+      |> Map.put("declaration_number", to_string(Enum.random(1..1000)))
 
     conn = post(conn, declaration_path(conn, :create), declaration: params)
     assert %{"id" => id, "inserted_at" => inserted_at, "updated_at" => updated_at} = json_response(conn, 201)["data"]
@@ -165,6 +167,7 @@ defmodule OPS.Web.DeclarationControllerTest do
       |> Map.put(:person_id, person_id)
       |> Map.put(:declaration_request_id, UUID.generate())
       |> Map.put(:overlimit, true)
+      |> Map.put(:declaration_number, to_string(Enum.random(1..1000)))
 
     %{id: id2} = fixture(:declaration, params)
     conn = post(conn, declaration_path(conn, :create_with_termination_logic), params)
