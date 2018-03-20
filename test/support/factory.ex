@@ -28,7 +28,8 @@ defmodule OPS.Factory do
       legal_entity_id: Ecto.UUID.generate(),
       is_active: true,
       scope: "",
-      seed: "some seed"
+      seed: "some seed",
+      declaration_number: to_string(Enum.random(1..1000))
     }
   end
 
