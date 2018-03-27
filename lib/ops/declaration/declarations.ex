@@ -25,7 +25,7 @@ defmodule OPS.Declarations do
     Declaration
     |> select([d], fragment("count(*)"))
     |> where([d], d.employee_id in ^ids)
-    |> where([d], d.status in ^[Declaration.status(:active)])
+    |> where([d], d.status == ^Declaration.status(:active))
     |> Repo.one!()
   end
 
