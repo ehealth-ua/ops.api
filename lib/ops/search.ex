@@ -21,15 +21,9 @@ defmodule OPS.Search do
       end
 
       def get_search_query(entity, changes) when map_size(changes) > 0 do
-        statuses =
-          changes
-          |> Map.get(:status, "")
-          |> String.split(",")
-
-        params =
-          changes
-          |> Map.drop([:status])
-          |> Map.to_list()
+        statuses = changes |> Map.get(:status, "") |> String.split(",")
+        start_year = changes |> Map.get(:start_year)
+        params = changes |> Map.drop([:status, :start_year]) |> Map.to_list()
 
         query =
           from(
@@ -38,18 +32,22 @@ defmodule OPS.Search do
             order_by: [desc: :inserted_at]
           )
 
-        add_status_where(query, statuses)
+        query
+        |> add_query_statuses(statuses)
+        |> add_query_start_year(start_year)
       end
 
       def get_search_query(entity, _changes), do: from(e in entity, order_by: [desc: :inserted_at])
 
-      defp add_status_where(query, [""]), do: query
-      defp add_status_where(query, statuses), do: query |> where([e], e.status in ^statuses)
+      defp add_query_statuses(query, [""]), do: query
+      defp add_query_statuses(query, statuses), do: where(query, [e], e.status in ^statuses)
+
+      defp add_query_start_year(query, nil), do: query
+
+      defp add_query_start_year(query, start_year),
+        do: where(query, [d], fragment("date_part('year', ?) = ?", d.start_date, ^start_year))
 
       defoverridable get_search_query: 2
     end
   end
-
-  def to_integer(value) when is_binary(value), do: String.to_integer(value)
-  def to_integer(value), do: value
 end

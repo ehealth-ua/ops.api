@@ -44,20 +44,6 @@ defmodule OPS.Web.DeclarationControllerTest do
     division_id: "invalid"
   }
 
-  def fixture(:declaration, attrs \\ @create_attrs) do
-    create_attrs =
-      attrs
-      |> Map.put(:id, UUID.generate())
-      |> Map.put(:employee_id, UUID.generate())
-      |> Map.put(:legal_entity_id, UUID.generate())
-      |> Map.put(:person_id, UUID.generate())
-      |> Map.put(:declaration_request_id, UUID.generate())
-      |> Map.put(:declaration_number, to_string(Enum.random(1..1000)))
-
-    {:ok, declaration} = Declarations.create_declaration(create_attrs)
-    declaration
-  end
-
   setup %{conn: conn} do
     insert_initial_block()
 
@@ -92,6 +78,27 @@ defmodule OPS.Web.DeclarationControllerTest do
     assert legal_entity_id == resp_declaration["legal_entity_id"]
     assert Map.has_key?(resp_declaration, "reason")
     assert Map.has_key?(resp_declaration, "reason_description")
+  end
+
+  test "search declarations from cabinet", %{conn: conn} do
+    person_id = UUID.generate()
+    start_year = "2018"
+    start_date_expected = "2018-01-01"
+
+    insert(:declaration, person_id: person_id, status: Declaration.status(:active), start_date: start_date_expected)
+    insert(:declaration, person_id: person_id, status: Declaration.status(:pending), start_date: "2017-01-01")
+    insert(:declaration, person_id: person_id, status: Declaration.status(:rejected), start_date: start_date_expected)
+    insert(:declaration, start_date: "2017-01-01")
+
+    # search active
+    response = perform_declaration_request(conn, %{person_id: person_id, status: Declaration.status(:active)})
+    assert 1 === Enum.count(response)
+    assert [person_id] === get_declarations_property(response, "person_id")
+    assert [Declaration.status(:active)] === get_declarations_property(response, "status")
+
+    # search with all with particual year
+    response = perform_declaration_request(conn, %{person_id: person_id, start_year: start_year})
+    assert [start_date_expected, start_date_expected] === get_declarations_property(response, "start_date")
   end
 
   test "ignore invalid search params", %{conn: conn} do
@@ -395,4 +402,28 @@ defmodule OPS.Web.DeclarationControllerTest do
              } = json_response(conn, 200)
     end
   end
+
+  defp fixture(:declaration, attrs \\ @create_attrs) do
+    create_attrs =
+      attrs
+      |> Map.put(:id, UUID.generate())
+      |> Map.put(:employee_id, UUID.generate())
+      |> Map.put(:legal_entity_id, UUID.generate())
+      |> Map.put(:person_id, UUID.generate())
+      |> Map.put(:declaration_request_id, UUID.generate())
+      |> Map.put(:declaration_number, to_string(Enum.random(1..1000)))
+
+    {:ok, declaration} = Declarations.create_declaration(create_attrs)
+    declaration
+  end
+
+  defp perform_declaration_request(conn, params) do
+    conn
+    |> get(declaration_path(conn, :index), params)
+    |> json_response(200)
+    |> Access.get("data")
+  end
+
+  defp get_declarations_property(declarations, property),
+    do: Enum.map(declarations, fn declaration -> declaration[property] end)
 end

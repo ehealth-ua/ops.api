@@ -11,5 +11,7 @@ defmodule OPS.Declarations.DeclarationSearch do
     field(:division_id, Ecto.UUID)
     field(:status, :string)
     field(:is_active, :boolean)
+    field(:start_year, :integer)
+    field(:declaration_number, :string)
   end
 end
