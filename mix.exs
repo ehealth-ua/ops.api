@@ -63,7 +63,7 @@ defmodule OPS.Mixfile do
       {:ecto_trail, ">= 0.0.0"},
       {:quantum, "~> 2.2.0"},
       {:plug_logger_json, "~> 0.5"},
-      {:ecto_logger_json, "~> 0.1"},
+      {:ecto_logger_json, git: "https://github.com/edenlabllc/ecto_logger_json.git", branch: "query_params"},
       {:ex_machina, "~> 2.0", only: [:dev, :test]},
       {:excoveralls, ">= 0.5.0", only: [:dev, :test]},
       {:credo, ">= 0.5.1", only: [:dev, :test]}
