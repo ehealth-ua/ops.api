@@ -133,11 +133,12 @@ defmodule OPS.Web.DeclarationControllerTest do
   end
 
   test "creates declaration and renders declaration when data is valid", %{conn: conn} do
+    declaration_number = UUID.generate()
     params =
       @create_attrs
       |> Map.put("declaration_request_id", UUID.generate())
       |> Map.put("person_id", UUID.generate())
-      |> Map.put("declaration_number", to_string(Enum.random(1..1000)))
+      |> Map.put("declaration_number", declaration_number)
 
     conn = post(conn, declaration_path(conn, :create), declaration: params)
     assert %{"id" => id, "inserted_at" => inserted_at, "updated_at" => updated_at} = json_response(conn, 201)["data"]
@@ -163,7 +164,8 @@ defmodule OPS.Web.DeclarationControllerTest do
              "created_by" => @create_attrs.created_by,
              "updated_at" => updated_at,
              "updated_by" => @create_attrs.updated_by,
-             "is_active" => true
+             "is_active" => true,
+             "declaration_number" => declaration_number
            }
 
     declaration_status_hstr = Repo.one!(DeclarationStatusHistory)
@@ -223,7 +225,9 @@ defmodule OPS.Web.DeclarationControllerTest do
   end
 
   test "updates chosen declaration and renders declaration when data is valid", %{conn: conn} do
-    %Declaration{id: id, declaration_request_id: declaration_request_id} = declaration = fixture(:declaration)
+    declaration_number = UUID.generate()
+    declaration = insert(:declaration, declaration_number: declaration_number)
+    %Declaration{id: id, declaration_request_id: declaration_request_id} = declaration
     conn = put(conn, declaration_path(conn, :update, declaration), declaration: @update_attrs)
     assert %{"id" => ^id, "inserted_at" => inserted_at, "updated_at" => updated_at} = json_response(conn, 200)["data"]
 
@@ -247,7 +251,8 @@ defmodule OPS.Web.DeclarationControllerTest do
              "created_by" => @update_attrs.created_by,
              "updated_at" => updated_at,
              "updated_by" => @update_attrs.updated_by,
-             "is_active" => false
+             "is_active" => false,
+             "declaration_number" => declaration_number
            }
 
     declaration_status_hstrs = Repo.all(DeclarationStatusHistory)
