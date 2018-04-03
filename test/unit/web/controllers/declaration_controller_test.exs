@@ -69,6 +69,15 @@ defmodule OPS.Web.DeclarationControllerTest do
     assert json_response(conn, 200)["data"] == []
   end
 
+  test "max page size", %{conn: conn} do
+    for _i <- 1..110 do
+      insert(:declaration)
+    end
+
+    conn = get(conn, declaration_path(conn, :index), page_size: 1000)
+    assert 100 == length(json_response(conn, 200)["data"])
+  end
+
   test "searches entries", %{conn: conn} do
     %{employee_id: doctor_id_1} = fixture(:declaration)
     %{employee_id: doctor_id_2} = fixture(:declaration)

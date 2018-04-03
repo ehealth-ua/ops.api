@@ -6,5 +6,5 @@ defmodule OPS.Repo do
   """
   use Ecto.Repo, otp_app: :ops
   use EctoTrail
-  use Scrivener, page_size: 50
+  use Scrivener, page_size: 50, max_page_size: 100
 end
