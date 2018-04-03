@@ -29,7 +29,7 @@ defmodule OPS.Factory do
       is_active: true,
       scope: "",
       seed: "some seed",
-      declaration_number: to_string(Enum.random(1..1000))
+      declaration_number: sequence("")
     }
   end
 
