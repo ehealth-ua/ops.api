@@ -78,14 +78,15 @@ defmodule OPS.Declarations do
       legal_entity_id
       declaration_request_id
       seed
-      overlimit
     )a
+
+    fields_optional = ~w(overlimit)a
 
     # declaration_number shouldn't be updated
     fields = if declaration.declaration_number, do: fields, else: fields ++ [:declaration_number]
 
     declaration
-    |> cast(attrs, fields)
+    |> cast(attrs, fields ++ fields_optional)
     |> validate_required(fields)
     |> validate_status_transition()
     |> validate_inclusion(:scope, ["family_doctor"])
