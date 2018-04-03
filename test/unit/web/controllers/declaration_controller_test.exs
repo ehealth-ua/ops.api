@@ -134,6 +134,7 @@ defmodule OPS.Web.DeclarationControllerTest do
 
   test "creates declaration and renders declaration when data is valid", %{conn: conn} do
     declaration_number = UUID.generate()
+
     params =
       @create_attrs
       |> Map.put("declaration_request_id", UUID.generate())
