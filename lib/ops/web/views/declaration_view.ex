@@ -24,6 +24,7 @@ defmodule OPS.Web.DeclarationView do
     updated_at
     updated_by
     is_active
+    declaration_number
   )a
 
   @fields_termination_declaration ~w(id status reason reason_description updated_by updated_at)a
