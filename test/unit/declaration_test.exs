@@ -81,9 +81,11 @@ defmodule OPS.DeclarationTest do
   test "create_declaration/1 with valid data creates a declaration" do
     declaration_number = to_string(Enum.random(1..1000))
 
+    id = Ecto.UUID.generate()
+
     create_attrs =
       @create_attrs
-      |> Map.put("id", Ecto.UUID.generate())
+      |> Map.put("id", id)
       |> Map.put("employee_id", Ecto.UUID.generate())
       |> Map.put("legal_entity_id", Ecto.UUID.generate())
       |> Map.put("person_id", Ecto.UUID.generate())
@@ -103,6 +105,9 @@ defmodule OPS.DeclarationTest do
     assert declaration.is_active
     assert declaration.employee_id == create_attrs["employee_id"]
     assert declaration.legal_entity_id == create_attrs["legal_entity_id"]
+
+    assert {:error, %Ecto.Changeset{valid?: false, errors: [id: {"has already been taken", []}]}} =
+             Declarations.create_declaration(create_attrs)
   end
 
   @tag pending: true

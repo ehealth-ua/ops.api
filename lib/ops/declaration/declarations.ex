@@ -103,6 +103,7 @@ defmodule OPS.Declarations do
         &Declaration.status/1
       )
     )
+    |> unique_constraint(:id, name: :declarations_pkey)
   end
 
   defp declaration_changeset(%DeclarationSearch{} = declaration, attrs) do
