@@ -1,15 +1,17 @@
 defmodule OPS.MedicationDispenses do
   @moduledoc false
 
+  use OPS.Search
+
+  import Ecto.Changeset
+  import OPS.AuditLogs, only: [create_audit_logs: 1]
+
   alias OPS.MedicationDispenses.MedicationDispense
   alias OPS.MedicationDispense.Details
   alias OPS.Repo
   alias OPS.MedicationDispense.Search
   alias Ecto.Multi
   alias OPS.EventManager
-  import Ecto.Changeset
-  import OPS.AuditLogs, only: [create_audit_logs: 1]
-  use OPS.Search
 
   @status_new MedicationDispense.status(:new)
   @status_processed MedicationDispense.status(:processed)
@@ -30,7 +32,7 @@ defmodule OPS.MedicationDispenses do
     updated_by
   )a
 
-  @fields_optional ~w(payment_id)a
+  @fields_optional ~w(payment_id dispensed_by)a
 
   def list(params) do
     %Search{}
