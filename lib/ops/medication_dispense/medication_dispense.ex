@@ -16,6 +16,8 @@ defmodule OPS.MedicationDispenses.MedicationDispense do
   @primary_key {:id, :binary_id, autogenerate: false}
   schema "medication_dispenses" do
     field(:medication_request_id, Ecto.UUID)
+    # Full name of worker who dispensed recipe
+    field(:dispensed_by, :string)
     field(:dispensed_at, :date)
     field(:party_id, Ecto.UUID)
     field(:legal_entity_id, Ecto.UUID)

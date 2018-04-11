@@ -40,6 +40,7 @@ defmodule OPS.Factory do
       inserted_by: Ecto.UUID.generate(),
       updated_by: Ecto.UUID.generate(),
       is_active: true,
+      dispensed_by: sequence("John Doe"),
       dispensed_at: to_string(Date.utc_today()),
       party_id: Ecto.UUID.generate(),
       legal_entity_id: Ecto.UUID.generate(),
