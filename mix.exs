@@ -3,7 +3,7 @@ defmodule OPS.Mixfile do
 
   use Mix.Project
 
-  @version "1.140.1"
+  @version "1.140.2"
 
   def project do
     [
