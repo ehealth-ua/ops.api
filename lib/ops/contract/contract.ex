@@ -24,6 +24,7 @@ defmodule OPS.Contracts.Contract do
     field(:nhs_legal_entity_id, UUID)
     field(:nhs_signer_id, UUID)
     field(:nhs_payment_method, :string)
+    field(:nhs_payment_details, :map)
     field(:nhs_signer_base, :string)
     field(:issue_city, :string)
     field(:price, :float)
