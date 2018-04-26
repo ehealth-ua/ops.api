@@ -9,19 +9,18 @@ defmodule OPS.Web.ContractControllerTest do
     test "successfully shows", %{conn: conn} do
       contractor_owner_id = UUID.generate()
       contract = insert(:contract, contractor_owner_id: contractor_owner_id)
+      conn = get(conn, contract_path(conn, :show, contract.id))
 
-      assert %{"data" => response_data} = do_contract_show_request(conn, contract.id)
-      assert %{"contractor_owner_id" => ^contractor_owner_id} = response_data
+      assert %{"contractor_owner_id" => ^contractor_owner_id} = json_response(conn, 200)["data"]
     end
 
     test "founds nothing", %{conn: conn} do
-      assert %{"error" => %{"type" => "not_found"}} = do_contract_show_request(conn, UUID.generate(), 404)
-    end
-  end
+      response =
+        conn
+        |> get(contract_path(conn, :show, UUID.generate()))
+        |> json_response(404)
 
-  defp do_contract_show_request(conn, id, status_code \\ 200) do
-    conn
-    |> get(contract_path(conn, :show, id))
-    |> json_response(status_code)
+      assert %{"error" => %{"type" => "not_found"}} = response
+    end
   end
 end
