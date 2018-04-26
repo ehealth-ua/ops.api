@@ -30,6 +30,7 @@ defmodule OPS.Contracts.Contract do
     field(:contract_number, :string)
     field(:contract_request_id, UUID)
     field(:is_active, :boolean)
+    field(:is_suspended, :boolean)
     field(:inserted_by, UUID)
     field(:updated_by, UUID)
 
