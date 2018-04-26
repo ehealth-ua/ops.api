@@ -10,7 +10,7 @@ defmodule OPS.Repo.Migrations.CreateContract do
       add(:end_date, :naive_datetime, null: false)
       add(:status, :string, null: false)
       add(:contractor_legal_entity_id, :uuid, null: false)
-      add(:contractor_id, :uuid, null: false)
+      add(:contractor_owner_id, :uuid, null: false)
       add(:contractor_base, :string, null: false)
       add(:contractor_payment_details, :map, null: false)
       add(:contractor_rmsp_amount, :integer, null: false)
