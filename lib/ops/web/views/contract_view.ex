@@ -3,7 +3,15 @@ defmodule OPS.Web.ContractView do
 
   use OPS.Web, :view
 
+  def render("index.json", %{contracts: contracts}) do
+    render_many(contracts, __MODULE__, "contract.json")
+  end
+
   def render("show.json", %{contract: contract}) do
+    render_one(contract, __MODULE__, "contract.json")
+  end
+
+  def render("contract.json", %{contract: contract}) do
     Map.take(contract, ~w(
       id
       start_date

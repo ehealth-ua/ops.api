@@ -12,8 +12,8 @@ defmodule OPS.Contracts.Contract do
 
   @primary_key {:id, Ecto.UUID, autogenerate: false}
   schema "contracts" do
-    field(:start_date, :naive_datetime)
-    field(:end_date, :naive_datetime)
+    field(:start_date, :date)
+    field(:end_date, :date)
     field(:status, :string)
     field(:contractor_legal_entity_id, UUID)
     field(:contractor_owner_id, UUID)

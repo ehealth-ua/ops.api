@@ -6,8 +6,8 @@ defmodule OPS.Repo.Migrations.CreateContract do
   def change do
     create table(:contracts, primary_key: false) do
       add(:id, :uuid, primary_key: true)
-      add(:start_date, :naive_datetime, null: false)
-      add(:end_date, :naive_datetime, null: false)
+      add(:start_date, :date, null: false)
+      add(:end_date, :date, null: false)
       add(:status, :string, null: false)
       add(:contractor_legal_entity_id, :uuid, null: false)
       add(:contractor_owner_id, :uuid, null: false)
