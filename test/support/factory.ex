@@ -114,11 +114,13 @@ defmodule OPS.Factory do
             issued_at: NaiveDateTime.utc_now(),
             expires_at: NaiveDateTime.add(NaiveDateTime.utc_now(), days_to_seconds(365), :seconds)
           },
-          divisions: [%{
-            id: UUID.generate(),
-            name: "Бориспільське відділення Клініки Ноунейм",
-            medical_service: "Послуга ПМД"
-          }]
+          divisions: [
+            %{
+              id: UUID.generate(),
+              name: "Бориспільське відділення Клініки Ноунейм",
+              medical_service: "Послуга ПМД"
+            }
+          ]
         }
       ],
       nhs_legal_entity_id: UUID.generate(),
