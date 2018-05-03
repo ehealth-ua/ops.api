@@ -33,10 +33,10 @@ defmodule OPS.Contracts do
   end
 
   def get_search_query(entity, changes) do
-    date_from_start_date = Map.get(changes, :dispensed_from)
-    date_to_start_date = Map.get(changes, :dispensed_to)
-    date_from_end_date = Map.get(changes, :dispensed_from)
-    date_to_end_date = Map.get(changes, :dispensed_to)
+    date_from_start_date = Map.get(changes, :date_from_start_date)
+    date_to_start_date = Map.get(changes, :date_to_start_date)
+    date_from_end_date = Map.get(changes, :date_from_end_date)
+    date_to_end_date = Map.get(changes, :date_to_end_date)
 
     params = Map.drop(changes, @date_fields)
 
@@ -46,17 +46,17 @@ defmodule OPS.Contracts do
     |> add_date_range_at_query(:end_date, date_from_end_date, date_to_end_date)
   end
 
-  defp add_date_range_at_query(query, attr, nil, nil), do: query
+  defp add_date_range_at_query(query, _, nil, nil), do: query
 
   defp add_date_range_at_query(query, attr, date_from, nil) do
-    where(query, [md], md.attr >= ^date_from)
+    where(query, [c], field(c, ^attr) >= ^date_from)
   end
 
   defp add_date_range_at_query(query, attr, nil, date_to) do
-    where(query, [md], md.dispensed_at <= ^date_to)
+    where(query, [c], field(c, ^attr) <= ^date_to)
   end
 
   defp add_date_range_at_query(query, attr, date_from, date_to) do
-    where(query, [md], fragment("? BETWEEN ? AND ?", md.attr, ^date_from, ^date_to))
+    where(query, [c], fragment("? BETWEEN ? AND ?", field(c, ^attr), ^date_from, ^date_to))
   end
 end
