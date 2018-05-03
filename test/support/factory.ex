@@ -90,8 +90,8 @@ defmodule OPS.Factory do
   def contract_factory do
     %Contract{
       id: UUID.generate(),
-      start_date: NaiveDateTime.utc_now(),
-      end_date: NaiveDateTime.add(NaiveDateTime.utc_now(), days_to_seconds(30), :seconds),
+      start_date: Date.utc_today(),
+      end_date: Date.utc_today() |> Date.add(60),
       status: Contract.status(:verified),
       contractor_legal_entity_id: UUID.generate(),
       contractor_owner_id: UUID.generate(),

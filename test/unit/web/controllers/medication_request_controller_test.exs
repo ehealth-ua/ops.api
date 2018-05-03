@@ -22,6 +22,7 @@ defmodule OPS.Web.MedicationRequestControllerTest do
   describe "search medication requests" do
     test "success default search", %{conn: conn} do
       conn = get(conn, medication_request_path(conn, :index))
+
       resp = json_response(conn, 200)["data"]
       assert 2 == length(resp)
     end
