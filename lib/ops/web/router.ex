@@ -40,6 +40,8 @@ defmodule OPS.Web.Router do
     get("/qualify_medication_requests", MedicationRequestController, :qualify_list)
     get("/prequalify_medication_requests", MedicationRequestController, :prequalify_list)
     get("/latest_block", BlockController, :latest_block)
+
+    resources("/contracts", ContractController, only: [:index, :show])
   end
 
   defp handle_errors(%Plug.Conn{status: 500} = conn, %{kind: kind, reason: reason, stack: stacktrace}) do
