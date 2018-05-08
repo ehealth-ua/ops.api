@@ -1,4 +1,4 @@
-defmodule OPS.Ecto.UUIDsList do
+defmodule Ecto.UUIDsList do
   @moduledoc false
 
   @behaviour Ecto.Type
