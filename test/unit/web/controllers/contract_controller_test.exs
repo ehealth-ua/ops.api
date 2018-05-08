@@ -4,6 +4,7 @@ defmodule OPS.Web.ContractControllerTest do
   use OPS.Web.ConnCase
 
   alias Ecto.UUID
+  alias OPS.Contracts.Contract
 
   describe "contract show" do
     test "successfully shows", %{conn: conn} do
@@ -176,6 +177,39 @@ defmodule OPS.Web.ContractControllerTest do
 
       conn = get(conn, contract_path(conn, :index), search_params)
       assert json_response(conn, 200)["data"] == []
+    end
+
+    test "search by legal_entity_id", %{conn: conn} do
+      nhs_legal_entity_id = UUID.generate()
+      contractor_legal_entity_id = UUID.generate()
+
+      insert(:contract)
+
+      insert(
+        :contract,
+        nhs_legal_entity_id: nhs_legal_entity_id,
+        contractor_legal_entity_id: contractor_legal_entity_id,
+        status: Contract.status(:terminated)
+      )
+
+      %{id: contract_id} =
+        insert(
+          :contract,
+          nhs_legal_entity_id: nhs_legal_entity_id,
+          contractor_legal_entity_id: contractor_legal_entity_id
+        )
+
+      assert [%{"id" => ^contract_id}] =
+               conn
+               |> get(contract_path(conn, :index), status: "VERIFIED", legal_entity_id: nhs_legal_entity_id)
+               |> json_response(200)
+               |> Map.get("data")
+
+      assert [%{"id" => ^contract_id}] =
+               conn
+               |> get(contract_path(conn, :index), status: "VERIFIED", legal_entity_id: contractor_legal_entity_id)
+               |> json_response(200)
+               |> Map.get("data")
     end
 
     test "ignore invalid search params", %{conn: conn} do

@@ -3,16 +3,16 @@ defmodule OPS.Contracts do
 
   use OPS.Search
   import Ecto.{Query, Changeset}, warn: false
-  alias OPS.Contracts.Contract
-  alias OPS.Contracts.ContractSearch
   alias OPS.Repo
+  alias OPS.Contracts.{Contract, ContractSearch}
 
-  @date_fields ~w(
+  @fields_to_drop ~w(
     date_from_start_date
     date_to_start_date
     date_from_end_date
     date_to_end_date
-    )a
+    legal_entity_id
+  )a
 
   def get_by_id(id) do
     with contract = %Contract{} <- Repo.get(Contract, id) do
@@ -37,13 +37,15 @@ defmodule OPS.Contracts do
     date_to_start_date = Map.get(changes, :date_to_start_date)
     date_from_end_date = Map.get(changes, :date_from_end_date)
     date_to_end_date = Map.get(changes, :date_to_end_date)
+    legal_entity_id = Map.get(changes, :legal_entity_id)
 
-    params = Map.drop(changes, @date_fields)
+    params = Map.drop(changes, @fields_to_drop)
 
     entity
     |> super(params)
     |> add_date_range_at_query(:start_date, date_from_start_date, date_to_start_date)
     |> add_date_range_at_query(:end_date, date_from_end_date, date_to_end_date)
+    |> add_legal_entity_id_query(legal_entity_id)
   end
 
   defp add_date_range_at_query(query, _, nil, nil), do: query
@@ -58,5 +60,11 @@ defmodule OPS.Contracts do
 
   defp add_date_range_at_query(query, attr, date_from, date_to) do
     where(query, [c], fragment("? BETWEEN ? AND ?", field(c, ^attr), ^date_from, ^date_to))
+  end
+
+  defp add_legal_entity_id_query(query, nil), do: query
+
+  defp add_legal_entity_id_query(query, legal_entity_id) do
+    where(query, [c], c.nhs_legal_entity_id == ^legal_entity_id or c.contractor_legal_entity_id == ^legal_entity_id)
   end
 end
