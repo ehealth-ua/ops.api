@@ -2,7 +2,7 @@ defmodule OPS.MedicationRequest.DoctorSearch do
   @moduledoc false
 
   use Ecto.Schema
-  alias OPS.Ecto.UUIDsList
+  alias Ecto.UUIDsList
 
   @primary_key false
   schema "medication_request_doctor_search" do

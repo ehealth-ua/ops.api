@@ -217,4 +217,71 @@ defmodule OPS.Web.ContractControllerTest do
       assert [] == json_response(conn, 200)["data"]
     end
   end
+
+  describe "suspend contracts" do
+    test "success", %{conn: conn} do
+      insert(:contract)
+      %{id: id1} = insert(:contract)
+      %{id: id2} = insert(:contract)
+      %{id: id3} = insert(:contract, is_suspended: true)
+      params = [ids: Enum.join([id1, id2, id3, UUID.generate()], ",")]
+
+      assert %{"suspended" => 3} ==
+               conn
+               |> patch(contract_path(conn, :suspend), params)
+               |> json_response(200)
+               |> Map.get("data")
+
+      Enum.each([id1, id2, id3], fn id ->
+        data =
+          conn
+          |> get(contract_path(conn, :show, id))
+          |> json_response(200)
+          |> Map.get("data")
+
+        assert Map.has_key?(data, "is_suspended")
+        assert data["is_suspended"]
+      end)
+    end
+
+    test "invalid ids", %{conn: conn} do
+      conn
+      |> patch(contract_path(conn, :suspend), ids: "invalid,uuid")
+      |> json_response(422)
+    end
+  end
+
+  describe "renew contracts" do
+    test "success", %{conn: conn} do
+      insert(:contract)
+      %{id: id1} = insert(:contract)
+      %{id: id2} = insert(:contract, is_suspended: true)
+      %{id: id3} = insert(:contract, is_suspended: true)
+
+      params = [ids: Enum.join([id1, id2, id3, UUID.generate()], ",")]
+
+      assert %{"renewed" => 3} ==
+               conn
+               |> patch(contract_path(conn, :renew), params)
+               |> json_response(200)
+               |> Map.get("data")
+
+      Enum.each([id1, id2, id3], fn id ->
+        data =
+          conn
+          |> get(contract_path(conn, :show, id))
+          |> json_response(200)
+          |> Map.get("data")
+
+        assert Map.has_key?(data, "is_suspended")
+        refute data["is_suspended"]
+      end)
+    end
+
+    test "invalid ids", %{conn: conn} do
+      conn
+      |> patch(contract_path(conn, :suspend), ids: "invalid,uuid")
+      |> json_response(422)
+    end
+  end
 end

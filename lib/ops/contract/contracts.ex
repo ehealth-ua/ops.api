@@ -3,8 +3,9 @@ defmodule OPS.Contracts do
 
   use OPS.Search
   import Ecto.{Query, Changeset}, warn: false
+  alias Ecto.Changeset
   alias OPS.Repo
-  alias OPS.Contracts.{Contract, ContractSearch}
+  alias OPS.Contracts.{Contract, ContractSearch, ContractIDs}
 
   @fields_to_drop ~w(
     date_from_start_date
@@ -26,10 +27,26 @@ defmodule OPS.Contracts do
     |> search(params, Contract)
   end
 
-  defp contract_changeset(%ContractSearch{} = contract, attrs) do
-    fields = ContractSearch.__schema__(:fields)
+  def suspend(params) do
+    with %Changeset{valid?: true} <- contract_ids_changeset(params) do
+      update_is_suspended(params["ids"], true)
+    end
+  end
 
-    cast(contract, attrs, fields)
+  def renew(params) do
+    with %Changeset{valid?: true} <- contract_ids_changeset(params) do
+      update_is_suspended(params["ids"], false)
+    end
+  end
+
+  defp update_is_suspended(ids, is_suspended) when is_boolean(is_suspended) do
+    ids = String.split(ids, ",")
+    query = from(c in Contract, where: c.id in ^ids)
+
+    case Repo.update_all(query, set: [is_suspended: is_suspended]) do
+      {suspended, _} -> {:ok, suspended}
+      err -> err
+    end
   end
 
   def get_search_query(entity, changes) do
@@ -46,6 +63,20 @@ defmodule OPS.Contracts do
     |> add_date_range_at_query(:start_date, date_from_start_date, date_to_start_date)
     |> add_date_range_at_query(:end_date, date_from_end_date, date_to_end_date)
     |> add_legal_entity_id_query(legal_entity_id)
+  end
+
+  defp contract_changeset(%ContractSearch{} = contract, attrs) do
+    fields = ContractSearch.__schema__(:fields)
+
+    cast(contract, attrs, fields)
+  end
+
+  defp contract_ids_changeset(attrs) do
+    required = ContractIDs.__schema__(:fields)
+
+    %ContractIDs{}
+    |> cast(attrs, required)
+    |> validate_required(required)
   end
 
   defp add_date_range_at_query(query, _, nil, nil), do: query

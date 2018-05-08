@@ -36,4 +36,7 @@ defmodule OPS.Web.ContractView do
       contract_request_id
     )a)
   end
+
+  def render("suspended.json", %{suspended: suspended}), do: %{suspended: suspended}
+  def render("renewed.json", %{renewed: renewed}), do: %{renewed: renewed}
 end
