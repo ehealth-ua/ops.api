@@ -42,8 +42,6 @@ defmodule OPS.Web.Router do
     get("/latest_block", BlockController, :latest_block)
 
     resources("/contracts", ContractController, only: [:index, :show])
-    patch("/contracts/actions/suspend", ContractController, :suspend)
-    patch("/contracts/actions/renew", ContractController, :renew)
   end
 
   defp handle_errors(%Plug.Conn{status: 500} = conn, %{kind: kind, reason: reason, stack: stacktrace}) do
