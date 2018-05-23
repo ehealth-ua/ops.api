@@ -28,7 +28,7 @@ defmodule OPS.Contracts.Contract do
     field(:nhs_payment_details, :map)
     field(:nhs_signer_base, :string)
     field(:issue_city, :string)
-    field(:price, :float)
+    field(:nhs_contract_price, :float)
     field(:contract_number, :string)
     field(:contract_request_id, UUID)
     field(:is_active, :boolean)

@@ -133,7 +133,7 @@ defmodule OPS.Factory do
       },
       nhs_signer_base: "на підставі наказу",
       issue_city: "Київ",
-      price: Enum.random(100_000..200_000) |> to_float(),
+      nhs_contract_price: Enum.random(100_000..200_000) |> to_float(),
       contract_number: "0000-9EAX-XT7X-3115",
       contract_request_id: UUID.generate(),
       is_active: true,

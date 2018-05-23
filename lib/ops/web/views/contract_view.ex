@@ -30,7 +30,7 @@ defmodule OPS.Web.ContractView do
       nhs_signer_base
       nhs_payment_details
       issue_city
-      price
+      nhs_contract_price
       contract_number
       is_suspended
       contract_request_id
