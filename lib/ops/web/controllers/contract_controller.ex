@@ -20,6 +20,12 @@ defmodule OPS.Web.ContractController do
     end
   end
 
+  def create(conn, params) do
+    with {:ok, contract} <- Contracts.create(params) do
+      render(conn, "show.json", contract: contract)
+    end
+  end
+
   def suspend(conn, params) do
     with {:ok, suspended} <- Contracts.suspend(params) do
       render(conn, "suspended.json", suspended: suspended)

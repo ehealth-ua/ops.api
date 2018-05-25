@@ -41,7 +41,7 @@ defmodule OPS.Web.Router do
     get("/prequalify_medication_requests", MedicationRequestController, :prequalify_list)
     get("/latest_block", BlockController, :latest_block)
 
-    resources("/contracts", ContractController, only: [:index, :show])
+    resources("/contracts", ContractController, only: [:index, :create, :show])
     patch("/contracts/actions/suspend", ContractController, :suspend)
     patch("/contracts/actions/renew", ContractController, :renew)
   end

@@ -5,6 +5,9 @@ defmodule OPS.Web.ContractControllerTest do
 
   alias Ecto.UUID
   alias OPS.Contracts.Contract
+  alias OPS.Contracts.ContractEmployee
+  alias OPS.Contracts.ContractDivision
+  alias OPS.Repo
 
   describe "contract show" do
     test "successfully shows", %{conn: conn} do
@@ -282,6 +285,87 @@ defmodule OPS.Web.ContractControllerTest do
       conn
       |> patch(contract_path(conn, :suspend), ids: "invalid,uuid")
       |> json_response(422)
+    end
+  end
+
+  describe "create contract" do
+    test "success create contract with contract_employees and contract_divisions", %{conn: conn} do
+      contract_employee =
+        :contract_employee
+        |> build()
+        |> Poison.encode!()
+        |> Poison.decode!()
+
+      params =
+        :contract
+        |> build()
+        |> Poison.encode!()
+        |> Poison.decode!()
+        |> Map.put("contractor_employee_divisions", [contract_employee])
+        |> Map.put("contractor_divisions", [UUID.generate()])
+
+      conn = post(conn, contract_path(conn, :create), params)
+
+      assert resp = json_response(conn, 200)
+      assert params["contract_number"] == resp["data"]["contract_number"]
+    end
+
+    test "success create contract with existing contract_number", %{conn: conn} do
+      contract = insert(:contract)
+
+      :contract_employee
+      |> insert(contract_id: contract.id)
+      |> Poison.encode!()
+      |> Poison.decode!()
+
+      :contract_division
+      |> insert(contract_id: contract.id)
+      |> Poison.encode!()
+      |> Poison.decode!()
+
+      params =
+        contract
+        |> Poison.encode!()
+        |> Poison.decode!()
+        |> Map.put("id", UUID.generate())
+        |> Map.put("contractor_divisions", [UUID.generate()])
+
+      conn = post(conn, contract_path(conn, :create), params)
+
+      assert resp = json_response(conn, 200)
+
+      assert params["contract_number"] == resp["data"]["contract_number"]
+      assert 2 = Enum.count(Repo.all(Contract))
+      assert 2 = Enum.count(Repo.all(ContractEmployee))
+      assert 2 = Enum.count(Repo.all(ContractDivision))
+    end
+
+    test "contract by contract_number is not verified", %{conn: conn} do
+      contract_employee =
+        :contract_employee
+        |> build()
+        |> Poison.encode!()
+        |> Poison.decode!()
+
+      params =
+        :contract
+        |> insert(status: Contract.status(:terminated))
+        |> Poison.encode!()
+        |> Poison.decode!()
+        |> Map.put("id", UUID.generate())
+        |> Map.put("contractor_employee_divisions", [contract_employee])
+        |> Map.put("contractor_divisions", [UUID.generate()])
+
+      conn = post(conn, contract_path(conn, :create), params)
+
+      assert resp = json_response(conn, 422)
+
+      assert %{
+               "invalid" => [
+                 %{"entry_type" => "request", "rules" => [%{"rule" => "json"}]}
+               ],
+               "message" => "There is no active contract with such contract_number"
+             } = resp["error"]
     end
   end
 end
