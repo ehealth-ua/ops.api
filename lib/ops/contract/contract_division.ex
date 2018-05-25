@@ -1,4 +1,4 @@
-defmodule OPS.Contracts.ContractEmployee do
+defmodule OPS.Contracts.ContractDivision do
   @moduledoc false
 
   use Ecto.Schema
@@ -11,26 +11,13 @@ defmodule OPS.Contracts.ContractEmployee do
   @primary_key {:id, :binary_id, autogenerate: true}
 
   @fields_required ~w(
-    start_date
-    employee_id
     division_id
-    staff_units
-    declaration_limit
     inserted_by
     updated_by
   )a
 
-  @fields_optional ~w(
-    end_date
-  )a
-
-  schema "contract_employees" do
-    field(:employee_id, UUID)
-    field(:staff_units, :float)
-    field(:declaration_limit, :integer)
+  schema "contract_divisions" do
     field(:division_id, UUID)
-    field(:start_date, :date)
-    field(:end_date, :date)
     field(:inserted_by, UUID)
     field(:updated_by, UUID)
 
@@ -39,9 +26,9 @@ defmodule OPS.Contracts.ContractEmployee do
     timestamps()
   end
 
-  def changeset(%__MODULE__{} = contract_employee, attrs) do
-    contract_employee
-    |> cast(attrs, @fields_required ++ @fields_optional)
+  def changeset(%__MODULE__{} = contract_division, attrs) do
+    contract_division
+    |> cast(attrs, @fields_required)
     |> validate_required(@fields_required)
   end
 end

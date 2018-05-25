@@ -7,6 +7,8 @@ defmodule OPS.Factory do
   alias OPS.MedicationDispenses.MedicationDispense
   alias OPS.MedicationRequests.MedicationRequest
   alias OPS.MedicationDispense.Details
+  alias OPS.Contracts.ContractDivision
+  alias OPS.Contracts.ContractEmployee
   alias OPS.Contracts.Contract
   alias Ecto.UUID
 
@@ -133,11 +135,33 @@ defmodule OPS.Factory do
       },
       nhs_signer_base: "на підставі наказу",
       issue_city: "Київ",
-      nhs_contract_price: Enum.random(100_000..200_000) |> to_float(),
+      nhs_contract_price: to_float(Enum.random(100_000..200_000)),
       contract_number: "0000-9EAX-XT7X-3115",
       contract_request_id: UUID.generate(),
       is_active: true,
       is_suspended: false,
+      inserted_by: UUID.generate(),
+      updated_by: UUID.generate()
+    }
+  end
+
+  def contract_employee_factory do
+    %ContractEmployee{
+      contract_id: UUID.generate(),
+      employee_id: UUID.generate(),
+      division_id: UUID.generate(),
+      staff_units: to_float(Enum.random(100_000..200_000)),
+      declaration_limit: 2000,
+      inserted_by: UUID.generate(),
+      updated_by: UUID.generate(),
+      start_date: Date.utc_today()
+    }
+  end
+
+  def contract_division_factory do
+    %ContractDivision{
+      contract_id: UUID.generate(),
+      division_id: UUID.generate(),
       inserted_by: UUID.generate(),
       updated_by: UUID.generate()
     }

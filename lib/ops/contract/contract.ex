@@ -3,6 +3,10 @@ defmodule OPS.Contracts.Contract do
 
   use Ecto.Schema
   alias Ecto.UUID
+  alias OPS.Contracts.ContractDivision
+  alias OPS.Contracts.ContractEmployee
+
+  @derive {Poison.Encoder, except: [:__meta__, :contract_employees, :contract_divisions]}
 
   @status_verified "VERIFIED"
   @status_terminated "TERMINATED"
@@ -15,6 +19,7 @@ defmodule OPS.Contracts.Contract do
     field(:start_date, :date)
     field(:end_date, :date)
     field(:status, :string)
+    field(:status_reason, :string)
     field(:contractor_legal_entity_id, UUID)
     field(:contractor_owner_id, UUID)
     field(:contractor_base, :string)
@@ -35,6 +40,9 @@ defmodule OPS.Contracts.Contract do
     field(:is_suspended, :boolean)
     field(:inserted_by, UUID)
     field(:updated_by, UUID)
+
+    has_many(:contract_employees, ContractEmployee)
+    has_many(:contract_divisions, ContractDivision)
 
     timestamps()
   end
