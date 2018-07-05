@@ -44,6 +44,9 @@ config :ops, OPS.Scheduler,
   medication_request_autotermination: {:system, :string, "MEDICATION_REQUEST_AUTOTERMINATION_SCHEDULE", "* * * * *"},
   close_block: {:system, :string, "CLOSE_BLOCK_SCHEDULE", "0 * * * *"}
 
+config :ops, OPS.DeclarationsAutoProcessor,
+  termination_batch_size: {:system, :integer, "DECLARATION_REQUEST_AUTOTERMINATION_BATCH", 500}
+
 # Configures the endpoint
 config :ops, OPS.Web.Endpoint,
   url: [host: "localhost"],
