@@ -22,6 +22,13 @@ defmodule OPS do
       supervisor(OPS.Web.Endpoint, []),
       # Starts a worker by calling: OPS.Worker.start_link(arg1, arg2, arg3)
       # worker(OPS.Worker, [arg1, arg2, arg3]),
+
+      worker(
+        OPS.DeclarationsAutoProcessor,
+        [:declaration_terminator],
+        id: :declaration_terminator
+      ),
+      worker(OPS.DeclarationsAutoProcessor, [:declaration_approver], id: :declaration_approver),
       worker(OPS.Scheduler, [])
     ]
 

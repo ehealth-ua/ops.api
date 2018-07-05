@@ -8,7 +8,7 @@ defmodule OPS.Scheduler do
   alias OPS.MedicationDispenses
   alias OPS.MedicationRequests
   alias OPS.Block.API
-  import OPS.Declarations, only: [approve_declarations: 0, terminate_declarations: 0]
+  import OPS.DeclarationsAutoProcessor, only: [approve_declarations: 0, terminate_declarations: 0]
 
   def create_jobs do
     __MODULE__.new_job()

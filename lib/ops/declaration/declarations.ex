@@ -10,7 +10,6 @@ defmodule OPS.Declarations do
   alias OPS.Block.API, as: BlockAPI
   alias OPS.Declarations.Declaration
   alias OPS.Declarations.DeclarationSearch
-  alias OPS.API.IL
   alias OPS.EventManager
   import OPS.AuditLogs, only: [create_audit_logs: 1, create_audit_log: 1]
   require Logger
@@ -140,40 +139,11 @@ defmodule OPS.Declarations do
       declaration_changeset(%Declaration{seed: block.hash}, declaration_params),
       returning: true
     )
-    |> Multi.run(:log_declarations_update, &log_status_updates(&1.previous_declarations))
+    |> Multi.run(:log_declarations_update, fn response ->
+      {_, declarations} = response.previous_declarations
+      log_status_updates(declarations)
+    end)
     |> Multi.run(:log_declaration_insert, &log_insert(&1.new_declaration))
-    |> Repo.transaction()
-  end
-
-  def approve_declarations do
-    with {:ok, response} <- IL.get_global_parameters(),
-         _ <- Logger.info("Global parameters: #{Poison.encode!(response)}"),
-         parameters <- Map.fetch!(response, "data"),
-         unit <- Map.fetch!(parameters, "verification_request_term_unit"),
-         expiration <- Map.fetch!(parameters, "verification_request_expiration") do
-      unit =
-        unit
-        |> String.downcase()
-        |> String.replace_trailing("s", "")
-
-      do_approve_declarations(expiration, unit)
-    end
-  end
-
-  defp do_approve_declarations(value, unit) do
-    Logger.info("approve all declarations with inserted_at + #{value} #{unit} < now()")
-
-    query =
-      Declaration
-      |> where([d], fragment("?::date < now()::date", datetime_add(d.inserted_at, ^value, ^unit)))
-      |> where([d], d.status == ^Declaration.status(:pending))
-
-    user_id = Confex.fetch_env!(:ops, :system_user)
-    updates = [status: Declaration.status(:active), updated_by: user_id, updated_at: DateTime.utc_now()]
-
-    Multi.new()
-    |> Multi.update_all(:declarations, query, [set: updates], returning: updated_fields_list(updates))
-    |> Multi.run(:logged_declarations, &log_status_updates(&1.declarations))
     |> Repo.transaction()
   end
 
@@ -184,21 +154,6 @@ defmodule OPS.Declarations do
          %Ecto.Changeset{valid?: true} = changeset <- terminate_changeset(declaration, attrs) do
       Repo.update_and_log(changeset, attrs["updated_by"])
     end
-  end
-
-  def terminate_declarations do
-    query =
-      Declaration
-      |> where([d], fragment("?::date < now()::date", d.end_date))
-      |> where([d], d.status not in ^[Declaration.status(:closed), Declaration.status(:terminated)])
-
-    user_id = Confex.fetch_env!(:ops, :system_user)
-    updates = [status: Declaration.status(:closed), updated_by: user_id, updated_at: DateTime.utc_now()]
-
-    Multi.new()
-    |> Multi.update_all(:declarations, query, [set: updates], returning: updated_fields_list(updates))
-    |> Multi.run(:logged_terminations, &log_status_updates(&1.declarations))
-    |> Repo.transaction()
   end
 
   def terminate_declarations(user_id, employee_id, attrs \\ %{}) do
@@ -217,7 +172,10 @@ defmodule OPS.Declarations do
 
     Multi.new()
     |> Multi.update_all(:terminated_declarations, query, [set: updates], returning: updated_fields_list(updates))
-    |> Multi.run(:logged_terminations, &log_status_updates(&1.terminated_declarations))
+    |> Multi.run(:logged_terminations, fn response ->
+      {_, declarations} = response.terminated_declarations
+      log_status_updates(declarations)
+    end)
     |> Repo.transaction()
   end
 
@@ -237,7 +195,10 @@ defmodule OPS.Declarations do
 
     Multi.new()
     |> Multi.update_all(:terminated_declarations, query, [set: updates], returning: updated_fields_list(updates))
-    |> Multi.run(:logged_terminations, &log_status_updates(&1.terminated_declarations))
+    |> Multi.run(:logged_terminations, fn response ->
+      {_, declarations} = response.terminated_declarations
+      log_status_updates(declarations)
+    end)
     |> Repo.transaction()
   end
 
@@ -259,7 +220,7 @@ defmodule OPS.Declarations do
     end
   end
 
-  defp log_status_updates({_, declarations}) do
+  def log_status_updates(declarations) do
     {_, changelog} =
       declarations
       |> Enum.map(fn decl ->
@@ -276,6 +237,8 @@ defmodule OPS.Declarations do
 
     {:ok, changelog}
   end
+
+  def updated_fields_list(updates), do: [:id | Keyword.keys(updates)]
 
   defp log_insert(%OPS.Declarations.Declaration{} = declaration) do
     changes = %{
@@ -294,8 +257,6 @@ defmodule OPS.Declarations do
     |> Map.from_struct()
     |> Map.drop([:__meta__, :inserted_at, :updated_at])
   end
-
-  defp updated_fields_list(updates), do: [:id | Keyword.keys(updates)]
 
   defp validate_changed(%Ecto.Changeset{changes: changes} = changeset, field) do
     if Map.has_key?(changes, field) do

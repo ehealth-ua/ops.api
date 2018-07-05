@@ -3,21 +3,23 @@ defmodule OPS.Integration.DeclarationAutoApproveTest do
 
   use OPS.Web.ConnCase
 
-  alias OPS.Declarations
   alias OPS.Declarations.Declaration
+  alias OPS.DeclarationsAutoProcessor
   alias OPS.Repo
 
   test "approve_declarations/0" do
-    declaration = insert(:declaration, status: Declaration.status(:pending))
-    inserted_at = NaiveDateTime.add(NaiveDateTime.utc_now(), -86_400 * 10, :seconds)
+    declaration_ids =
+      Enum.map(1..10, fn _ ->
+        inserted_at = NaiveDateTime.add(NaiveDateTime.utc_now(), -86_400 * 10, :seconds)
 
-    declaration
-    |> Ecto.Changeset.change(inserted_at: inserted_at)
-    |> Repo.update()
+        declaration = insert(:declaration, status: Declaration.status(:pending), inserted_at: inserted_at)
+        declaration.id
+      end)
 
-    Declarations.approve_declarations()
+    DeclarationsAutoProcessor.approve_declarations()
+    assert_receive :approve
 
     active_status = Declaration.status(:active)
-    assert %{status: ^active_status} = Repo.get(Declaration, declaration.id)
+    Enum.each(declaration_ids, fn id -> assert %{status: ^active_status} = Repo.get(Declaration, id) end)
   end
 end
