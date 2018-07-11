@@ -1,4 +1,4 @@
-FROM edenlabllc/elixir:1.5.2 as builder
+FROM elixir:1.6.6-alpine as builder
 
 ARG APP_NAME
 ARG APP_VERSION
@@ -9,6 +9,7 @@ WORKDIR /app
 
 ENV MIX_ENV=prod
 
+RUN apk add git
 RUN mix do \
       local.hex --force, \
       local.rebar --force, \
@@ -16,7 +17,7 @@ RUN mix do \
       deps.compile, \
       release
 
-FROM alpine:edge
+FROM alpine:3.7
 
 ARG APP_NAME
 ARG APP_VERSION
