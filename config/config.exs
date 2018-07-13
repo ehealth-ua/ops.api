@@ -34,7 +34,10 @@ config :ops,
 
 config :ops,
   namespace: OPS,
-  system_user: {:system, "EHEALTH_SYSTEM_USER", "4261eacf-8008-4e62-899f-de1e2f7065f0"}
+  system_user: {:system, "EHEALTH_SYSTEM_USER", "4261eacf-8008-4e62-899f-de1e2f7065f0"},
+  api_resolvers: [
+    il: OPS.API.IL
+  ]
 
 config :ops, OPS.Scheduler,
   declaration_auto_approve: {:system, :string, "DECLARATION_AUTO_APPROVE_SCHEDULE", "0 0-4 * * *"},

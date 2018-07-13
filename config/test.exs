@@ -3,6 +3,8 @@ use Mix.Config
 # Configuration for test environment
 config :ex_unit, capture_log: true
 
+config :ops, api_resolvers: [il: IlMock]
+
 # Configure your databases
 config :ops, OPS.Repo,
   adapter: Ecto.Adapters.Postgres,

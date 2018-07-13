@@ -2,12 +2,20 @@ defmodule OPS.DeclarationTerminatorTest do
   @moduledoc false
 
   use OPS.Web.ConnCase
+  import Mox
 
   alias OPS.Declarations.Declaration
   alias OPS.DeclarationsAutoProcessor
   alias OPS.Repo
 
   test "terminate_declarations/0" do
+    expect(IlMock, :get_global_parameters, fn ->
+      {:ok,
+       %{
+         "data" => %{"verification_request_term_unit" => "DAYS", "verification_request_expiration" => "3"}
+       }}
+    end)
+
     declaration_ids =
       Enum.map(1..10, fn _ ->
         inserted_at = NaiveDateTime.add(NaiveDateTime.utc_now(), -86_400 * 10, :seconds)

@@ -5,14 +5,15 @@ defmodule OPS.DeclarationsAutoProcessor do
 
   use OPS.Search
   use Confex, otp_app: :ops
+  use GenServer
+
   import Ecto.{Query, Changeset}, warn: false
   alias OPS.Repo
   alias OPS.Declarations.Declaration
   alias OPS.Declarations
-  alias OPS.API.IL
   require Logger
 
-  use GenServer
+  @il_api Application.get_env(:ops, :api_resolvers)[:il]
 
   def approve_declarations do
     init_processor_state(:declaration_approver)
@@ -74,11 +75,11 @@ defmodule OPS.DeclarationsAutoProcessor do
     user_id = Confex.fetch_env!(:ops, :system_user)
     limit = config()[:termination_batch_size]
 
-    with {:ok, response} <- IL.get_global_parameters(),
+    with {:ok, response} <- @il_api.get_global_parameters(),
          _ <- Logger.info("Global parameters: #{Poison.encode!(response)}"),
          parameters <- Map.fetch!(response, "data"),
          unit <- Map.fetch!(parameters, "verification_request_term_unit"),
-         expiration <- Map.fetch!(parameters, "verification_request_expiration"),
+         expiration <- parameters |> Map.fetch!("verification_request_expiration") |> String.to_integer(),
          unit =
            unit
            |> String.downcase()
