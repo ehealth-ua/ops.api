@@ -1,9 +1,10 @@
 defmodule OPS.AuditLogs do
   @moduledoc false
 
-  alias OPS.Repo
+  use Confex, otp_app: :ops
   import Ecto.Changeset
 
+  alias OPS.Repo
   alias EctoTrail.Changelog
 
   def create_audit_log(attrs \\ %{}) do
@@ -13,9 +14,21 @@ defmodule OPS.AuditLogs do
   end
 
   def create_audit_logs(attrs_list \\ []) when is_list(attrs_list) do
-    changes = Enum.map(attrs_list, &Map.put(&1, :inserted_at, DateTime.utc_now()))
+    attrs_list
+    |> Enum.map(&Map.put(&1, :inserted_at, DateTime.utc_now()))
+    |> insert_chunk_records
+  end
 
-    Repo.insert_all(Changelog, changes, returning: true)
+  @doc """
+  Insert n of records m times, because postgres ecto has limit of parameters
+  """
+  def insert_chunk_records([]), do: {:ok, nil}
+
+  def insert_chunk_records(changes) do
+    chunk_limit = config()[:max_audit_record_insert]
+    {records, rest} = Enum.split(changes, chunk_limit)
+    Repo.insert_all(Changelog, records)
+    insert_chunk_records(rest)
   end
 
   def audit_log_changeset(%Changelog{} = audit_log, attrs) do

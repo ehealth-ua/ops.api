@@ -39,6 +39,8 @@ config :ops,
     il: OPS.API.IL
   ]
 
+config :ops, OPS.AuditLogs, max_audit_record_insert: 100
+
 config :ops, OPS.Scheduler,
   declaration_auto_approve: {:system, :string, "DECLARATION_AUTO_APPROVE_SCHEDULE", "0 0-4 * * *"},
   medication_dispense_autotermination: {:system, :string, "MEDICATION_DISPENSE_AUTOTERMINATION_SCHEDULE", "* * * * *"},
