@@ -3,11 +3,11 @@ defmodule OPS.Block.API do
 
   import Ecto.Query
 
-  alias OPS.Repo
+  alias OPS.API.IL
   alias OPS.BlockRepo
   alias OPS.Block.Schema, as: Block
-  alias OPS.API.IL
   alias OPS.Declarations.Declaration
+  alias OPS.Repo
   alias OPS.VerificationFailure.API, as: VerificationFailureAPI
 
   def get_latest do

@@ -8,9 +8,9 @@ defmodule OPS.DeclarationsAutoProcessor do
   use GenServer
 
   import Ecto.{Query, Changeset}, warn: false
-  alias OPS.Repo
-  alias OPS.Declarations.Declaration
   alias OPS.Declarations
+  alias OPS.Declarations.Declaration
+  alias OPS.Repo
   require Logger
 
   @il_api Application.get_env(:ops, :api_resolvers)[:il]

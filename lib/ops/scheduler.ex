@@ -4,10 +4,10 @@ defmodule OPS.Scheduler do
   use Quantum.Scheduler, otp_app: :ops
 
   alias Crontab.CronExpression.Parser
-  alias Quantum.Job
+  alias OPS.Block.API
   alias OPS.MedicationDispenses
   alias OPS.MedicationRequests
-  alias OPS.Block.API
+  alias Quantum.Job
   import OPS.DeclarationsAutoProcessor, only: [approve_declarations: 0, terminate_declarations: 0]
 
   def create_jobs do

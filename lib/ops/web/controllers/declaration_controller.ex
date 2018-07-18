@@ -3,9 +3,9 @@ defmodule OPS.Web.DeclarationController do
 
   use OPS.Web, :controller
 
-  alias Scrivener.Page
   alias OPS.Declarations
   alias OPS.Declarations.Declaration
+  alias Scrivener.Page
 
   action_fallback(OPS.Web.FallbackController)
 

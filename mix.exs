@@ -49,7 +49,7 @@ defmodule OPS.Mixfile do
   defp deps do
     [
       {:mox, "~> 0.3", only: :test},
-      {:distillery, "~> 1.5.3", runtime: false},
+      {:distillery, "~> 1.4.0"},
       {:confex, "~> 3.2"},
       {:ecto, "~> 2.1"},
       {:scrivener_ecto, "~> 1.2"},
@@ -65,7 +65,7 @@ defmodule OPS.Mixfile do
       {:ecto_logger_json, git: "https://github.com/edenlabllc/ecto_logger_json.git", branch: "query_params"},
       {:ex_machina, "~> 2.0", only: [:dev, :test]},
       {:excoveralls, "~> 0.8.1", only: [:dev, :test]},
-      {:credo, "~> 0.9.0-rc3", only: [:dev, :test]}
+      {:credo, "~> 0.9.3", only: [:dev, :test]}
     ]
   end
 

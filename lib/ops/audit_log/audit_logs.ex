@@ -4,8 +4,8 @@ defmodule OPS.AuditLogs do
   use Confex, otp_app: :ops
   import Ecto.Changeset
 
-  alias OPS.Repo
   alias EctoTrail.Changelog
+  alias OPS.Repo
 
   def create_audit_log(attrs \\ %{}) do
     %Changelog{}

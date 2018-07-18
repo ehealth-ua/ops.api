@@ -3,8 +3,8 @@ defmodule OPS.Web.MedicationDispenseController do
 
   use OPS.Web, :controller
 
-  alias Scrivener.Page
   alias OPS.MedicationDispenses
+  alias Scrivener.Page
 
   action_fallback(OPS.Web.FallbackController)
 

@@ -6,12 +6,12 @@ defmodule OPS.MedicationDispenses do
   import Ecto.Changeset
   import OPS.AuditLogs, only: [create_audit_logs: 1]
 
-  alias OPS.MedicationDispenses.MedicationDispense
-  alias OPS.MedicationDispense.Details
-  alias OPS.Repo
-  alias OPS.MedicationDispense.Search
   alias Ecto.Multi
   alias OPS.EventManager
+  alias OPS.MedicationDispense.Details
+  alias OPS.MedicationDispense.Search
+  alias OPS.MedicationDispenses.MedicationDispense
+  alias OPS.Repo
 
   @status_new MedicationDispense.status(:new)
   @status_processed MedicationDispense.status(:processed)

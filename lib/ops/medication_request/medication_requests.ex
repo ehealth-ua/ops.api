@@ -1,13 +1,13 @@
 defmodule OPS.MedicationRequests do
   @moduledoc false
 
-  alias OPS.MedicationRequests.MedicationRequest
-  alias OPS.MedicationDispenses.MedicationDispense
-  alias OPS.Repo
-  alias OPS.MedicationRequest.Search
   alias OPS.Declarations.Declaration
+  alias OPS.MedicationDispenses.MedicationDispense
   alias OPS.MedicationRequest.DoctorSearch
   alias OPS.MedicationRequest.QualifySearch
+  alias OPS.MedicationRequest.Search
+  alias OPS.MedicationRequests.MedicationRequest
+  alias OPS.Repo
   import Ecto.Changeset
   import OPS.AuditLogs, only: [create_audit_logs: 1]
   alias Ecto.Multi

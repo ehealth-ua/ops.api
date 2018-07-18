@@ -3,9 +3,9 @@ defmodule OPS do
   This is an entry point of ops application.
   """
   use Application
-  alias OPS.Web.Endpoint
   alias Confex.Resolver
   alias OPS.Scheduler
+  alias OPS.Web.Endpoint
 
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
   # for more information on OTP Applications
