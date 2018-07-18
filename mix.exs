@@ -3,15 +3,13 @@ defmodule OPS.Mixfile do
 
   use Mix.Project
 
-  @version "1.154.1"
-
   def project do
     [
       app: :ops,
       description: "Add description to your package.",
       package: package(),
-      version: @version,
-      elixir: "~> 1.5",
+      version: "0.1.0",
+      elixir: "~> 1.6",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix] ++ Mix.compilers(),
       build_embedded: Mix.env() == :prod,
@@ -51,23 +49,23 @@ defmodule OPS.Mixfile do
   defp deps do
     [
       {:mox, "~> 0.3", only: :test},
-      {:distillery, "~> 1.4.0"},
+      {:distillery, "~> 1.5.3", runtime: false},
       {:confex, "~> 3.2"},
       {:ecto, "~> 2.1"},
       {:scrivener_ecto, "~> 1.2"},
-      {:postgrex, "~> 0.13.2"},
+      {:postgrex, ">= 0.0.0"},
       {:cowboy, "~> 1.1"},
       {:httpoison, "~> 1.0"},
       {:phoenix, "~> 1.3.0"},
       {:eview, "~> 0.12.0"},
       {:phoenix_ecto, "~> 3.2"},
       {:ecto_trail, ">= 0.0.0"},
-      {:quantum, "~> 2.2.0"},
+      {:quantum, "~> 2.2"},
       {:plug_logger_json, "~> 0.5"},
       {:ecto_logger_json, git: "https://github.com/edenlabllc/ecto_logger_json.git", branch: "query_params"},
       {:ex_machina, "~> 2.0", only: [:dev, :test]},
-      {:excoveralls, ">= 0.5.0", only: [:dev, :test]},
-      {:credo, ">= 0.5.1", only: [:dev, :test]}
+      {:excoveralls, "~> 0.8.1", only: [:dev, :test]},
+      {:credo, "~> 0.9.0-rc3", only: [:dev, :test]}
     ]
   end
 
