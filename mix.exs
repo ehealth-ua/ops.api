@@ -48,8 +48,8 @@ defmodule OPS.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
+      {:distillery, "~> 1.4.1", runtime: false},
       {:mox, "~> 0.3", only: :test},
-      {:distillery, "~> 1.4.0"},
       {:confex, "~> 3.2"},
       {:ecto, "~> 2.1"},
       {:scrivener_ecto, "~> 1.2"},
