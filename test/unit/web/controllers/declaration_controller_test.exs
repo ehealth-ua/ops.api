@@ -388,10 +388,10 @@ defmodule OPS.Web.DeclarationControllerTest do
 
     test "no reason and updated field", %{conn: conn} do
       declaration = insert(:declaration)
-      conn = patch(conn, declaration_path(conn, :terminate_declaration, declaration.id))
 
-      assert %{"error" => %{"invalid" => [%{"entry" => "$.reason"}, %{"entry" => "$.updated_by"}]}} =
-               json_response(conn, 422)
+      assert_raise(KeyError, fn ->
+        patch(conn, declaration_path(conn, :terminate_declaration, declaration.id))
+      end)
     end
 
     test "success terminate declaration", %{conn: conn} do
