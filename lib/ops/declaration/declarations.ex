@@ -118,7 +118,6 @@ defmodule OPS.Declarations do
     declaration
     |> cast(attrs, fields_required ++ fields_optional)
     |> validate_required(fields_required)
-    |> validate_changed(:updated_by)
     |> validate_status_transition()
   end
 
@@ -151,8 +150,11 @@ defmodule OPS.Declarations do
     attrs = Map.put(attrs, "status", Declaration.status(:terminated))
 
     with %Declaration{} = declaration <- get_declaration!(id),
-         %Ecto.Changeset{valid?: true} = changeset <- terminate_changeset(declaration, attrs) do
-      Repo.update_and_log(changeset, attrs["updated_by"])
+         updated_by <- Map.fetch!(attrs, "updated_by"),
+         %Ecto.Changeset{valid?: true} = changeset <- terminate_changeset(declaration, attrs),
+         {:ok, declaration} <- Repo.update_and_log(changeset, updated_by),
+         {:ok, _} <- EventManager.insert_change_status(declaration, declaration.status, declaration.updated_by) do
+      {:ok, declaration}
     end
   end
 
@@ -256,13 +258,5 @@ defmodule OPS.Declarations do
     declaration
     |> Map.from_struct()
     |> Map.drop([:__meta__, :inserted_at, :updated_at])
-  end
-
-  defp validate_changed(%Ecto.Changeset{changes: changes} = changeset, field) do
-    if Map.has_key?(changes, field) do
-      changeset
-    else
-      add_error(changeset, field, "can't be blank", validation: :required)
-    end
   end
 end
