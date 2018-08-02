@@ -416,6 +416,29 @@ defmodule OPS.Web.DeclarationControllerTest do
                }
              } = json_response(conn, 200)
     end
+
+    test "success terminate pending_verification declaration", %{conn: conn} do
+      declaration = insert(:declaration, status: Declaration.status(:pending))
+      updated_by = UUID.generate()
+
+      conn =
+        patch(conn, declaration_path(conn, :terminate_declaration, declaration.id), %{
+          "reason" => "manual_person",
+          "updated_by" => updated_by
+        })
+
+      declaration_id = declaration.id
+      terminated = Declaration.status(:terminated)
+
+      assert %{
+               "data" => %{
+                 "updated_by" => ^updated_by,
+                 "id" => ^declaration_id,
+                 "reason" => "manual_person",
+                 "status" => ^terminated
+               }
+             } = json_response(conn, 200)
+    end
   end
 
   defp fixture(:declaration, attrs \\ @create_attrs) do
