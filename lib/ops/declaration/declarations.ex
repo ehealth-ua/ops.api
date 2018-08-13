@@ -172,13 +172,9 @@ defmodule OPS.Declarations do
       updated_at: DateTime.utc_now()
     ]
 
-    Multi.new()
-    |> Multi.update_all(:terminated_declarations, query, [set: updates], returning: updated_fields_list(updates))
-    |> Multi.run(:logged_terminations, fn response ->
-      {_, declarations} = response.terminated_declarations
-      log_status_updates(declarations)
-    end)
-    |> Repo.transaction()
+    {_, declarations} = Repo.update_all(query, [set: updates], returning: updated_fields_list(updates))
+    log_status_updates(declarations)
+    {:ok, declarations}
   end
 
   def terminate_person_declarations(user_id, person_id, attrs \\ %{}) do
@@ -195,13 +191,9 @@ defmodule OPS.Declarations do
       updated_at: DateTime.utc_now()
     ]
 
-    Multi.new()
-    |> Multi.update_all(:terminated_declarations, query, [set: updates], returning: updated_fields_list(updates))
-    |> Multi.run(:logged_terminations, fn response ->
-      {_, declarations} = response.terminated_declarations
-      log_status_updates(declarations)
-    end)
-    |> Repo.transaction()
+    {_, declarations} = Repo.update_all(query, [set: updates], returning: updated_fields_list(updates))
+    log_status_updates(declarations)
+    {:ok, declarations}
   end
 
   def validate_status_transition(changeset) do

@@ -56,8 +56,7 @@ defmodule OPS.Web.DeclarationController do
   end
 
   def terminate_declarations(conn, %{"user_id" => user_id, "id" => employee_id} = attrs) do
-    with {:ok, result} <- Declarations.terminate_declarations(user_id, employee_id, attrs),
-         {_, terminated_declarations} = result.terminated_declarations do
+    with {:ok, terminated_declarations} <- Declarations.terminate_declarations(user_id, employee_id, attrs) do
       render(conn, "terminated_declarations.json", declarations: terminated_declarations)
     end
   end
@@ -71,8 +70,7 @@ defmodule OPS.Web.DeclarationController do
   def terminate_person_declarations(conn, %{"id" => person_id} = attrs) do
     user_id = fetch_user_id(attrs)
 
-    with {:ok, result} <- Declarations.terminate_person_declarations(user_id, person_id, attrs),
-         {_, terminated_declarations} = result.terminated_declarations do
+    with {:ok, terminated_declarations} <- Declarations.terminate_person_declarations(user_id, person_id, attrs) do
       render(conn, "terminated_declarations.json", declarations: terminated_declarations)
     end
   end
