@@ -379,6 +379,38 @@ defmodule OPS.Web.DeclarationControllerTest do
     end
   end
 
+  describe "get person ids" do
+    test "success", %{conn: conn} do
+      employee_id1 = UUID.generate()
+      employee_id2 = UUID.generate()
+      %{person_id: person_id1} = insert(:declaration, employee_id: employee_id1)
+      %{person_id: person_id2} = insert(:declaration, employee_id: employee_id2)
+
+      resp_data =
+        conn
+        |> get(declaration_path(conn, :person_ids, employee_ids: Enum.join([employee_id1, employee_id2], ",")))
+        |> json_response(200)
+        |> Map.get("data")
+
+      assert person_id1 in resp_data["person_ids"]
+      assert person_id2 in resp_data["person_ids"]
+    end
+
+    test "empty params", %{conn: conn} do
+      assert [] =
+               conn
+               |> get(declaration_path(conn, :person_ids, employee_ids: ""))
+               |> json_response(200)
+               |> get_in(["data", "person_ids"])
+    end
+
+    test "error on missed param", %{conn: conn} do
+      assert conn
+             |> get(declaration_path(conn, :person_ids))
+             |> json_response(422)
+    end
+  end
+
   describe "terminate declaration" do
     test "invalid declaration id", %{conn: conn} do
       assert_raise Ecto.NoResultsError, fn ->

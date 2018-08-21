@@ -4,7 +4,7 @@ defmodule OPS.Declarations.DeclarationSearch do
   use Ecto.Schema
 
   @primary_key false
-  schema "declarations_search" do
+  embedded_schema do
     field(:employee_id, Ecto.UUID)
     field(:person_id, Ecto.UUID)
     field(:legal_entity_id, Ecto.UUID)
