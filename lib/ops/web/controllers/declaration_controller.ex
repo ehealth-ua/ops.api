@@ -85,6 +85,17 @@ defmodule OPS.Web.DeclarationController do
     {:error, {:"422", "missed \"ids\" parameter"}}
   end
 
+  def person_ids(conn, %{"employee_ids" => employee_ids}) do
+    person_ids =
+      employee_ids
+      |> String.split(",")
+      |> Declarations.get_person_ids()
+
+    render(conn, "person_ids.json", person_ids: person_ids)
+  end
+
+  def person_ids(_, _), do: {:error, {:"422", "missed \"employee_ids\" parameter"}}
+
   defp fetch_user_id(%{"user_id" => user_id}) when byte_size(user_id) > 0, do: user_id
   defp fetch_user_id(_), do: Confex.fetch_env!(:ops, :system_user)
 end

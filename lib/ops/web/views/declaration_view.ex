@@ -47,6 +47,8 @@ defmodule OPS.Web.DeclarationView do
 
   def render("declarations_count.json", %{count: count}), do: %{count: count}
 
+  def render("person_ids.json", %{person_ids: person_ids}), do: %{person_ids: person_ids}
+
   defp sanitize(%OPS.Declarations.Declaration{} = declaration) do
     Map.take(declaration, @fields_termination_declaration)
   end

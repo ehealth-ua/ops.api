@@ -4,14 +4,17 @@ defmodule OPS.Declarations do
   """
 
   use OPS.Search
+
   import Ecto.{Query, Changeset}, warn: false
+  import OPS.AuditLogs, only: [create_audit_logs: 1, create_audit_log: 1]
+
   alias Ecto.Multi
-  alias OPS.Repo
   alias OPS.Block.API, as: BlockAPI
   alias OPS.Declarations.Declaration
   alias OPS.Declarations.DeclarationSearch
   alias OPS.EventManager
-  import OPS.AuditLogs, only: [create_audit_logs: 1, create_audit_log: 1]
+  alias OPS.Repo
+
   require Logger
 
   def list_declarations(params) do
@@ -194,6 +197,16 @@ defmodule OPS.Declarations do
     {_, declarations} = Repo.update_all(query, [set: updates], returning: updated_fields_list(updates))
     log_status_updates(declarations)
     {:ok, declarations}
+  end
+
+  def get_person_ids([""]), do: []
+
+  def get_person_ids(employee_ids) when is_list(employee_ids) do
+    Declaration
+    |> select([d], d.person_id)
+    |> where([d], d.status in ^[Declaration.status(:active), Declaration.status(:pending)])
+    |> where([d], d.employee_id in ^employee_ids)
+    |> Repo.all()
   end
 
   def validate_status_transition(changeset) do
