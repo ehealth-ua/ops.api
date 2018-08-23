@@ -199,7 +199,7 @@ defmodule OPS.Declarations do
     {:ok, declarations}
   end
 
-  def get_person_ids([""]), do: []
+  def get_person_ids([]), do: []
 
   def get_person_ids(employee_ids) when is_list(employee_ids) do
     Declaration

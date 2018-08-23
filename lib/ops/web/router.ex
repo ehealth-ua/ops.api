@@ -24,7 +24,9 @@ defmodule OPS.Web.Router do
   scope "/", OPS.Web do
     pipe_through(:api)
 
-    get("/declarations/person_ids", DeclarationController, :person_ids)
+    # query string is too long for this endpoint, so it is POST instead of GET
+    post("/declarations/person_ids", DeclarationController, :person_ids)
+
     resources("/declarations", DeclarationController)
     post("/declarations/with_termination", DeclarationController, :create_with_termination_logic)
     patch("/employees/:id/declarations/actions/terminate", DeclarationController, :terminate_declarations)

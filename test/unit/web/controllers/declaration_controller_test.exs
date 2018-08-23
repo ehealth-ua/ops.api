@@ -388,7 +388,7 @@ defmodule OPS.Web.DeclarationControllerTest do
 
       resp_data =
         conn
-        |> get(declaration_path(conn, :person_ids, employee_ids: Enum.join([employee_id1, employee_id2], ",")))
+        |> post(declaration_path(conn, :person_ids), employee_ids: [employee_id1, employee_id2])
         |> json_response(200)
         |> Map.get("data")
 
@@ -399,14 +399,14 @@ defmodule OPS.Web.DeclarationControllerTest do
     test "empty params", %{conn: conn} do
       assert [] =
                conn
-               |> get(declaration_path(conn, :person_ids, employee_ids: ""))
+               |> post(declaration_path(conn, :person_ids), employee_ids: [])
                |> json_response(200)
                |> get_in(["data", "person_ids"])
     end
 
     test "error on missed param", %{conn: conn} do
       assert conn
-             |> get(declaration_path(conn, :person_ids))
+             |> post(declaration_path(conn, :person_ids))
              |> json_response(422)
     end
   end
