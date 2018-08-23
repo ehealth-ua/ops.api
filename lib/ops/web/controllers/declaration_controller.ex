@@ -86,10 +86,7 @@ defmodule OPS.Web.DeclarationController do
   end
 
   def person_ids(conn, %{"employee_ids" => employee_ids}) do
-    person_ids =
-      employee_ids
-      |> String.split(",")
-      |> Declarations.get_person_ids()
+    person_ids = Declarations.get_person_ids(employee_ids)
 
     render(conn, "person_ids.json", person_ids: person_ids)
   end
