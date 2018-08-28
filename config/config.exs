@@ -50,7 +50,7 @@ config :ops, OPS.Scheduler,
   close_block: {:system, :string, "CLOSE_BLOCK_SCHEDULE", "0 * * * *"}
 
 config :ops, OPS.DeclarationsAutoProcessor,
-  termination_batch_size: {:system, :integer, "DECLARATION_REQUEST_AUTOTERMINATION_BATCH", 500}
+  termination_batch_size: {:system, :integer, "DECLARATION_REQUEST_AUTOTERMINATION_BATCH", 10}
 
 # Configures the endpoint
 config :ops, OPS.Web.Endpoint,
