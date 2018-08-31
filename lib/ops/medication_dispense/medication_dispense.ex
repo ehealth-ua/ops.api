@@ -24,6 +24,7 @@ defmodule OPS.MedicationDispenses.MedicationDispense do
     field(:division_id, Ecto.UUID)
     field(:medical_program_id, Ecto.UUID)
     field(:payment_id, :string)
+    field(:payment_amount, :float)
     field(:status, :string)
     field(:is_active, :boolean)
     field(:inserted_by, Ecto.UUID)

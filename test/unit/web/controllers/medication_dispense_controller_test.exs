@@ -12,6 +12,7 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
     party_id: UUID.generate(),
     legal_entity_id: UUID.generate(),
     payment_id: UUID.generate(),
+    payment_amount: 12.5,
     employee_id: UUID.generate(),
     division_id: UUID.generate(),
     medical_program_id: UUID.generate(),
@@ -157,13 +158,45 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
     dispensed_by = @create_attrs.dispensed_by
     inserted_by = @create_attrs.inserted_by
     updated_by = @create_attrs.updated_by
+    payment_id = @create_attrs.payment_id
+    payment_amount = @create_attrs.payment_amount
 
     assert %{
              "id" => _id,
              "medication_request" => %{"id" => ^medication_request_id},
              "division_id" => ^division_id,
              "legal_entity_id" => ^legal_entity_id,
+             "payment_id" => ^payment_id,
+             "payment_amount" => ^payment_amount,
              "dispensed_by" => ^dispensed_by,
+             "dispensed_at" => "2017-08-17",
+             "status" => ^status,
+             "inserted_by" => ^inserted_by,
+             "updated_by" => ^updated_by
+           } = response_data
+  end
+
+  test "creates medication dispense without optional params", %{conn: conn} do
+    insert(:medication_request, id: @create_attrs.medication_request_id)
+    params = Map.drop(@create_attrs, ~w(payment_id payment_amount dispensed_by)a)
+    conn = post(conn, medication_dispense_path(conn, :create), medication_dispense: params)
+    response_data = json_response(conn, 201)["data"]
+
+    medication_request_id = @create_attrs.medication_request_id
+    division_id = @create_attrs.division_id
+    legal_entity_id = @create_attrs.legal_entity_id
+    status = MedicationDispense.status(:new)
+    inserted_by = @create_attrs.inserted_by
+    updated_by = @create_attrs.updated_by
+
+    assert %{
+             "id" => _id,
+             "medication_request" => %{"id" => ^medication_request_id},
+             "division_id" => ^division_id,
+             "legal_entity_id" => ^legal_entity_id,
+             "payment_id" => nil,
+             "payment_amount" => nil,
+             "dispensed_by" => nil,
              "dispensed_at" => "2017-08-17",
              "status" => ^status,
              "inserted_by" => ^inserted_by,
