@@ -377,6 +377,18 @@ defmodule OPS.Web.DeclarationControllerTest do
       conn = post(conn, declaration_path(conn, :declarations_count))
       assert json_response(conn, 422)
     end
+
+    test "count only active and pending declarations", %{conn: conn} do
+      employee_id1 = UUID.generate()
+      insert(:declaration, employee_id: employee_id1, status: Declaration.status(:active))
+      insert(:declaration, employee_id: employee_id1, status: Declaration.status(:pending))
+      insert(:declaration, employee_id: employee_id1, status: Declaration.status(:closed))
+      insert(:declaration, employee_id: employee_id1, status: Declaration.status(:terminated))
+      conn = post(conn, declaration_path(conn, :declarations_count, ids: [employee_id1]))
+
+      assert resp = json_response(conn, 200)
+      assert %{"count" => 2} == resp["data"]
+    end
   end
 
   describe "get person ids" do
