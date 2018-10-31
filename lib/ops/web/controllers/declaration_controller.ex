@@ -75,14 +75,12 @@ defmodule OPS.Web.DeclarationController do
     end
   end
 
-  def declarations_count(conn, %{"ids" => employee_ids}) do
-    with count <- Declarations.count_by_employee_ids(employee_ids) do
+  def declarations_count(conn, params) do
+    with {:ok, count} <- Declarations.count_by_employee_ids(params) do
       render(conn, "declarations_count.json", count: count)
+    else
+      :error -> {:error, {:"422", "missed \"ids\" parameter"}}
     end
-  end
-
-  def declarations_count(_, _) do
-    {:error, {:"422", "missed \"ids\" parameter"}}
   end
 
   def person_ids(conn, %{"employee_ids" => employee_ids}) do

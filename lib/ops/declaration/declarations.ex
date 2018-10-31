@@ -23,13 +23,23 @@ defmodule OPS.Declarations do
     |> search(params, Declaration)
   end
 
-  def count_by_employee_ids(ids) do
-    Declaration
-    |> select([d], fragment("count(*)"))
-    |> where([d], d.employee_id in ^ids)
-    |> where([d], d.status in [^Declaration.status(:active), ^Declaration.status(:pending)])
-    |> Repo.one!()
+  def count_by_employee_ids(%{"ids" => employee_ids} = params) do
+    {:ok,
+     Declaration
+     |> select([d], fragment("count(*)"))
+     |> where([d], d.employee_id in ^employee_ids)
+     |> where([d], d.status in [^Declaration.status(:active), ^Declaration.status(:pending)])
+     |> filter_by_person_id(params)
+     |> Repo.one!()}
   end
+
+  def count_by_employee_ids(_), do: :error
+
+  defp filter_by_person_id(query, %{"exclude_person_id" => exclude_person_id}) when not is_nil(exclude_person_id) do
+    where(query, [d], d.person_id != ^exclude_person_id)
+  end
+
+  defp filter_by_person_id(query, _), do: query
 
   def get_declaration!(id), do: Repo.get!(Declaration, id)
 

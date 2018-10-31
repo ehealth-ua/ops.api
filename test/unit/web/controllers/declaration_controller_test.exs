@@ -389,6 +389,25 @@ defmodule OPS.Web.DeclarationControllerTest do
       assert resp = json_response(conn, 200)
       assert %{"count" => 2} == resp["data"]
     end
+
+    test "success count declarations by employee_ids and person_id to exclude", %{conn: conn} do
+      employee_id1 = UUID.generate()
+      employee_id2 = UUID.generate()
+      person_id = UUID.generate()
+      insert(:declaration, employee_id: employee_id1)
+      insert(:declaration, employee_id: employee_id2)
+      insert(:declaration, employee_id: employee_id2, person_id: person_id)
+
+      conn =
+        post(
+          conn,
+          declaration_path(conn, :declarations_count, ids: [employee_id1, employee_id2]),
+          exclude_person_id: person_id
+        )
+
+      assert resp = json_response(conn, 200)
+      assert %{"count" => 2} == resp["data"]
+    end
   end
 
   describe "get person ids" do
