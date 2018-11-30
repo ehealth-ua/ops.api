@@ -39,6 +39,10 @@ defmodule OPS.MedicationRequests.MedicationRequest do
     field(:updated_by, Ecto.UUID)
     field(:verification_code, :string)
     field(:legal_entity_id, Ecto.UUID)
+    field(:intent, :string, defalut: "order", null: false)
+    field(:category, :string, defalut: "community", null: false)
+    field(:context, :map)
+    field(:dosage_instruction, {:array, :map})
 
     timestamps()
   end
