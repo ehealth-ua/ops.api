@@ -40,7 +40,7 @@ defmodule OPS.MixProject do
   defp deps do
     [
       {:confex_config_provider, "~> 0.1.0"},
-      {:plug_logger_json, "~> 0.6.0"},
+      {:plug_logger_json, git: "https://github.com/edenlabllc/plug_logger_json.git", branch: "jason"},
       {:eview, "~> 0.15.0"},
       {:phoenix, "~> 1.4.0"},
       {:phoenix_pubsub, "~> 1.1"},
