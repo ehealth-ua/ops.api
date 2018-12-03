@@ -4,10 +4,11 @@
       color: true,
       name: "default",
       files: %{
-        included: ["lib/"],
-        excluded: ["lib/ops/tasks.ex"]
+        included: ["apps/*/lib/*"],
+        excluded: ["apps/*/lib/tasks/tasks.ex"]
       },
       checks: [
+        {Credo.Check.Design.DuplicatedCode, false},
         {Credo.Check.Design.TagTODO, exit_status: 0},
         {Credo.Check.Readability.MaxLineLength, priority: :low, max_length: 120},
         {Credo.Check.Readability.Specs, false},

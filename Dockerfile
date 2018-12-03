@@ -1,4 +1,4 @@
-FROM elixir:1.6.6-alpine as builder
+FROM elixir:1.7.4-alpine as builder
 
 ARG APP_NAME
 
@@ -14,9 +14,9 @@ RUN mix do \
       local.rebar --force, \
       deps.get, \
       deps.compile, \
-      release
+      release --name="${APP_NAME}"
 
-FROM alpine:3.7
+FROM alpine:3.8
 
 ARG APP_NAME
 

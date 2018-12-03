@@ -11,9 +11,9 @@ addons:
     packages:
       - docker-ce
 elixir:
-  - 1.6.6
+  - 1.7.4
 otp_release:
-  - 20.3.8
+  - 21.1.1
 notifications:
   slack:
     rooms:
@@ -23,7 +23,7 @@ env:
   global:
     - MIX_ENV=test
     - DOCKER_NAMESPACE=edenlabllc
-    - APPS='{"ops":"ops"}'
+    - APPS='[{"app":"ops","chart":"ops","namespace":"ops","deployment":"api"}]
     - POSTGRES_VERSION=9.6
     # Docker and GitHub credentials
     - secure: "QwDhHlRgYe0WmlP4A75KadNOcs4RNOPjLAZW7Sur/ippA5hnu1L4N92eUEdBK0qAdDEiefUsQ79Uk9iIsYjg9/zbPO4gXOm3BNc1UkmbSnfTMiflyPfsKYLAmUxIB2o7zZhvvSrSc9R+9cf6YOKDEM71m+Hxxh1cEvBsrbZ9HqUvlI0YK6HOFw7KjYwvk/cJrur/FxTmVRELuDNwBaS01mA5knXg8drskR2md6FgiCOd3/REzAb+qJAvtC9m48kc3A4oXWUF7aI8qpHkcsAGYoWsViE2KzD2p4t9zl2W3Mv7lP0pttQ99k8vjJy3fgpCq0LDaxgFTRKZDVp13gkjiEXZPgoCzQII3Snd0Kl3W6Ff4rIbguKQ4JCCqJQwZ9mA2UyyAVR4bdFvDBV+ZAV8lHTfGILa8JtIfWOFxDg00V6hSkToD8uO8MiNqFGp1sCl+cw5OMOUrFn/cPusQo95Etx7j7iBnnbVeNgnwJvRfkWuWD7jAWJnG+b3m8bgh866djphYvcKDSpNuMDDfb2/OxLk7m3fgJC0ZwnImMR2Ah1Ky/YKOn7DdG7JpjVwmAaZY6kWuMBlF9HpuixReSKaIlE8NfYBon7MgmV75M5c+TE4RwcsgbsTO21LOmZdzwtseoDI58601Y19olIkzX2DDyDQ6Ij8UaQW+RbiXyC+H+M="
@@ -34,15 +34,20 @@ branches:
     - /[0-9]*\.[0-9]*\.[0-9]*/
 before_install:
   - sudo apt-get install jq
-  - curl -s https://raw.githubusercontent.com/edenlabllc/ci-utils/umbrella/init-db.sh -o init-db.sh; sudo sh ./init-db.sh
+  - curl -s https://raw.githubusercontent.com/edenlabllc/ci-utils/umbrella_v2/init-db.sh -o init-db.sh; sudo sh ./init-db.sh
 jobs:
   include:
     - stage: "test and build"
       # run tests
-      script: (curl -s https://raw.githubusercontent.com/edenlabllc/ci-utils/umbrella/tests.sh -o tests.sh; bash ./tests.sh) || travis_terminate 1
+      script: (curl -s https://raw.githubusercontent.com/edenlabllc/ci-utils/umbrella_v2/tests.sh -o tests.sh; bash ./tests.sh) || travis_terminate 1
       # Build Docker container
     - stage: "test and build"
-      # "Decrypting deploy key..."
+      env: APPS='[{"app":"ops","chart":"ops","namespace":"ops","deployment":"api","label":"api"}]'
       script:
       - openssl aes-256-cbc -K $encrypted_2e24d2a6c6cd_key -iv $encrypted_2e24d2a6c6cd_iv -in eHealth-8110bd102a69.json.enc -out eHealth-8110bd102a69.json -d
-      - (curl -s https://raw.githubusercontent.com/edenlabllc/ci-utils/umbrella/docker.sh -o docker.sh; bash ./docker.sh) || travis_terminate 1
+      - (curl -s https://raw.githubusercontent.com/edenlabllc/ci-utils/umbrella_v2/docker.sh -o docker.sh; bash ./docker.sh) || travis_terminate 1
+    - stage: "test and build"
+      env: APPS='[{"app":"ops_scheduler","chart":"ops","namespace":"ops","deployment":"ops-scheduler","label":"scheduler"}]'
+      script:
+      - openssl aes-256-cbc -K $encrypted_2e24d2a6c6cd_key -iv $encrypted_2e24d2a6c6cd_iv -in eHealth-8110bd102a69.json.enc -out eHealth-8110bd102a69.json -d
+      - (curl -s https://raw.githubusercontent.com/edenlabllc/ci-utils/umbrella_v2/docker.sh -o docker.sh; bash ./docker.sh) || travis_terminate 1
