@@ -35,6 +35,7 @@ branches:
 before_install:
   - sudo apt-get install jq
   - curl -s https://raw.githubusercontent.com/edenlabllc/ci-utils/umbrella_v2/init-db.sh -o init-db.sh; sudo sh ./init-db.sh
+  - curl -s https://raw.githubusercontent.com/edenlabllc/ci-utils/umbrella_v2/init-kafka.sh -o init-kafka.sh; sudo sh ./init-kafka.sh
 jobs:
   include:
     - stage: "test and build"
@@ -48,6 +49,11 @@ jobs:
       - (curl -s https://raw.githubusercontent.com/edenlabllc/ci-utils/umbrella_v2/docker.sh -o docker.sh; bash ./docker.sh) || travis_terminate 1
     - stage: "test and build"
       env: APPS='[{"app":"ops_scheduler","chart":"ops","namespace":"ops","deployment":"ops-scheduler","label":"scheduler"}]'
+      script:
+      - openssl aes-256-cbc -K $encrypted_2e24d2a6c6cd_key -iv $encrypted_2e24d2a6c6cd_iv -in eHealth-8110bd102a69.json.enc -out eHealth-8110bd102a69.json -d
+      - (curl -s https://raw.githubusercontent.com/edenlabllc/ci-utils/umbrella_v2/docker.sh -o docker.sh; bash ./docker.sh) || travis_terminate 1
+    - stage: "test and build"
+      env: APPS='[{"app":"deactivate_declaration_consumer","chart":"ops","namespace":"ops","deployment":"deactivate-declaration-consumer","label":"deactivate-declaration-consumer"}]'
       script:
       - openssl aes-256-cbc -K $encrypted_2e24d2a6c6cd_key -iv $encrypted_2e24d2a6c6cd_iv -in eHealth-8110bd102a69.json.enc -out eHealth-8110bd102a69.json -d
       - (curl -s https://raw.githubusercontent.com/edenlabllc/ci-utils/umbrella_v2/docker.sh -o docker.sh; bash ./docker.sh) || travis_terminate 1

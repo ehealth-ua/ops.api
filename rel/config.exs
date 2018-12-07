@@ -39,3 +39,15 @@ release :ops_scheduler do
 
   set(config_providers: [ConfexConfigProvider])
 end
+
+release :deactivate_declaration_consumer do
+  set(version: current_version(:deactivate_declaration_consumer))
+
+  set(
+    applications: [
+      deactivate_declaration_consumer: :permanent
+    ]
+  )
+
+  set(config_providers: [ConfexConfigProvider])
+end
