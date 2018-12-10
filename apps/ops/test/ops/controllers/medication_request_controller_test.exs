@@ -15,7 +15,9 @@ defmodule OPS.Web.MedicationRequestControllerTest do
         created_at: Date.add(Date.utc_today(), 1)
       )
 
-    medication_request2 = insert(:medication_request, status: MedicationRequest.status(:completed))
+    medication_request2 =
+      insert(:medication_request, status: MedicationRequest.status(:completed), intent: MedicationRequest.intent(:plan))
+
     {:ok, conn: put_req_header(conn, "accept", "application/json"), data: [medication_request1, medication_request2]}
   end
 
@@ -137,7 +139,9 @@ defmodule OPS.Web.MedicationRequestControllerTest do
           "id" => medication_request.id,
           "created_from" => to_string(medication_request.created_at),
           "created_to" => to_string(medication_request.created_at),
-          "request_number" => medication_request.request_number
+          "request_number" => medication_request.request_number,
+          "status" => medication_request.status,
+          "intent" => medication_request.intent
         })
 
       resp = json_response(conn, 200)["data"]

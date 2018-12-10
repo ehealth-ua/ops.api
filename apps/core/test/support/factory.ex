@@ -71,9 +71,9 @@ defmodule Core.Factory do
       medication_request_requests_id: UUID.generate(),
       request_number: to_string(:rand.uniform()),
       legal_entity_id: UUID.generate(),
-      intent: "order",
+      intent: MedicationRequest.intent(:order),
       category: "community",
-      context: medical_events_context(),
+      context: build(:medical_events_context),
       dosage_instruction: medical_events_dosage_instruction()
     }
   end
@@ -90,23 +90,23 @@ defmodule Core.Factory do
     }
   end
 
-  defp days_to_seconds(count), do: 24 * 60 * 60 * count
-
-  defp medical_events_context do
+  def medical_events_context_factory do
     %{
-      "identifier" => %{
-        "type" => %{
-          "coding" => [
+      identifier: %{
+        type: %{
+          coding: [
             %{
-              "system" => "eHealth/resources",
-              "code" => "encounter"
+              system: "eHealth/resources",
+              code: "encounter"
             }
           ]
         },
-        "value" => UUID.generate()
+        value: UUID.generate()
       }
     }
   end
+
+  defp days_to_seconds(count), do: 24 * 60 * 60 * count
 
   defp medical_events_dosage_instruction do
     [

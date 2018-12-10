@@ -16,5 +16,6 @@ defmodule Core.MedicationRequest.DoctorSearch do
     field(:created_from, :date)
     field(:created_to, :date)
     field(:medication_id, UUID)
+    field(:intent, :string)
   end
 end
