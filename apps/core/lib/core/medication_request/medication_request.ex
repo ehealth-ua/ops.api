@@ -46,8 +46,8 @@ defmodule Core.MedicationRequests.MedicationRequest do
     field(:updated_by, UUID)
     field(:verification_code, :string)
     field(:legal_entity_id, UUID)
-    field(:intent, :string, defalut: "order", null: false)
-    field(:category, :string, defalut: "community", null: false)
+    field(:intent, :string, default: "order", null: false)
+    field(:category, :string, default: "community", null: false)
     field(:context, :map)
     field(:dosage_instruction, {:array, :map})
 
