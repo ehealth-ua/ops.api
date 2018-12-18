@@ -16,7 +16,11 @@ defmodule OPS.Web.MedicationRequestControllerTest do
       )
 
     medication_request2 =
-      insert(:medication_request, status: MedicationRequest.status(:completed), intent: MedicationRequest.intent(:plan))
+      insert(:medication_request,
+        status: MedicationRequest.status(:completed),
+        intent: MedicationRequest.intent(:plan),
+        medical_program_id: UUID.generate()
+      )
 
     {:ok, conn: put_req_header(conn, "accept", "application/json"), data: [medication_request1, medication_request2]}
   end
@@ -103,6 +107,15 @@ defmodule OPS.Web.MedicationRequestControllerTest do
       assert 2 == length(resp)
     end
 
+    test "success search by medical_program_id", %{conn: conn, data: [_, medication_request2]} do
+      conn =
+        get(conn, medication_request_path(conn, :index, medical_program_id: medication_request2.medical_program_id))
+
+      resp = json_response(conn, 200)["data"]
+      assert 1 == length(resp)
+      assert medication_request2.medical_program_id == hd(resp)["medical_program_id"]
+    end
+
     test "success search by all possible params", %{conn: conn, data: [_, medication_request2]} do
       conn =
         get(
@@ -112,7 +125,8 @@ defmodule OPS.Web.MedicationRequestControllerTest do
             :index,
             status: medication_request2.status,
             person_id: medication_request2.person_id,
-            employee_id: medication_request2.employee_id
+            employee_id: medication_request2.employee_id,
+            medical_program_id: medication_request2.medical_program_id
           )
         )
 
@@ -121,6 +135,7 @@ defmodule OPS.Web.MedicationRequestControllerTest do
       assert medication_request2.status == hd(resp)["status"]
       assert medication_request2.person_id == hd(resp)["person_id"]
       assert medication_request2.employee_id == hd(resp)["employee_id"]
+      assert medication_request2.medical_program_id == hd(resp)["medical_program_id"]
     end
   end
 
