@@ -154,20 +154,20 @@ defmodule Core.MedicationRequests do
     where(query, [mr, d], mr.employee_id in ^employee_ids or d.employee_id in ^employee_ids)
   end
 
-  defp changeset(%Search{} = search, attrs) do
+  def changeset(%Search{} = search, attrs) do
     # allow to search by all available fields
     cast(search, attrs, Search.__schema__(:fields))
   end
 
-  defp changeset(%DoctorSearch{} = search, attrs) do
+  def changeset(%DoctorSearch{} = search, attrs) do
     cast(search, attrs, DoctorSearch.__schema__(:fields))
   end
 
-  defp changeset(%MedicationRequest{} = medication_request, attrs) do
+  def changeset(%MedicationRequest{} = medication_request, attrs) do
     cast(medication_request, attrs, MedicationRequest.__schema__(:fields))
   end
 
-  defp changeset(%QualifySearch{} = search, attrs) do
+  def changeset(%QualifySearch{} = search, attrs) do
     search
     |> cast(attrs, QualifySearch.__schema__(:fields))
     |> validate_required(QualifySearch.__schema__(:fields))

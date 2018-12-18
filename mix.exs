@@ -8,7 +8,8 @@ defmodule Ops.MixProject do
       apps_path: "apps",
       start_permanent: Mix.env() == :prod,
       test_coverage: [tool: ExCoveralls],
-      deps: deps()
+      deps: deps(),
+      docs: [filter_prefix: "Core.Rpc"]
     ]
   end
 
@@ -21,7 +22,8 @@ defmodule Ops.MixProject do
     [
       {:distillery, "~> 2.0", runtime: false, override: true},
       {:excoveralls, "~> 0.9.1", only: [:dev, :test]},
-      {:credo, "~> 1.0", only: [:dev, :test]}
+      {:credo, "~> 1.0", only: [:dev, :test]},
+      {:ex_doc, "~> 0.19", only: :dev, runtime: false}
     ]
   end
 end
