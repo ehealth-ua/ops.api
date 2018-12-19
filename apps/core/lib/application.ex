@@ -8,6 +8,7 @@ defmodule Core.Application do
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
+      {Core.ReadRepo, []},
       {Core.Repo, []},
       {Core.BlockRepo, []},
       {Core.EventManagerRepo, []}

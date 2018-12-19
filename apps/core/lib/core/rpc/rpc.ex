@@ -8,8 +8,9 @@ defmodule Core.Rpc do
   alias Core.MedicationRequest.Search
   alias Core.MedicationRequests
   alias Core.MedicationRequests.MedicationRequest
-  alias Core.Repo
   alias EView.Views.ValidationError
+
+  @read_repo Application.get_env(:core, :repos)[:read_repo]
 
   @last_medication_request_dates_search_params ~w(
     person_id
@@ -78,7 +79,7 @@ defmodule Core.Rpc do
       |> order_by([mr], desc: :ended_at)
       |> add_query_statuses(statuses)
       |> limit([mr], 1)
-      |> Repo.all()
+      |> @read_repo.all()
 
     if Enum.empty?(result), do: {:ok, nil}, else: {:ok, hd(result)}
   end

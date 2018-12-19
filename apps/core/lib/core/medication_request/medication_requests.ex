@@ -13,6 +13,8 @@ defmodule Core.MedicationRequests do
   import Ecto.Changeset
   import Core.AuditLogs, only: [create_audit_logs: 1]
 
+  @read_repo Application.get_env(:core, :repos)[:read_repo]
+
   def list(params) do
     %Search{}
     |> changeset(params)
@@ -23,7 +25,7 @@ defmodule Core.MedicationRequests do
     %DoctorSearch{}
     |> changeset(params)
     |> doctor_search()
-    |> Repo.paginate(params)
+    |> @read_repo.paginate(params)
   end
 
   def qualify_list(params) do
@@ -145,7 +147,7 @@ defmodule Core.MedicationRequests do
           query
       end
 
-    {:ok, Repo.all(query)}
+    {:ok, @read_repo.all(query)}
   end
 
   defp filter_by_employees(query, []), do: query

@@ -18,6 +18,8 @@ defmodule Core.Declarations do
 
   require Logger
 
+  @read_repo Application.get_env(:core, :repos)[:read_repo]
+
   def list_declarations(params) do
     %DeclarationSearch{}
     |> declaration_changeset(params)
@@ -31,7 +33,7 @@ defmodule Core.Declarations do
      |> where([d], d.employee_id in ^employee_ids)
      |> where([d], d.status in [^Declaration.status(:active), ^Declaration.status(:pending)])
      |> filter_by_person_id(params)
-     |> Repo.one!()}
+     |> @read_repo.one!()}
   end
 
   def count_by_employee_ids(_), do: :error
@@ -42,7 +44,7 @@ defmodule Core.Declarations do
 
   defp filter_by_person_id(query, _), do: query
 
-  def get_declaration!(id), do: Repo.get!(Declaration, id)
+  def get_declaration!(id), do: @read_repo.get!(Declaration, id)
 
   # TODO: Make more clearly getting created_by and updated_by parameters
   def create_declaration(attrs \\ %{}) do
@@ -217,7 +219,7 @@ defmodule Core.Declarations do
     |> select([d], d.person_id)
     |> where([d], d.status in ^[Declaration.status(:active), Declaration.status(:pending)])
     |> where([d], d.employee_id in ^employee_ids)
-    |> Repo.all()
+    |> @read_repo.all()
   end
 
   def validate_status_transition(changeset) do

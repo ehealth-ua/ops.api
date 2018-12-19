@@ -2,7 +2,20 @@ use Mix.Config
 
 config :ex_unit, capture_log: true
 
-config :core, api_resolvers: [il: IlMock]
+config :core,
+  api_resolvers: [il: IlMock],
+  repos: [
+    read_repo: Core.Repo
+  ]
+
+config :core, Core.ReadRepo,
+  adapter: Ecto.Adapters.Postgres,
+  username: "postgres",
+  password: "postgres",
+  database: "ops_test",
+  hostname: "localhost",
+  pool: Ecto.Adapters.SQL.Sandbox,
+  ownership_timeout: 120_000_000
 
 config :core, Core.Repo,
   adapter: Ecto.Adapters.Postgres,

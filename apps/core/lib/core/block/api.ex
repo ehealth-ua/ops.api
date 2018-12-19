@@ -6,11 +6,11 @@ defmodule Core.Block.API do
   alias Core.Block
   alias Core.BlockRepo
   alias Core.Declarations.Declaration
-  alias Core.Repo
   alias Core.VerificationFailure.API, as: VerificationFailureAPI
   require Logger
 
   @il_api Application.get_env(:core, :api_resolvers)[:il]
+  @read_repo Application.get_env(:core, :repos)[:read_repo]
 
   def get_latest do
     block_query =
@@ -141,7 +141,7 @@ defmodule Core.Block.API do
   end
 
   def calculated_hash(version, from, to) do
-    {:ok, %{rows: [[hash_value]], num_rows: 1}} = Repo.query(current_version_query(version), [from, to])
+    {:ok, %{rows: [[hash_value]], num_rows: 1}} = @read_repo.query(current_version_query(version), [from, to])
 
     hash_value
   end
@@ -167,7 +167,7 @@ defmodule Core.Block.API do
           select: count(1)
         )
 
-      Repo.one(query1) == Repo.one(query2)
+      @read_repo.one(query1) == @read_repo.one(query2)
     else
       true
     end

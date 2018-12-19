@@ -5,16 +5,16 @@ defmodule Core.Search do
 
   defmacro __using__(_) do
     quote do
-      alias Core.Repo
-
       import Core.Search
       import Ecto.Query
       import Ecto.Changeset
 
+      @read_repo Application.get_env(:core, :repos)[:read_repo]
+
       def search(%Ecto.Changeset{valid?: true, changes: changes}, search_params, entity) do
         entity
         |> get_search_query(changes)
-        |> Repo.paginate(search_params)
+        |> @read_repo.paginate(search_params)
       end
 
       def search(%Ecto.Changeset{valid?: false} = changeset, _search_params, _entity) do

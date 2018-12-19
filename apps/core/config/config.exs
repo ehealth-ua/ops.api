@@ -3,7 +3,7 @@
 use Mix.Config
 
 config :core,
-  ecto_repos: [Core.Repo, Core.BlockRepo, Core.EventManagerRepo]
+  ecto_repos: [Core.ReadRepo, Core.Repo, Core.BlockRepo, Core.EventManagerRepo]
 
 config :ecto, json_library: Jason
 
@@ -11,6 +11,9 @@ config :core,
   system_user: {:system, "EHEALTH_SYSTEM_USER", "4261eacf-8008-4e62-899f-de1e2f7065f0"},
   api_resolvers: [
     il: Core.API.IL
+  ],
+  repos: [
+    read_repo: Core.ReadRepo
   ]
 
 config :core, Core.AuditLogs, max_audit_record_insert: 100

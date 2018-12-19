@@ -12,6 +12,8 @@ defmodule Core.MedicationDispenses do
   alias Core.MedicationDispenses.MedicationDispense
   alias Core.Repo
 
+  @read_repo Application.get_env(:core, :repos)[:read_repo]
+
   @status_new MedicationDispense.status(:new)
   @status_processed MedicationDispense.status(:processed)
   @status_rejected MedicationDispense.status(:rejected)
@@ -67,7 +69,7 @@ defmodule Core.MedicationDispenses do
             Repo.insert_and_log(item, inserted_by)
           end)
 
-          Repo.preload(medication_dispense, ~w(medication_request details)a)
+          @read_repo.preload(medication_dispense, ~w(medication_request details)a)
         end
       end)
     else
@@ -86,7 +88,7 @@ defmodule Core.MedicationDispenses do
          author_id <- medication_dispense.updated_by,
          status <- medication_dispense.status,
          _ <- EventManager.insert_change_status(medication_dispense, old_status, status, author_id) do
-      {:ok, Repo.preload(medication_dispense, :medication_request, force: true)}
+      {:ok, @read_repo.preload(medication_dispense, :medication_request, force: true)}
     end
   end
 
