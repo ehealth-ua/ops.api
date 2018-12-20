@@ -28,14 +28,14 @@ defmodule DeactivateDeclarationConsumer.MixProject do
   defp deps do
     [
       {:confex_config_provider, "~> 0.1.0"},
-      {:kafka_ex, git: "https://github.com/kafkaex/kafka_ex.git", branch: "master"},
+      {:kafka_ex, "~> 0.9.0"},
       {:core, in_umbrella: true}
     ]
   end
 
   defp aliases do
     [
-      "ecto.setup": []
+      "ecto.setup": fn _ -> Mix.shell().cmd("cd ../core && mix ecto.setup") end
     ]
   end
 end

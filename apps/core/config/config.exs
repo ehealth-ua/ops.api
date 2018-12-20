@@ -3,7 +3,7 @@
 use Mix.Config
 
 config :core,
-  ecto_repos: [Core.ReadRepo, Core.Repo, Core.BlockRepo, Core.EventManagerRepo]
+  ecto_repos: [Core.Repo, Core.BlockRepo, Core.EventManagerRepo]
 
 config :ecto, json_library: Jason
 

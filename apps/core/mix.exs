@@ -50,17 +50,13 @@ defmodule Core.MixProject do
     [
       "ecto.setup": [
         "ecto.create",
-        "ecto.create --repo Core.EventManagerRepo",
-        "ecto.create --repo Core.BlockRepo",
         "ecto.migrate",
         "run priv/repo/seeds.exs"
       ],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: [
         "ecto.drop",
-        "ecto.create --quiet",
-        "ecto.create --quiet --repo Core.EventManagerRepo",
-        "ecto.create --quiet --repo Core.BlockRepo",
+        "ecto.create",
         "ecto.migrate",
         "test"
       ]
