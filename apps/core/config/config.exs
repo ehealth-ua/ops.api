@@ -70,6 +70,14 @@ config :core, :block_versions, %{
   "
 }
 
+config :core, Core.API.IL,
+  endpoint: {:system, "IL_ENDPOINT", "http://api-svc.il"},
+  timeouts: [
+    connect_timeout: {:system, :integer, "IL_REQUEST_TIMEOUT", 30_000},
+    recv_timeout: {:system, :integer, "IL_REQUEST_TIMEOUT", 30_000},
+    timeout: {:system, :integer, "IL_REQUEST_TIMEOUT", 30_000}
+  ]
+
 # Must be adjusted every time current_block_version is appended with new version
 config :core, :current_block_version, "v2"
 
