@@ -20,7 +20,9 @@ defmodule OpsScheduler.Jobs.DeclarationsApproveTest do
       Enum.map(1..10, fn _ ->
         inserted_at = NaiveDateTime.add(NaiveDateTime.utc_now(), -86_400 * 10, :seconds)
 
-        declaration = insert(:declaration, status: Declaration.status(:pending), inserted_at: inserted_at)
+        declaration =
+          insert(:declaration, status: Declaration.status(:pending), inserted_at: inserted_at, reason: "offline")
+
         declaration.id
       end)
 

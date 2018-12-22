@@ -38,6 +38,7 @@ defmodule OpsScheduler.Jobs.DeclarationsApprove do
       |> select([d], %{id: d.id})
       |> where([d], d.inserted_at < datetime_add(^NaiveDateTime.utc_now(), ^(-1 * expiration), ^unit))
       |> where([d], d.status == ^Declaration.status(:pending))
+      |> where([d], d.reason == "offline")
       |> limit(^limit)
 
     updates = [status: Declaration.status(:active), updated_by: user_id, updated_at: DateTime.utc_now()]
