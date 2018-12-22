@@ -122,6 +122,14 @@ defmodule OPS.Web.DeclarationControllerTest do
     assert Enum.empty?(json_response(conn, 200)["data"])
   end
 
+  test "search declarations by reason", %{conn: conn} do
+    %{id: id} = insert(:declaration, reason: "terminated")
+    insert(:declaration, reason: "another reason")
+    conn = get(conn, declaration_path(conn, :index), reason: "terminated")
+
+    assert [%{"id" => ^id}] = json_response(conn, 200)["data"]
+  end
+
   test "search declarations by statuses active and pending_verification", %{conn: conn} do
     fixture(:declaration)
     fixture(:declaration, Map.put(@create_attrs, :status, "pending_verification"))

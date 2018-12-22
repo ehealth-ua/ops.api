@@ -14,5 +14,6 @@ defmodule Core.Declarations.DeclarationSearch do
     field(:is_active, :boolean)
     field(:start_year, :integer)
     field(:declaration_number, :string)
+    field(:reason, :string)
   end
 end
