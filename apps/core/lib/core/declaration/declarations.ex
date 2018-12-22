@@ -95,7 +95,7 @@ defmodule Core.Declarations do
       seed
     )a
 
-    fields_optional = ~w(overlimit)a
+    fields_optional = ~w(reason overlimit)a
 
     # declaration_number shouldn't be updated
     fields = if declaration.declaration_number, do: fields, else: fields ++ [:declaration_number]
