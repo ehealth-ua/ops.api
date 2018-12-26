@@ -69,7 +69,7 @@ defmodule Core.MedicationDispenses do
             Repo.insert_and_log(item, inserted_by)
           end)
 
-          @read_repo.preload(medication_dispense, ~w(medication_request details)a)
+          Repo.preload(medication_dispense, ~w(medication_request details)a)
         end
       end)
     else
