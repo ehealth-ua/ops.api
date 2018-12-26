@@ -2,10 +2,11 @@ defmodule Core.RpcTest do
   @moduledoc false
 
   use Core.DataCase
+  alias Core.MedicationRequests.MedicationRequest
   alias Core.Rpc
   alias Ecto.UUID
 
-  describe "existing_max_medication_request/1" do
+  describe "last_medication_request_dates/1" do
     test "returns medication request dates with max ended_at when medication requests are found" do
       max_ended_at = Date.add(Date.utc_today(), 3)
       insert(:medication_request, ended_at: Date.add(Date.utc_today(), 1))
@@ -13,6 +14,68 @@ defmodule Core.RpcTest do
       insert(:medication_request, ended_at: Date.add(Date.utc_today(), 2))
 
       {:ok, %{"ended_at" => ended_at}} = Rpc.last_medication_request_dates(%{})
+      assert ended_at == max_ended_at
+    end
+
+    test "returns medication request dates with max ended_at when medication requests are found (using search params)" do
+      person_id = UUID.generate()
+      medication_id = UUID.generate()
+      medical_program_id = UUID.generate()
+
+      search_params = %{
+        "person_id" => person_id,
+        "medication_id" => medication_id,
+        "medical_program_id" => medical_program_id,
+        "status" => Enum.join([MedicationRequest.status(:active), MedicationRequest.status(:completed)], ",")
+      }
+
+      max_ended_at = Date.add(Date.utc_today(), 3)
+
+      # valid medication requests
+
+      insert(:medication_request,
+        ended_at: Date.add(Date.utc_today(), 1),
+        person_id: person_id,
+        medication_id: medication_id,
+        medical_program_id: medical_program_id,
+        status: MedicationRequest.status(:completed)
+      )
+
+      insert(:medication_request,
+        ended_at: max_ended_at,
+        person_id: person_id,
+        medication_id: medication_id,
+        medical_program_id: medical_program_id,
+        status: MedicationRequest.status(:active)
+      )
+
+      insert(:medication_request,
+        ended_at: Date.add(Date.utc_today(), 2),
+        person_id: person_id,
+        medication_id: medication_id,
+        medical_program_id: medical_program_id,
+        status: MedicationRequest.status(:completed)
+      )
+
+      # invalid medication requests
+
+      insert(:medication_request,
+        ended_at: Date.add(Date.utc_today(), 4),
+        person_id: person_id,
+        medication_id: medication_id,
+        medical_program_id: medical_program_id,
+        status: MedicationRequest.status(:rejected)
+      )
+
+      insert(:medication_request,
+        ended_at: Date.add(Date.utc_today(), 5),
+        person_id: UUID.generate(),
+        medication_id: medication_id,
+        medical_program_id: medical_program_id,
+        status: MedicationRequest.status(:active)
+      )
+
+      {:ok, %{"ended_at" => ended_at}} = Rpc.last_medication_request_dates(search_params)
       assert ended_at == max_ended_at
     end
 
