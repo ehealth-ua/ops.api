@@ -33,7 +33,8 @@ defmodule Core.MixProject do
   defp deps do
     [
       {:httpoison, "~> 1.4"},
-      {:confex, "~> 3.3"},
+      {:kube_rpc, git: "https://github.com/edenlabllc/kube_rpc.git"},
+      {:confex, "~> 3.4"},
       {:mox, "~> 0.4.0"},
       {:jason, "~> 1.1"},
       {:ecto, "~> 2.2"},
