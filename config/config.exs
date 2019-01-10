@@ -6,8 +6,7 @@ use Mix.Config
 config :logger, :console,
   format: "$message\n",
   handle_otp_reports: true,
-  level: :info,
-  device: :stdio
+  level: :info
 
 # By default, the umbrella project as well as each child
 # application will require this configuration file, ensuring
