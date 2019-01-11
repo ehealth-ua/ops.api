@@ -18,8 +18,8 @@ defmodule DeactivateDeclarationConsumer.Kafka.DeactivateDeclarationEventConsumer
     {:async_commit, state}
   end
 
-  def consume(%{"actor_id" => actor_id, "person_id" => person_id} = attrs) do
-    with {:ok, _} <- Declarations.terminate_person_declarations(actor_id, person_id, attrs) do
+  def consume(%{"actor_id" => _} = attrs) do
+    with {:ok, _} <- Declarations.terminate_declarations(attrs) do
       :ok
     else
       {:error, %Changeset{} = changeset} ->
