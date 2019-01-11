@@ -24,8 +24,8 @@ defmodule OPS.Web.Router do
 
     resources("/declarations", DeclarationController)
     post("/declarations/with_termination", DeclarationController, :create_with_termination_logic)
-    patch("/employees/:id/declarations/actions/terminate", DeclarationController, :terminate_declarations)
-    patch("/persons/:id/declarations/actions/terminate", DeclarationController, :terminate_person_declarations)
+    patch("/employees/:employee_id/declarations/actions/terminate", DeclarationController, :terminate_declarations)
+    patch("/persons/:person_id/declarations/actions/terminate", DeclarationController, :terminate_declarations)
     patch("/declarations/:id/actions/terminate", DeclarationController, :terminate_declaration)
     post("/declarations_count", DeclarationController, :declarations_count)
 

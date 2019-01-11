@@ -215,7 +215,7 @@ defmodule Core.DeclarationTest do
 
       Repo.update_all(Declaration, set: [employee_id: employee_id])
 
-      Core.Declarations.terminate_declarations(user_id, employee_id)
+      Core.Declarations.terminate_declarations(%{"actor_id" => user_id, "employee_id" => employee_id})
 
       Enum.each([dec1, dec2, dec3], fn declaration ->
         declaration = Repo.get(Declaration, declaration.id)
