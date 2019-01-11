@@ -193,17 +193,21 @@ defmodule Core.Declarations do
     {:ok, declarations}
   end
 
-  def terminate_person_declarations(user_id, person_id, attrs \\ %{}) do
+  def terminate_declarations(attrs) do
+    query = where(Declaration, [d], d.status in ^[Declaration.status(:active), Declaration.status(:pending)])
+
     query =
-      Declaration
-      |> where([d], d.status in ^[Declaration.status(:active), Declaration.status(:pending)])
-      |> where([d], d.person_id == ^person_id)
+      if Map.has_key?(attrs, "person_id") do
+        where(query, [d], d.person_id == ^Map.get(attrs, "person_id"))
+      else
+        where(query, [d], d.employee_id == ^Map.get(attrs, "employee_id"))
+      end
 
     updates = [
       status: Declaration.status(:terminated),
       reason: Map.get(attrs, "reason"),
       reason_description: Map.get(attrs, "reason_description"),
-      updated_by: user_id,
+      updated_by: Map.get(attrs, "actor_id"),
       updated_at: DateTime.utc_now()
     ]
 

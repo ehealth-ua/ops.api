@@ -236,9 +236,7 @@ defmodule Core.DeclarationTest do
         assert user_id == audit_log.actor_id
       end)
     end
-  end
 
-  describe "terminate_person_declarations/1" do
     test "terminates person declarations" do
       user_id = Confex.fetch_env!(:core, :system_user)
       person_id = "84e30a11-94bd-49fe-8b1f-f5511c5916d6"
@@ -249,7 +247,45 @@ defmodule Core.DeclarationTest do
       dec3 = insert(:declaration, person_id: person_id, status: Declaration.status(:closed))
       dec4 = insert(:declaration, person_id: person_id, status: Declaration.status(:rejected))
 
-      Core.Declarations.terminate_person_declarations(user_id, person_id)
+      Core.Declarations.terminate_declarations(%{"actor_id" => user_id, "person_id" => person_id})
+
+      Enum.each([dec1, dec2], fn declaration ->
+        declaration = Repo.get(Declaration, declaration.id)
+
+        assert "terminated" == declaration.status
+        assert user_id == declaration.updated_by
+
+        audit_log =
+          Repo.one!(
+            from(
+              cl in Changelog,
+              where:
+                cl.resource == "declarations" and cl.resource_id == ^declaration.id and
+                  fragment("?->>?", cl.changeset, "status") == "terminated"
+            )
+          )
+
+        assert user_id == audit_log.actor_id
+      end)
+
+      Enum.each([dec3, dec4], fn declaration ->
+        declaration = Repo.get(Declaration, declaration.id)
+        assert "terminated" != declaration.status
+        assert user_id != declaration.updated_by
+      end)
+    end
+
+    test "terminates employee declarations" do
+      user_id = Confex.fetch_env!(:core, :system_user)
+      employee_id = "84e30a11-94bd-49fe-8b1f-f5511c5916d6"
+
+      # in all statuses
+      dec1 = insert(:declaration, employee_id: employee_id)
+      dec2 = insert(:declaration, employee_id: employee_id, status: Declaration.status(:pending))
+      dec3 = insert(:declaration, employee_id: employee_id, status: Declaration.status(:closed))
+      dec4 = insert(:declaration, employee_id: employee_id, status: Declaration.status(:rejected))
+
+      Core.Declarations.terminate_declarations(%{"actor_id" => user_id, "employee_id" => employee_id})
 
       Enum.each([dec1, dec2], fn declaration ->
         declaration = Repo.get(Declaration, declaration.id)
