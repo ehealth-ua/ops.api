@@ -174,25 +174,6 @@ defmodule Core.Declarations do
     end
   end
 
-  def terminate_declarations(user_id, employee_id, attrs \\ %{}) do
-    query =
-      Declaration
-      |> where([d], d.status in ^[Declaration.status(:active), Declaration.status(:pending)])
-      |> where([d], d.employee_id == ^employee_id)
-
-    updates = [
-      status: Declaration.status(:terminated),
-      reason: Map.get(attrs, "reason"),
-      reason_description: Map.get(attrs, "reason_description"),
-      updated_by: user_id,
-      updated_at: DateTime.utc_now()
-    ]
-
-    {_, declarations} = Repo.update_all(query, [set: updates], returning: updated_fields_list(updates))
-    log_status_updates(declarations)
-    {:ok, declarations}
-  end
-
   def terminate_declarations(attrs) do
     query = where(Declaration, [d], d.status in ^[Declaration.status(:active), Declaration.status(:pending)])
 
