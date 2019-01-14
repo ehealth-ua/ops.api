@@ -85,7 +85,7 @@ defmodule Core.RpcTest do
 
     test "failed when search params are invalid" do
       search_params = %{
-        "person_id" => 12345,
+        "person_id" => 12_345,
         "medication_id" => "test",
         "medical_program_id" => "test",
         "status" => 123
@@ -130,6 +130,22 @@ defmodule Core.RpcTest do
 
       {:ok, %{"ended_at" => ended_at}} = Rpc.last_medication_request_dates(search_params)
       assert ended_at == Date.utc_today()
+    end
+  end
+
+  describe "declarations_by_employees/2" do
+    test "get declarations by empty list of employees" do
+      assert {:ok, []} = Rpc.declarations_by_employees([], [:id])
+    end
+
+    test "success get declarations" do
+      declaration1 = insert(:declaration)
+      declaration2 = insert(:declaration)
+      legal_entity_id1 = declaration1.legal_entity_id
+      legal_entity_id2 = declaration2.legal_entity_id
+
+      assert {:ok, [%{legal_entity_id: ^legal_entity_id1}, %{legal_entity_id: ^legal_entity_id2}]} =
+               Rpc.declarations_by_employees([declaration1.employee_id, declaration2.employee_id], [:legal_entity_id])
     end
   end
 end
