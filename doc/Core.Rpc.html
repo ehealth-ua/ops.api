@@ -7,7 +7,7 @@
     <meta name="generator" content="ExDoc v0.19.1">
     <title>Core.Rpc –  vdev</title>
     <link rel="stylesheet" href="dist/app-240d7fc7e5.css" />
-    <script src="dist/sidebar_items-21cd076258.js"></script>
+    <script src="dist/sidebar_items-9a791bbd06.js"></script>
     
   </head>
   <body data-type="modules">
@@ -100,6 +100,13 @@ Core.Rpc              </h1>
     </h2>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="#declarations_by_employees/2">declarations_by_employees(employee_ids, fields)</a>
+  </div>
+    <div class="summary-synopsis"><p>Get declarations by list of employee ids</p>
+</div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="#last_medication_request_dates/1">last_medication_request_dates(params)</a>
   </div>
     <div class="summary-synopsis"><p>Searches medication request by given parameters (string key map) with maximum ended_at field</p>
@@ -179,6 +186,29 @@ Core.Rpc              </h1>
             </a>
             Functions
           </h1>
+<div class="detail" id="declarations_by_employees/2">
+    <div class="detail-header">
+    <a href="#declarations_by_employees/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <span class="signature">declarations_by_employees(employee_ids, fields)</span>
+        
+      <div class="specs">
+          <pre>declarations_by_employees(employee_ids :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">list</a>(), fields :: [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()]) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">list</a>()</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Get declarations by list of employee ids</p>
+<h2 id="declarations_by_employees/2-examples" class="section-heading">
+  <a href="#declarations_by_employees/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">Core.Rpc</span><span class="o">.</span><span class="n">declarations_by_employees</span><span class="p" data-group-id="1069544573-1">(</span><span class="p" data-group-id="1069544573-2">[</span><span class="s">&quot;4671ab27-57f8-4c55-a618-a042a68c7add&quot;</span><span class="p" data-group-id="1069544573-2">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1069544573-3">[</span><span class="ss">:legal_entity_id</span><span class="p" data-group-id="1069544573-3">]</span><span class="p" data-group-id="1069544573-1">)</span><span class="w">
+</span><span class="p" data-group-id="1069544573-4">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1069544573-5">[</span><span class="p" data-group-id="1069544573-6">%{</span><span class="ss">legal_entity_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;43ec9534-2250-42bb-94ec-e0a7ad33afd3&quot;</span><span class="p" data-group-id="1069544573-6">}</span><span class="p" data-group-id="1069544573-5">]</span><span class="p" data-group-id="1069544573-4">}</span></code></pre>
+  </section>
+</div>
 <div class="detail" id="last_medication_request_dates/1">
     <div class="detail-header">
     <a href="#last_medication_request_dates/1" class="detail-link" title="Link to this function">
@@ -229,14 +259,14 @@ Core.Rpc              </h1>
   Examples
 </h2>
 
-<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">Core.Rpc</span><span class="o">.</span><span class="n">last_medication_request_dates</span><span class="p" data-group-id="2908993204-1">(</span><span class="p" data-group-id="2908993204-2">%{</span><span class="w">
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">Core.Rpc</span><span class="o">.</span><span class="n">last_medication_request_dates</span><span class="p" data-group-id="5445848092-1">(</span><span class="p" data-group-id="5445848092-2">%{</span><span class="w">
    </span><span class="s">&quot;person_id&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;4671ab27-57f8-4c55-a618-a042a68c7add&quot;</span><span class="p">,</span><span class="w">
    </span><span class="s">&quot;medication_id&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;43ec9534-2250-42bb-94ec-e0a7ad33afd3&quot;</span><span class="p">,</span><span class="w">
    </span><span class="s">&quot;medical_program_id&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
    </span><span class="s">&quot;status&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;ACTIVE&quot;</span><span class="w">
-   </span><span class="p" data-group-id="2908993204-2">}</span><span class="p" data-group-id="2908993204-1">)</span><span class="w">
+   </span><span class="p" data-group-id="5445848092-2">}</span><span class="p" data-group-id="5445848092-1">)</span><span class="w">
 
-</span><span class="p" data-group-id="2908993204-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2908993204-4">%{</span><span class="s">&quot;ended_at&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="ld">~D[2018-12-17]</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;started_at&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="ld">~D[2018-12-17]</span><span class="p" data-group-id="2908993204-4">}</span><span class="p" data-group-id="2908993204-3">}</span></code></pre>
+</span><span class="p" data-group-id="5445848092-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5445848092-4">%{</span><span class="s">&quot;ended_at&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="ld">~D[2018-12-17]</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;started_at&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="ld">~D[2018-12-17]</span><span class="p" data-group-id="5445848092-4">}</span><span class="p" data-group-id="5445848092-3">}</span></code></pre>
   </section>
 </div>
         </section>
