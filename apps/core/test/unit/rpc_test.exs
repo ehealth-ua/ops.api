@@ -149,6 +149,18 @@ defmodule Core.RpcTest do
     end
   end
 
+  describe "declaration_by_id/1" do
+    test "success" do
+      declaration = %{id: declaration_id} = insert(:declaration)
+
+      assert declaration == Rpc.declaration_by_id(declaration_id)
+    end
+
+    test "not found" do
+      assert nil == Rpc.declaration_by_id(UUID.generate())
+    end
+  end
+
   describe "search_declarations/3" do
     test "success with limit, offset" do
       insert(:declaration)
