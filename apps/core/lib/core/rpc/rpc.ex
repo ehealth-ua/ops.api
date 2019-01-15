@@ -108,4 +108,25 @@ defmodule Core.Rpc do
      |> where([d], d.employee_id in ^employee_ids)
      |> @read_repo.all()}
   end
+
+  @doc """
+  Get declarations from filter
+
+  ## Examples
+      iex> Core.Rpc.search_declarations([{:person_id, :in, ["0042500e-6ac0-45fb-b82a-25f7857c49a8"]}], [start_date: :asc], {0, 10})
+      {:ok, [%Core.Declarations.Declaration{}]}
+  """
+  @spec search_declarations(list, list, {integer, integer}) :: list(Core.Declarations.Declaration)
+  def search_declarations(filter, order_by, {offset, limit}) when is_list(filter) and is_list(order_by) do
+    # TODO: apply filtering library
+
+    declarations =
+      Declaration
+      |> limit(^limit)
+      |> offset(^offset)
+      |> order_by(^order_by)
+      |> @read_repo.all()
+
+    {:ok, declarations}
+  end
 end
