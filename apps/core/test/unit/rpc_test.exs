@@ -148,4 +148,23 @@ defmodule Core.RpcTest do
                Rpc.declarations_by_employees([declaration1.employee_id, declaration2.employee_id], [:legal_entity_id])
     end
   end
+
+  describe "search_declarations/3" do
+    test "success with limit, offset" do
+      insert(:declaration)
+      declaration1 = insert(:declaration)
+      declaration2 = insert(:declaration)
+      insert(:declaration)
+
+      assert {:ok, [declaration1, declaration2]} == Rpc.search_declarations([], [], {1, 2})
+    end
+
+    test "success with order by" do
+      declaration1 = insert(:declaration)
+      insert_list(3, :declaration, is_active: false)
+      declaration2 = insert(:declaration)
+
+      assert {:ok, [declaration1, declaration2]} == Rpc.search_declarations([], [desc: :is_active], {0, 2})
+    end
+  end
 end
