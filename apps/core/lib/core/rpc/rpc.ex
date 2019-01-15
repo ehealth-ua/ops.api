@@ -110,6 +110,18 @@ defmodule Core.Rpc do
   end
 
   @doc """
+  Get declaration by id
+
+  ## Examples
+      iex> Core.Rpc.declaration_by_id("0042500e-6ac0-45fb-b82a-25f7857c49a8")
+      %Core.Declarations.Declaration{}
+  """
+  @spec declaration_by_id(binary) :: %Core.Declarations.Declaration{} | nil
+  def declaration_by_id(id) when is_binary(id) do
+    @read_repo.get(Declaration, id)
+  end
+
+  @doc """
   Get declarations from filter
 
   ## Examples
