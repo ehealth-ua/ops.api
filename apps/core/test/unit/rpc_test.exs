@@ -149,15 +149,17 @@ defmodule Core.RpcTest do
     end
   end
 
-  describe "declaration_by_id/1" do
+  describe "get_declaration/1" do
     test "success" do
-      declaration = %{id: declaration_id} = insert(:declaration)
+      declaration1 = %{id: declaration_id} = insert(:declaration)
+      declaration2 = %{declaration_number: declaration_number} = insert(:declaration)
 
-      assert declaration == Rpc.declaration_by_id(declaration_id)
+      assert declaration1 == Rpc.get_declaration(id: declaration_id)
+      assert declaration2 == Rpc.get_declaration(declaration_number: declaration_number)
     end
 
     test "not found" do
-      assert nil == Rpc.declaration_by_id(UUID.generate())
+      assert nil == Rpc.get_declaration(id: UUID.generate())
     end
   end
 
