@@ -113,11 +113,11 @@ defmodule Core.Rpc do
   Get declaration by params
 
   ## Examples
-      iex> Core.Rpc.get_declaration_by(id: "0042500e-6ac0-45fb-b82a-25f7857c49a8")
+      iex> Core.Rpc.get_declaration(id: "0042500e-6ac0-45fb-b82a-25f7857c49a8")
       %Core.Declarations.Declaration{}
   """
-  @spec get_declaration_by(list) :: %Core.Declarations.Declaration{} | nil
-  def get_declaration_by(params) when is_list(params) do
+  @spec get_declaration(list) :: %Core.Declarations.Declaration{} | nil
+  def get_declaration(params) when is_list(params) do
     @read_repo.get_by(Declaration, params)
   end
 
