@@ -173,6 +173,18 @@ defmodule Core.RpcTest do
       assert {:ok, [declaration1, declaration2]} == Rpc.search_declarations([], [], {1, 2})
     end
 
+    test "success by person_id" do
+      person_id = UUID.generate()
+      insert_list(3, :declaration)
+      [declaration1, declaration2] = insert_list(2, :declaration, person_id: person_id)
+
+      {:ok, declarations} = Rpc.search_declarations([{:person_id, :in, [person_id]}], [], {0, 10})
+
+      assert 2 == length(declarations)
+      assert declaration1 in declarations
+      assert declaration2 in declarations
+    end
+
     test "success with order by" do
       declaration1 = insert(:declaration)
       insert_list(3, :declaration, is_active: false)
