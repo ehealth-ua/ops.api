@@ -132,9 +132,18 @@ defmodule Core.Rpc do
   def search_declarations(filter, order_by, {offset, limit}) when is_list(filter) and is_list(order_by) do
     # TODO: apply filtering library
 
+    apply_filter = fn query, filter ->
+      Enum.reduce(filter, query, fn
+        {field, :in, values}, acc_query -> where(acc_query, [r], field(r, ^field) in ^values)
+        {field, :equal, value}, acc_query -> where(acc_query, [r], field(r, ^field) == ^value)
+        _, acc_query -> acc_query
+      end)
+    end
+
     declarations =
       Declaration
       |> limit(^limit)
+      |> apply_filter.(filter)
       |> offset(^offset)
       |> order_by(^order_by)
       |> @read_repo.all()
