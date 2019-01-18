@@ -43,22 +43,12 @@ defmodule OpsScheduler.Jobs.DeclarationsTerminator do
     updates = [status: Declaration.status(:closed), updated_by: user_id, updated_at: DateTime.utc_now()]
     query = join(Declaration, :inner, [d], dr in subquery(subquery), dr.id == d.id)
 
-    case update_rows(query, updates) do
+    case Declarations.update_rows(query, updates) do
       {:ok, rows_updated} when rows_updated >= limit ->
         terminate_declarations(expiration, unit, limit, user_id)
 
       _ ->
         :ok
     end
-  end
-
-  defp update_rows(query, updates) do
-    Repo.transaction(fn ->
-      {rows_updated, declarations} =
-        Repo.update_all(query, [set: updates], returning: Declarations.updated_fields_list(updates))
-
-      Declarations.log_status_updates(declarations)
-      rows_updated
-    end)
   end
 end

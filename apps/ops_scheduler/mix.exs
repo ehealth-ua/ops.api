@@ -16,7 +16,9 @@ defmodule OpsScheduler.MixProject do
       deps: deps(),
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: Mix.compilers(),
-      aliases: aliases()
+      aliases: aliases(),
+      preferred_cli_env: [coveralls: :test],
+      test_coverage: [tool: ExCoveralls]
     ]
   end
 

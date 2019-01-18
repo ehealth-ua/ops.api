@@ -145,7 +145,8 @@ defmodule Core.Declarations do
 
     block = BlockAPI.get_latest()
     user_id = Map.get(declaration_params, "created_by")
-    updates = [status: Declaration.status(:terminated), updated_by: user_id, updated_at: DateTime.utc_now()]
+    status = Declaration.status(:terminated)
+    updates = [status: status, updated_by: user_id, updated_at: DateTime.utc_now()]
 
     Multi.new()
     |> Multi.update_all(:previous_declarations, query, [set: updates], returning: updated_fields_list(updates))
@@ -156,7 +157,7 @@ defmodule Core.Declarations do
     )
     |> Multi.run(:log_declarations_update, fn response ->
       {_, declarations} = response.previous_declarations
-      log_status_updates(declarations)
+      log_status_updates(declarations, status, user_id)
     end)
     |> Multi.run(:log_declaration_insert, &log_insert(&1.new_declaration))
     |> Repo.transaction()
@@ -184,16 +185,20 @@ defmodule Core.Declarations do
         where(query, [d], d.employee_id == ^Map.get(attrs, "employee_id"))
       end
 
+    status = Declaration.status(:terminated)
+    user_id = Map.get(attrs, "actor_id")
+
     updates = [
-      status: Declaration.status(:terminated),
+      status: status,
       reason: Map.get(attrs, "reason"),
       reason_description: Map.get(attrs, "reason_description"),
-      updated_by: Map.get(attrs, "actor_id"),
+      updated_by: user_id,
       updated_at: DateTime.utc_now()
     ]
 
     {_, declarations} = Repo.update_all(query, [set: updates], returning: updated_fields_list(updates))
-    log_status_updates(declarations)
+
+    log_status_updates(declarations, status, user_id)
     {:ok, declarations}
   end
 
@@ -226,12 +231,22 @@ defmodule Core.Declarations do
     end
   end
 
-  def log_status_updates(declarations) do
+  def update_rows(query, status: status, updated_by: user_id, updated_at: updated_at) do
+    updates = [status: status, updated_by: user_id, updated_at: updated_at]
+
+    Repo.transaction(fn ->
+      {rows_updated, declarations} = Repo.update_all(query, [set: updates], returning: updated_fields_list(updates))
+      log_status_updates(declarations, status, user_id)
+      rows_updated
+    end)
+  end
+
+  def log_status_updates(declarations, status, user_id) do
+    EventManager.insert_change_statuses(declarations, status, user_id)
+
     {_, changelog} =
       declarations
       |> Enum.map(fn decl ->
-        EventManager.insert_change_status(decl, decl.status, decl.updated_by)
-
         %{
           actor_id: decl.updated_by,
           resource: "declarations",
