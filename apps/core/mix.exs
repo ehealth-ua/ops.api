@@ -43,7 +43,8 @@ defmodule Core.MixProject do
       {:phoenix_ecto, "~> 3.6"},
       {:scrivener_ecto, "~> 1.3"},
       {:postgrex, ">= 0.0.0"},
-      {:ecto_logger_json, git: "https://github.com/edenlabllc/ecto_logger_json.git", branch: "query_params"}
+      {:ecto_logger_json, git: "https://github.com/edenlabllc/ecto_logger_json.git", branch: "query_params"},
+      {:ecto_filter, git: "https://github.com/edenlabllc/ecto_filter"}
     ]
   end
 
