@@ -128,26 +128,18 @@ defmodule Core.Rpc do
       iex> Core.Rpc.search_declarations([{:person_id, :in, ["0042500e-6ac0-45fb-b82a-25f7857c49a8"]}], [start_date: :asc], {0, 10})
       {:ok, [%Core.Declarations.Declaration{}]}
   """
-  @spec search_declarations(list, list, {integer, integer}) :: list(Core.Declarations.Declaration)
-  def search_declarations(filter, order_by, {offset, limit}) when is_list(filter) and is_list(order_by) do
-    # TODO: apply filtering library
-
-    apply_filter = fn query, filter ->
-      Enum.reduce(filter, query, fn
-        {field, :in, values}, acc_query -> where(acc_query, [r], field(r, ^field) in ^values)
-        {field, :equal, value}, acc_query -> where(acc_query, [r], field(r, ^field) == ^value)
-        _, acc_query -> acc_query
-      end)
-    end
-
+  @spec search_declarations(list, list, nil | {integer, integer}) :: list(Core.Declarations.Declaration)
+  def search_declarations(filter, order_by \\ [], cursor \\ nil) when is_list(filter) and is_list(order_by) do
     declarations =
       Declaration
-      |> limit(^limit)
-      |> apply_filter.(filter)
-      |> offset(^offset)
+      |> EctoFilter.filter(filter)
+      |> apply_cursor(cursor)
       |> order_by(^order_by)
       |> @read_repo.all()
 
     {:ok, declarations}
   end
+
+  defp apply_cursor(query, {offset, limit}), do: query |> limit(^limit) |> offset(^offset)
+  defp apply_cursor(query, _), do: query
 end

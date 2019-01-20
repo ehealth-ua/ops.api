@@ -173,6 +173,18 @@ defmodule Core.RpcTest do
       assert {:ok, [declaration1, declaration2]} == Rpc.search_declarations([], [], {1, 2})
     end
 
+    test "success only with filter" do
+      today = Date.utc_today()
+      start_date = ~D[2010-10-10]
+      [declaration1, declaration2] = insert_list(2, :declaration, start_date: start_date)
+      insert_list(4, :declaration, start_date: today)
+
+      {:ok, declarations} = Rpc.search_declarations([{:start_date, :less_than, today}])
+      assert 2 == length(declarations)
+      assert declaration1 in declarations
+      assert declaration2 in declarations
+    end
+
     test "success by person_id" do
       person_id = UUID.generate()
       insert_list(3, :declaration)
