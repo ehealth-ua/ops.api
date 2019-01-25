@@ -247,7 +247,12 @@ defmodule Core.DeclarationTest do
       dec3 = insert(:declaration, person_id: person_id, status: Declaration.status(:closed))
       dec4 = insert(:declaration, person_id: person_id, status: Declaration.status(:rejected))
 
-      Core.Declarations.terminate_declarations(%{"actor_id" => user_id, "person_id" => person_id})
+      assert {:ok, _} =
+               Core.Declarations.terminate_declarations(%{
+                 "reason_description" => String.duplicate("reason-", 50),
+                 "actor_id" => user_id,
+                 "person_id" => person_id
+               })
 
       Enum.each([dec1, dec2], fn declaration ->
         declaration = Repo.get(Declaration, declaration.id)
