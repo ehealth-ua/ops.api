@@ -5,10 +5,12 @@ defmodule Core.Rpc do
 
   import Ecto.Query
 
+  alias Core.Declarations
   alias Core.Declarations.Declaration
   alias Core.MedicationRequest.Search
   alias Core.MedicationRequests
   alias Core.MedicationRequests.MedicationRequest
+  alias Ecto.Changeset
   alias EView.Views.ValidationError
 
   @read_repo Application.get_env(:core, :repos)[:read_repo]
@@ -142,4 +144,63 @@ defmodule Core.Rpc do
 
   defp apply_cursor(query, {offset, limit}), do: query |> limit(^limit) |> offset(^offset)
   defp apply_cursor(query, _), do: query
+
+  @doc """
+  Update declaration
+
+  Available parameters:
+
+  | Parameter              | Type                         | Example                                | Description                     |
+  | :--------------------: | :--------------------------: | :------------------------------------: | :-----------------------------: |
+  | updated_by             | `UUID`                       | `72b38c55-4fc9-4ab3-b656-1091af4c557c` | Required                        |
+  | employee_id            | `UUID`                       | `dfe13714-92ed-448b-90d2-cccb8640948a` |                                 |
+  | person_id              | `UUID`                       | `fba89efe-0cad-4c11-ad1f-d0cdce26b03a` |                                 |
+  | start_date             | `Date` or `binary`           | `~D[2015-10-10]` or `2015-10-10`       |                                 |
+  | end_date               | `Date` or `binary`           | `~D[2030-10-10]` or `2030-10-10`       |                                 |
+  | signed_at              | `NaiveDateTime` or `binary`  | `~N[2019-01-29 13:47:05.045117]`       |                                 |
+  | status                 | `binary`                     | `active`                               |                                 |
+  | created_by             | `UUID`                       | `99a604f9-c319-4d93-a802-a5798d8efdf7` |                                 |
+  | updated_by             | `UUID`                       | `99a604f9-c319-4d93-a802-a5798d8efdf7` |                                 |
+  | is_active              | `boolean`                    | `true`                                 |                                 |
+  | scope                  | `binary`                     | `family_doctor`                        |                                 |
+  | division_id            | `UUID`                       | `e217193a-e46b-49d9-9a66-79926abfefe8` |                                 |
+  | legal_entity_id        | `UUID`                       | `b5b30e2c-e347-49ba-a4e4-a52eaa057463` |                                 |
+  | declaration_request_id | `UUID`                       | `cc3efcde-16b0-45a4-b0b8-f278d7b3c9ca` |                                 |
+
+  ## Examples
+      iex> Core.Rpc.update_declaration("0042500e-6ac0-45fb-b82a-25f7857c49a8", %{"status" => "active"})
+      {:ok, %Core.Declarations.Declaration{}}
+  """
+  @spec update_declaration(binary, map) :: {:ok, %Core.Declarations.Declaration{}} | nil | {:error, %Ecto.Changeset{}}
+  def update_declaration(id, %{} = params) do
+    with %{} = declaration <- get_declaration(id: id) do
+      Declarations.update_declaration(declaration, params)
+    end
+  end
+
+  @doc """
+  Terminate declaration
+
+  Available parameters:
+
+  | Parameter           | Type                         | Example                                | Description                     |
+  | :-----------------: | :--------------------------: | :------------------------------------: | :-----------------------------: |
+  | updated_by          | `UUID`                       | `72b38c55-4fc9-4ab3-b656-1091af4c557c` | Required                        |
+  | status              | `binary`                     | `active`                               | Required                        |
+  | reason              | `binary`                     | `manual_person`                        | Required                        |
+  | reason_description  | `binary`                     | `Person died`                          |                                 |
+
+  ## Examples
+      iex> Core.Rpc.terminate_declaration("0042500e-6ac0-45fb-b82a-25f7857c49a8", %{"updated_by" => "11225aae-7ac0-45fb-b82a-25f7857c49b0"})
+      {:ok, %Core.Declarations.Declaration{}}
+  """
+  @spec terminate_declaration(binary, map) :: {:ok, %Core.Declarations.Declaration{}} | {:error, %Ecto.Changeset{}}
+  def terminate_declaration(id, %{"updated_by" => _} = params) do
+    with {:ok, declaration} <- Declarations.terminate_declaration(id, params) do
+      {:ok, declaration}
+    else
+      %Changeset{} = changeset -> {:error, changeset}
+      err -> err
+    end
+  end
 end
