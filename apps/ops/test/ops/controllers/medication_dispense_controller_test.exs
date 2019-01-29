@@ -154,6 +154,7 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
     medication_request_id = @create_attrs.medication_request_id
     division_id = @create_attrs.division_id
     legal_entity_id = @create_attrs.legal_entity_id
+    medical_program_id = @create_attrs.medical_program_id
     status = MedicationDispense.status(:new)
     dispensed_by = @create_attrs.dispensed_by
     inserted_by = @create_attrs.inserted_by
@@ -164,6 +165,7 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
     assert %{
              "id" => _id,
              "medication_request" => %{"id" => ^medication_request_id},
+             "medical_program_id" => ^medical_program_id,
              "division_id" => ^division_id,
              "legal_entity_id" => ^legal_entity_id,
              "payment_id" => ^payment_id,

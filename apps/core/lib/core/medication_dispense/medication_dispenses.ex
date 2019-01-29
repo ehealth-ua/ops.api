@@ -32,7 +32,7 @@ defmodule Core.MedicationDispenses do
     updated_by
   )a
 
-  @fields_optional ~w(payment_id payment_amount dispensed_by)a
+  @fields_optional ~w(medical_program_id payment_id payment_amount dispensed_by)a
 
   def list(params) do
     %Search{}
