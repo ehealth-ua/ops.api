@@ -26,7 +26,6 @@ defmodule Core.MedicationDispenses do
     party_id
     legal_entity_id
     division_id
-    medical_program_id
     status
     is_active
     inserted_by
