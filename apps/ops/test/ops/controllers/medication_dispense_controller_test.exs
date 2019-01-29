@@ -176,6 +176,42 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
            } = response_data
   end
 
+  test "creates medication dispense when data is valid and does not contain medical_program_id", %{conn: conn} do
+    insert(:medication_request, id: @create_attrs.medication_request_id)
+
+    conn =
+      post(conn, medication_dispense_path(conn, :create),
+        medication_dispense: Map.delete(@create_attrs, :medical_program_id)
+      )
+
+    response_data = json_response(conn, 201)["data"]
+
+    medication_request_id = @create_attrs.medication_request_id
+    division_id = @create_attrs.division_id
+    legal_entity_id = @create_attrs.legal_entity_id
+    status = MedicationDispense.status(:new)
+    dispensed_by = @create_attrs.dispensed_by
+    inserted_by = @create_attrs.inserted_by
+    updated_by = @create_attrs.updated_by
+    payment_id = @create_attrs.payment_id
+    payment_amount = @create_attrs.payment_amount
+
+    assert %{
+             "id" => _id,
+             "medication_request" => %{"id" => ^medication_request_id},
+             "medical_program_id" => nil,
+             "division_id" => ^division_id,
+             "legal_entity_id" => ^legal_entity_id,
+             "payment_id" => ^payment_id,
+             "payment_amount" => ^payment_amount,
+             "dispensed_by" => ^dispensed_by,
+             "dispensed_at" => "2017-08-17",
+             "status" => ^status,
+             "inserted_by" => ^inserted_by,
+             "updated_by" => ^updated_by
+           } = response_data
+  end
+
   test "creates medication dispense without optional params", %{conn: conn} do
     insert(:medication_request, id: @create_attrs.medication_request_id)
     params = Map.drop(@create_attrs, ~w(payment_id payment_amount dispensed_by)a)
