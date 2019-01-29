@@ -2,7 +2,9 @@ defmodule Core.RpcTest do
   @moduledoc false
 
   use Core.DataCase
+
   alias Core.MedicationRequests.MedicationRequest
+  alias Core.Declarations.Declaration
   alias Core.Rpc
   alias Ecto.UUID
 
@@ -159,7 +161,7 @@ defmodule Core.RpcTest do
     end
 
     test "not found" do
-      assert nil == Rpc.get_declaration(id: UUID.generate())
+      refute Rpc.get_declaration(id: UUID.generate())
     end
   end
 
@@ -203,6 +205,42 @@ defmodule Core.RpcTest do
       declaration2 = insert(:declaration)
 
       assert {:ok, [declaration1, declaration2]} == Rpc.search_declarations([], [desc: :is_active], {0, 2})
+    end
+  end
+
+  describe "update_declaration/2" do
+    test "success" do
+      declaration = insert(:declaration, is_active: true, status: "active", scope: "family_doctor")
+      patch = %{status: "closed", is_active: false, updated_by: UUID.generate()}
+
+      assert {:ok, %Declaration{status: "closed", is_active: false}} = Rpc.update_declaration(declaration.id, patch)
+    end
+
+    test "invalid status transaction" do
+      declaration = insert(:declaration, status: "closed")
+      patch = %{status: "closed", updated_by: UUID.generate()}
+
+      assert {:error, %Ecto.Changeset{valid?: false}} = Rpc.update_declaration(declaration.id, patch)
+    end
+
+    test "not found" do
+      refute Rpc.update_declaration(UUID.generate(), %{})
+    end
+  end
+
+  describe "terminate_declaration/2" do
+    test "success" do
+      declaration = insert(:declaration, status: "active")
+      patch = %{"updated_by" => UUID.generate(), "reason" => "manual_person"}
+
+      assert {:ok, %Declaration{status: "terminated"}} = Rpc.terminate_declaration(declaration.id, patch)
+    end
+
+    test "invalid status" do
+      declaration = insert(:declaration, status: "terminated")
+      patch = %{"updated_by" => UUID.generate(), "reason" => "manual_person"}
+
+      assert {:error, %Ecto.Changeset{valid?: false}} = Rpc.terminate_declaration(declaration.id, patch)
     end
   end
 end
