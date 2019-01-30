@@ -3,8 +3,10 @@ defmodule Ops.MixProject do
 
   use Mix.Project
 
+  @version "2.4.1"
   def project do
     [
+      version: @version,
       apps_path: "apps",
       start_permanent: Mix.env() == :prod,
       test_coverage: [tool: ExCoveralls],
@@ -23,7 +25,8 @@ defmodule Ops.MixProject do
       {:distillery, "~> 2.0", runtime: false, override: true},
       {:excoveralls, "~> 0.10.2", only: [:dev, :test]},
       {:credo, "~> 1.0", only: [:dev, :test]},
-      {:ex_doc, "~> 0.19", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.19", only: :dev, runtime: false},
+      {:git_ops, "~> 0.6.0", only: [:dev]}
     ]
   end
 end
