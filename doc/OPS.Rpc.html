@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.19.1">
+    <title>OPS.Rpc –  v2.4.1</title>
+    <link rel="stylesheet" href="dist/app-240d7fc7e5.css" />
+    <script src="dist/sidebar_items-2a13fc01cf.js"></script>
+    
+  </head>
+  <body data-type="modules">
+    <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
+    <div class="main">
+<button class="sidebar-button sidebar-toggle">
+  <span class="icon-menu" aria-hidden="true"></span>
+  <span class="sr-only">Toggle Sidebar</span>
+</button>
+<button class="sidebar-button night-mode-toggle">
+  <span class="icon-theme" aria-hidden="true"></span>
+  <span class="sr-only">Toggle Theme</span>
+</button>
+<section class="sidebar">
+
+  <a href="api-reference.html" class="sidebar-projectLink">
+    <div class="sidebar-projectDetails">
+      <h1 class="sidebar-projectName">
+      </h1>
+      <h2 class="sidebar-projectVersion">
+        v2.4.1
+      </h2>
+    </div>
+  </a>
+
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button">
+      <span class="icon-search" aria-hidden="true"></span>
+    </button>
+    <input name="q" type="text" id="search-list" class="search-input" placeholder="Search" aria-label="Search" autocomplete="off" />
+  </form>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+
+
+  </ul>
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+
+      <h1>
+        <small class="visible-xs"> v2.4.1</small>
+OPS.Rpc              </h1>
+
+
+        <section id="moduledoc">
+<p>This module contains functions that are called from other pods via RPC.</p>
+        </section>
+
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Summary
+          </h1>
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:declaration/0">declaration()</a>
+  </div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:error/0">error()</a>
+  </div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:errors/0">errors()</a>
+  </div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:validation_changeset_error/0">validation_changeset_error()</a>
+  </div>
+</div>
+  </div>
+          
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#declarations_by_employees/2">declarations_by_employees(employee_ids, fields)</a>
+  </div>
+    <div class="summary-synopsis"><p>Get declarations by list of employee ids</p>
+</div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#get_declaration/1">get_declaration(params)</a>
+  </div>
+    <div class="summary-synopsis"><p>Get declaration by params</p>
+</div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#last_medication_request_dates/1">last_medication_request_dates(params)</a>
+  </div>
+    <div class="summary-synopsis"><p>Searches medication request by given parameters (string key map) with maximum ended_at field</p>
+</div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#search_declarations/3">search_declarations(filter, order_by \\ [], cursor \\ nil)</a>
+  </div>
+    <div class="summary-synopsis"><p>Get declarations by filter
+Check avaiable formats for filter here https://github.com/edenlabllc/ecto_filter</p>
+</div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#terminate_declaration/2">terminate_declaration(id, params)</a>
+  </div>
+    <div class="summary-synopsis"><p>Terminate declaration</p>
+</div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#update_declaration/2">update_declaration(id, params)</a>
+  </div>
+    <div class="summary-synopsis"><p>Update declaration</p>
+</div>
+</div>
+  </div>
+          
+        </section>
+
+        <section id="types" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Types
+          </h1>
+          <div class="types-list">
+<div class="detail" id="t:declaration/0">
+    <div class="detail-header">
+    <a href="#t:declaration/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <span class="signature">declaration()</span>
+        
+      <div class="specs">
+          <pre>declaration() :: %{
+  id: <a href="https://hexdocs.pm/ecto/2.2.11/Ecto.UUID.html#t:type/0">Ecto.UUID.type</a>(),
+  employee_id: <a href="https://hexdocs.pm/ecto/2.2.11/Ecto.UUID.html#t:type/0">Ecto.UUID.type</a>(),
+  person_id: <a href="https://hexdocs.pm/ecto/2.2.11/Ecto.UUID.html#t:type/0">Ecto.UUID.type</a>(),
+  start_date: <a href="https://hexdocs.pm/elixir/Date.html#t:t/0">Date.t</a>(),
+  end_date: <a href="https://hexdocs.pm/elixir/Date.html#t:t/0">Date.t</a>(),
+  status: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(),
+  signed_at: <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>(),
+  created_by: <a href="https://hexdocs.pm/ecto/2.2.11/Ecto.UUID.html#t:type/0">Ecto.UUID.type</a>(),
+  updated_by: <a href="https://hexdocs.pm/ecto/2.2.11/Ecto.UUID.html#t:type/0">Ecto.UUID.type</a>(),
+  is_active: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>(),
+  scope: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(),
+  division_id: <a href="https://hexdocs.pm/ecto/2.2.11/Ecto.UUID.html#t:type/0">Ecto.UUID.type</a>(),
+  legal_entity_id: <a href="https://hexdocs.pm/ecto/2.2.11/Ecto.UUID.html#t:type/0">Ecto.UUID.type</a>(),
+  declaration_request_id: <a href="https://hexdocs.pm/ecto/2.2.11/Ecto.UUID.html#t:type/0">Ecto.UUID.type</a>(),
+  reason: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(),
+  reason_description: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(),
+  declaration_number: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(),
+  inserted_at: <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>(),
+  updated_at: <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>()
+}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+  </section>
+</div>
+<div class="detail" id="t:error/0">
+    <div class="detail-header">
+    <a href="#t:error/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <span class="signature">error()</span>
+        
+      <div class="specs">
+          <pre>error() :: %{entry: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(), entry_type: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(), rules: [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+  </section>
+</div>
+<div class="detail" id="t:errors/0">
+    <div class="detail-header">
+    <a href="#t:errors/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <span class="signature">errors()</span>
+        
+      <div class="specs">
+          <pre>errors() :: [<a href="#t:error/0">error</a>()]</pre>
+      </div>
+  </div>
+  <section class="docstring">
+  </section>
+</div>
+<div class="detail" id="t:validation_changeset_error/0">
+    <div class="detail-header">
+    <a href="#t:validation_changeset_error/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <span class="signature">validation_changeset_error()</span>
+        
+      <div class="specs">
+          <pre>validation_changeset_error() :: %{
+  type: :validation_failed,
+  invalid: <a href="#t:errors/0">errors</a>(),
+  message: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()
+}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+  </section>
+</div>
+          </div>
+        </section>
+
+
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Functions
+          </h1>
+<div class="detail" id="declarations_by_employees/2">
+    <div class="detail-header">
+    <a href="#declarations_by_employees/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <span class="signature">declarations_by_employees(employee_ids, fields)</span>
+        
+      <div class="specs">
+          <pre>declarations_by_employees(employee_ids :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">list</a>(), fields :: [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()]) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">list</a>()</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Get declarations by list of employee ids</p>
+<h2 id="declarations_by_employees/2-examples" class="section-heading">
+  <a href="#declarations_by_employees/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">OPS.Rpc</span><span class="o">.</span><span class="n">declarations_by_employees</span><span class="p" data-group-id="0065199423-1">(</span><span class="p" data-group-id="0065199423-2">[</span><span class="s">&quot;4671ab27-57f8-4c55-a618-a042a68c7add&quot;</span><span class="p" data-group-id="0065199423-2">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0065199423-3">[</span><span class="ss">:legal_entity_id</span><span class="p" data-group-id="0065199423-3">]</span><span class="p" data-group-id="0065199423-1">)</span><span class="w">
+</span><span class="p" data-group-id="0065199423-4">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0065199423-5">[</span><span class="p" data-group-id="0065199423-6">%{</span><span class="ss">legal_entity_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;43ec9534-2250-42bb-94ec-e0a7ad33afd3&quot;</span><span class="p" data-group-id="0065199423-6">}</span><span class="p" data-group-id="0065199423-5">]</span><span class="p" data-group-id="0065199423-4">}</span></code></pre>
+  </section>
+</div>
+<div class="detail" id="get_declaration/1">
+    <div class="detail-header">
+    <a href="#get_declaration/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <span class="signature">get_declaration(params)</span>
+        
+      <div class="specs">
+          <pre>get_declaration(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">list</a>()) :: {:ok, <a href="#t:declaration/0">declaration</a>()} | nil</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Get declaration by params</p>
+<h2 id="get_declaration/1-examples" class="section-heading">
+  <a href="#get_declaration/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">OPS.Rpc</span><span class="o">.</span><span class="n">get_declaration</span><span class="p" data-group-id="1578591071-1">(</span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0042500e-6ac0-45fb-b82a-25f7857c49a8&quot;</span><span class="p" data-group-id="1578591071-1">)</span><span class="w">
+</span><span class="p" data-group-id="1578591071-2">%{</span><span class="w">
+  </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cdb4a85b-f12c-46c6-b840-590467e26acf&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">created_by</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;738c8cc1-ae9b-42a5-8660-4b7612b2b35c&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">declaration_number</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">declaration_request_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;382cc67b-7ade-4905-b8a9-0dfe2e9b9da0&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">division_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;bb15bdde-ffd2-4683-8ca9-03c86b1e6846&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">employee_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;f8cc0822-f214-4eea-a7d4-d03142901eb1&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">end_date</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-01-21]</span><span class="p">,</span><span class="w">
+  </span><span class="ss">inserted_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1578591071-3">#</span><span class="nc" data-group-id="1578591071-3">DateTime</span><span class="p" data-group-id="1578591071-3">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455175</span><span class="nc">Z</span><span class="p" data-group-id="1578591071-3">&gt;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">is_active</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w">
+  </span><span class="ss">legal_entity_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;980d4d01-3427-4f7f-bbdd-bd7c1b25b1e2&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">person_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;071a2783-f752-42d9-bcfc-44ddc7eb923d&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">reason</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+  </span><span class="ss">reason_description</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+  </span><span class="ss">scope</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">signed_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1578591071-4">#</span><span class="nc" data-group-id="1578591071-4">DateTime</span><span class="p" data-group-id="1578591071-4">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">20</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.442837</span><span class="nc">Z</span><span class="p" data-group-id="1578591071-4">&gt;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">start_date</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-01-20]</span><span class="p">,</span><span class="w">
+  </span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">updated_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1578591071-5">#</span><span class="nc" data-group-id="1578591071-5">DateTime</span><span class="p" data-group-id="1578591071-5">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455185</span><span class="nc">Z</span><span class="p" data-group-id="1578591071-5">&gt;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">updated_by</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;8dac0fc6-04fd-4e62-9711-a85c0a42992d&quot;</span><span class="w">
+</span><span class="p" data-group-id="1578591071-2">}</span></code></pre>
+  </section>
+</div>
+<div class="detail" id="last_medication_request_dates/1">
+    <div class="detail-header">
+    <a href="#last_medication_request_dates/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <span class="signature">last_medication_request_dates(params)</span>
+        
+      <div class="specs">
+          <pre>last_medication_request_dates(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) ::
+  {:error, <a href="#t:validation_changeset_error/0">validation_changeset_error</a>()} | {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()} | {:ok, nil}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Searches medication request by given parameters (string key map) with maximum ended_at field.</p>
+<p>Available parameters (all of them are required):</p>
+<table>
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center">Parameter</th><th style="text-align: center">Type</th><th style="text-align: center">Example</th><th style="text-align: center">Description</th>
+</tr>
+</thead>
+<tr>
+<td style="text-align: center">person_id</td><td style="text-align: center"><code class="inline">UUID</code></td><td style="text-align: center"><code class="inline">72b38c55-4fc9-4ab3-b656-1091af4c557c</code></td><td style="text-align: center"></td>
+</tr>
+<tr>
+<td style="text-align: center">medication_id</td><td style="text-align: center"><code class="inline">UUID</code></td><td style="text-align: center"><code class="inline">64841249-7e59-4dfd-93ae-9a48b0f70595</code></td><td style="text-align: center"></td>
+</tr>
+<tr>
+<td style="text-align: center">medical_program_id</td><td style="text-align: center"><code class="inline">UUID</code></td><td style="text-align: center"><code class="inline">c4b3bf60-8352-4454-a762-fc67847e3797</code></td><td style="text-align: center"></td>
+</tr>
+<tr>
+<td style="text-align: center">status</td><td style="text-align: center"><code class="inline">binary</code> or list of <code class="inline">binary</code></td><td style="text-align: center"><code class="inline">ACTIVE</code> or [<code class="inline">ACTIVE</code>, <code class="inline">COMPLETED</code>]</td><td style="text-align: center"></td>
+</tr>
+</table>
+<p>Returns
+  <code class="inline">{:ok, %{&quot;started_at&quot; =&gt; Date.t(), &quot;ended_at&quot; =&gt; Date.t()}</code> when medication request is found.
+  <code class="inline">{:ok, nil}</code> when medication request is not found.
+  <code class="inline">{:error, Ecto.Changeset.t()}</code> when search params are invalid.</p>
+<h2 id="last_medication_request_dates/1-examples" class="section-heading">
+  <a href="#last_medication_request_dates/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">OPS.Rpc</span><span class="o">.</span><span class="n">last_medication_request_dates</span><span class="p" data-group-id="2700097842-1">(</span><span class="p" data-group-id="2700097842-2">%{</span><span class="w">
+   </span><span class="s">&quot;person_id&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;4671ab27-57f8-4c55-a618-a042a68c7add&quot;</span><span class="p">,</span><span class="w">
+   </span><span class="s">&quot;medication_id&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;43ec9534-2250-42bb-94ec-e0a7ad33afd3&quot;</span><span class="p">,</span><span class="w">
+   </span><span class="s">&quot;medical_program_id&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+   </span><span class="s">&quot;status&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;ACTIVE&quot;</span><span class="w">
+   </span><span class="p" data-group-id="2700097842-2">}</span><span class="p" data-group-id="2700097842-1">)</span><span class="w">
+
+</span><span class="p" data-group-id="2700097842-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2700097842-4">%{</span><span class="s">&quot;ended_at&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="ld">~D[2018-12-17]</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;started_at&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="ld">~D[2018-12-17]</span><span class="p" data-group-id="2700097842-4">}</span><span class="p" data-group-id="2700097842-3">}</span></code></pre>
+  </section>
+</div>
+<div class="detail" id="search_declarations/3">
+  
+    <span id="search_declarations/1"></span>
+
+    <span id="search_declarations/2"></span>
+  <div class="detail-header">
+    <a href="#search_declarations/3" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <span class="signature">search_declarations(filter, order_by \\ [], cursor \\ nil)</span>
+        
+      <div class="specs">
+          <pre>search_declarations(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">list</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">list</a>(), nil | {<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">integer</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">integer</a>()}) ::
+  {:ok, [<a href="#t:declaration/0">declaration</a>()]}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Get declarations by filter
+Check avaiable formats for filter here https://github.com/edenlabllc/ecto_filter</p>
+<p>Available parameters:</p>
+<table>
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center">Parameter</th><th style="text-align: center">Type</th><th style="text-align: center">Example</th><th style="text-align: center">Description</th>
+</tr>
+</thead>
+<tr>
+<td style="text-align: center">filter</td><td style="text-align: center"><code class="inline">list</code></td><td style="text-align: center"><code class="inline">[{:reason, :equal, &quot;no_tax_id&quot;}]</code></td><td style="text-align: center">Required. Uses filtering format</td>
+</tr>
+<tr>
+<td style="text-align: center">order_by</td><td style="text-align: center"><code class="inline">list</code></td><td style="text-align: center"><code class="inline">[asc: :inserted_at]</code> or <code class="inline">[desc: :status]</code></td><td style="text-align: center"></td>
+</tr>
+<tr>
+<td style="text-align: center">cursor</td><td style="text-align: center"><code class="inline">{integer, integer}</code> or <code class="inline">nil</code></td><td style="text-align: center"><code class="inline">{0, 10}</code></td><td style="text-align: center"></td>
+</tr>
+</table>
+<h2 id="search_declarations/3-examples" class="section-heading">
+  <a href="#search_declarations/3-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">OPS.Rpc</span><span class="o">.</span><span class="n">search_declarations</span><span class="p" data-group-id="8715651373-1">(</span><span class="p" data-group-id="8715651373-2">[</span><span class="p" data-group-id="8715651373-3">{</span><span class="ss">:person_id</span><span class="p">,</span><span class="w"> </span><span class="ss">:in</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8715651373-4">[</span><span class="s">&quot;0042500e-6ac0-45fb-b82a-25f7857c49a8&quot;</span><span class="p" data-group-id="8715651373-4">]</span><span class="p" data-group-id="8715651373-3">}</span><span class="p" data-group-id="8715651373-2">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8715651373-5">[</span><span class="ss">start_date</span><span class="p">:</span><span class="w"> </span><span class="ss">:asc</span><span class="p" data-group-id="8715651373-5">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8715651373-6">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p" data-group-id="8715651373-6">}</span><span class="p" data-group-id="8715651373-1">)</span><span class="w">
+</span><span class="p" data-group-id="8715651373-7">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8715651373-8">[</span><span class="w">
+  </span><span class="p" data-group-id="8715651373-9">%{</span><span class="w">
+    </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cdb4a85b-f12c-46c6-b840-590467e26acf&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">created_by</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;738c8cc1-ae9b-42a5-8660-4b7612b2b35c&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">declaration_number</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">declaration_request_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;382cc67b-7ade-4905-b8a9-0dfe2e9b9da0&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">division_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;bb15bdde-ffd2-4683-8ca9-03c86b1e6846&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">employee_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;f8cc0822-f214-4eea-a7d4-d03142901eb1&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">end_date</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-01-21]</span><span class="p">,</span><span class="w">
+    </span><span class="ss">inserted_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8715651373-10">#</span><span class="nc" data-group-id="8715651373-10">DateTime</span><span class="p" data-group-id="8715651373-10">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455175</span><span class="nc">Z</span><span class="p" data-group-id="8715651373-10">&gt;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">is_active</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w">
+    </span><span class="ss">legal_entity_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;980d4d01-3427-4f7f-bbdd-bd7c1b25b1e2&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">person_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;071a2783-f752-42d9-bcfc-44ddc7eb923d&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">reason</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+    </span><span class="ss">reason_description</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+    </span><span class="ss">scope</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">signed_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8715651373-11">#</span><span class="nc" data-group-id="8715651373-11">DateTime</span><span class="p" data-group-id="8715651373-11">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">20</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.442837</span><span class="nc">Z</span><span class="p" data-group-id="8715651373-11">&gt;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">start_date</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-01-20]</span><span class="p">,</span><span class="w">
+    </span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">updated_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8715651373-12">#</span><span class="nc" data-group-id="8715651373-12">DateTime</span><span class="p" data-group-id="8715651373-12">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455185</span><span class="nc">Z</span><span class="p" data-group-id="8715651373-12">&gt;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">updated_by</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;8dac0fc6-04fd-4e62-9711-a85c0a42992d&quot;</span><span class="w">
+  </span><span class="p" data-group-id="8715651373-9">}</span><span class="w">
+</span><span class="p" data-group-id="8715651373-8">]</span><span class="p" data-group-id="8715651373-7">}</span></code></pre>
+  </section>
+</div>
+<div class="detail" id="terminate_declaration/2">
+    <div class="detail-header">
+    <a href="#terminate_declaration/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <span class="signature">terminate_declaration(id, params)</span>
+        
+      <div class="specs">
+          <pre>terminate_declaration(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) ::
+  {:ok, <a href="#t:declaration/0">declaration</a>()}
+  | {:error,
+     %Ecto.Changeset{
+       action: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       changes: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       constraints: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       data: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       empty_values: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       errors: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       filters: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       params: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       prepare: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       repo: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       repo_opts: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       required: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       types: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       valid?: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       validations: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
+     }}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Terminate declaration</p>
+<p>Available parameters:</p>
+<table>
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center">Parameter</th><th style="text-align: center">Type</th><th style="text-align: center">Example</th><th style="text-align: center">Description</th>
+</tr>
+</thead>
+<tr>
+<td style="text-align: center">updated_by</td><td style="text-align: center"><code class="inline">UUID</code></td><td style="text-align: center"><code class="inline">72b38c55-4fc9-4ab3-b656-1091af4c557c</code></td><td style="text-align: center">Required</td>
+</tr>
+<tr>
+<td style="text-align: center">status</td><td style="text-align: center"><code class="inline">binary</code></td><td style="text-align: center"><code class="inline">active</code></td><td style="text-align: center">Required</td>
+</tr>
+<tr>
+<td style="text-align: center">reason</td><td style="text-align: center"><code class="inline">binary</code></td><td style="text-align: center"><code class="inline">manual_person</code></td><td style="text-align: center">Required</td>
+</tr>
+<tr>
+<td style="text-align: center">reason_description</td><td style="text-align: center"><code class="inline">binary</code></td><td style="text-align: center"><code class="inline">Person died</code></td><td style="text-align: center"></td>
+</tr>
+</table>
+<h2 id="terminate_declaration/2-examples" class="section-heading">
+  <a href="#terminate_declaration/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">OPS.Rpc</span><span class="o">.</span><span class="n">terminate_declaration</span><span class="p" data-group-id="0148765627-1">(</span><span class="s">&quot;0042500e-6ac0-45fb-b82a-25f7857c49a8&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0148765627-2">%{</span><span class="s">&quot;updated_by&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;11225aae-7ac0-45fb-b82a-25f7857c49b0&quot;</span><span class="p" data-group-id="0148765627-2">}</span><span class="p" data-group-id="0148765627-1">)</span><span class="w">
+</span><span class="p" data-group-id="0148765627-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="0148765627-4">%{</span><span class="w">
+    </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cdb4a85b-f12c-46c6-b840-590467e26acf&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">created_by</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;738c8cc1-ae9b-42a5-8660-4b7612b2b35c&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">declaration_number</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">declaration_request_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;382cc67b-7ade-4905-b8a9-0dfe2e9b9da0&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">division_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;bb15bdde-ffd2-4683-8ca9-03c86b1e6846&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">employee_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;f8cc0822-f214-4eea-a7d4-d03142901eb1&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">end_date</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-01-21]</span><span class="p">,</span><span class="w">
+    </span><span class="ss">inserted_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0148765627-5">#</span><span class="nc" data-group-id="0148765627-5">DateTime</span><span class="p" data-group-id="0148765627-5">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455175</span><span class="nc">Z</span><span class="p" data-group-id="0148765627-5">&gt;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">is_active</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w">
+    </span><span class="ss">legal_entity_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;980d4d01-3427-4f7f-bbdd-bd7c1b25b1e2&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">person_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;071a2783-f752-42d9-bcfc-44ddc7eb923d&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">reason</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+    </span><span class="ss">reason_description</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+    </span><span class="ss">scope</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">signed_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0148765627-6">#</span><span class="nc" data-group-id="0148765627-6">DateTime</span><span class="p" data-group-id="0148765627-6">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">20</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.442837</span><span class="nc">Z</span><span class="p" data-group-id="0148765627-6">&gt;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">start_date</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-01-20]</span><span class="p">,</span><span class="w">
+    </span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">updated_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0148765627-7">#</span><span class="nc" data-group-id="0148765627-7">DateTime</span><span class="p" data-group-id="0148765627-7">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455185</span><span class="nc">Z</span><span class="p" data-group-id="0148765627-7">&gt;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">updated_by</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;8dac0fc6-04fd-4e62-9711-a85c0a42992d&quot;</span><span class="w">
+  </span><span class="p" data-group-id="0148765627-4">}</span><span class="w">
+</span><span class="p" data-group-id="0148765627-3">}</span></code></pre>
+  </section>
+</div>
+<div class="detail" id="update_declaration/2">
+    <div class="detail-header">
+    <a href="#update_declaration/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <span class="signature">update_declaration(id, params)</span>
+        
+      <div class="specs">
+          <pre>update_declaration(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) ::
+  {:ok, <a href="#t:declaration/0">declaration</a>()}
+  | nil
+  | {:error,
+     %Ecto.Changeset{
+       action: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       changes: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       constraints: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       data: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       empty_values: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       errors: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       filters: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       params: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       prepare: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       repo: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       repo_opts: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       required: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       types: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       valid?: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+       validations: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
+     }}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Update declaration</p>
+<p>Available parameters:</p>
+<table>
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center">Parameter</th><th style="text-align: center">Type</th><th style="text-align: center">Example</th><th style="text-align: center">Description</th>
+</tr>
+</thead>
+<tr>
+<td style="text-align: center">updated_by</td><td style="text-align: center"><code class="inline">UUID</code></td><td style="text-align: center"><code class="inline">72b38c55-4fc9-4ab3-b656-1091af4c557c</code></td><td style="text-align: center">Required</td>
+</tr>
+<tr>
+<td style="text-align: center">employee_id</td><td style="text-align: center"><code class="inline">UUID</code></td><td style="text-align: center"><code class="inline">dfe13714-92ed-448b-90d2-cccb8640948a</code></td><td style="text-align: center"></td>
+</tr>
+<tr>
+<td style="text-align: center">person_id</td><td style="text-align: center"><code class="inline">UUID</code></td><td style="text-align: center"><code class="inline">fba89efe-0cad-4c11-ad1f-d0cdce26b03a</code></td><td style="text-align: center"></td>
+</tr>
+<tr>
+<td style="text-align: center">start_date</td><td style="text-align: center"><a href="https://hexdocs.pm/elixir/Date.html"><code class="inline">Date</code></a> or <code class="inline">binary</code></td><td style="text-align: center"><code class="inline">~D[2015-10-10]</code> or <code class="inline">2015-10-10</code></td><td style="text-align: center"></td>
+</tr>
+<tr>
+<td style="text-align: center">end_date</td><td style="text-align: center"><a href="https://hexdocs.pm/elixir/Date.html"><code class="inline">Date</code></a> or <code class="inline">binary</code></td><td style="text-align: center"><code class="inline">~D[2030-10-10]</code> or <code class="inline">2030-10-10</code></td><td style="text-align: center"></td>
+</tr>
+<tr>
+<td style="text-align: center">signed_at</td><td style="text-align: center"><a href="https://hexdocs.pm/elixir/DateTime.html"><code class="inline">DateTime</code></a> or <code class="inline">binary</code></td><td style="text-align: center"><code class="inline">2019-01-30 12:20:51</code></td><td style="text-align: center"></td>
+</tr>
+<tr>
+<td style="text-align: center">status</td><td style="text-align: center"><code class="inline">binary</code></td><td style="text-align: center"><code class="inline">active</code></td><td style="text-align: center"></td>
+</tr>
+<tr>
+<td style="text-align: center">created_by</td><td style="text-align: center"><code class="inline">UUID</code></td><td style="text-align: center"><code class="inline">99a604f9-c319-4d93-a802-a5798d8efdf7</code></td><td style="text-align: center"></td>
+</tr>
+<tr>
+<td style="text-align: center">updated_by</td><td style="text-align: center"><code class="inline">UUID</code></td><td style="text-align: center"><code class="inline">99a604f9-c319-4d93-a802-a5798d8efdf7</code></td><td style="text-align: center"></td>
+</tr>
+<tr>
+<td style="text-align: center">is_active</td><td style="text-align: center"><code class="inline">boolean</code></td><td style="text-align: center"><code class="inline">true</code></td><td style="text-align: center"></td>
+</tr>
+<tr>
+<td style="text-align: center">scope</td><td style="text-align: center"><code class="inline">binary</code></td><td style="text-align: center"><code class="inline">family_doctor</code></td><td style="text-align: center"></td>
+</tr>
+<tr>
+<td style="text-align: center">division_id</td><td style="text-align: center"><code class="inline">UUID</code></td><td style="text-align: center"><code class="inline">e217193a-e46b-49d9-9a66-79926abfefe8</code></td><td style="text-align: center"></td>
+</tr>
+<tr>
+<td style="text-align: center">legal_entity_id</td><td style="text-align: center"><code class="inline">UUID</code></td><td style="text-align: center"><code class="inline">b5b30e2c-e347-49ba-a4e4-a52eaa057463</code></td><td style="text-align: center"></td>
+</tr>
+<tr>
+<td style="text-align: center">declaration_request_id</td><td style="text-align: center"><code class="inline">UUID</code></td><td style="text-align: center"><code class="inline">cc3efcde-16b0-45a4-b0b8-f278d7b3c9ca</code></td><td style="text-align: center"></td>
+</tr>
+</table>
+<h2 id="update_declaration/2-examples" class="section-heading">
+  <a href="#update_declaration/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">OPS.Rpc</span><span class="o">.</span><span class="n">update_declaration</span><span class="p" data-group-id="0190401601-1">(</span><span class="s">&quot;0042500e-6ac0-45fb-b82a-25f7857c49a8&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0190401601-2">%{</span><span class="s">&quot;status&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="p" data-group-id="0190401601-2">}</span><span class="p" data-group-id="0190401601-1">)</span><span class="w">
+</span><span class="p" data-group-id="0190401601-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="0190401601-4">%{</span><span class="w">
+    </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cdb4a85b-f12c-46c6-b840-590467e26acf&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">created_by</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;738c8cc1-ae9b-42a5-8660-4b7612b2b35c&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">declaration_number</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">declaration_request_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;382cc67b-7ade-4905-b8a9-0dfe2e9b9da0&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">division_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;bb15bdde-ffd2-4683-8ca9-03c86b1e6846&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">employee_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;f8cc0822-f214-4eea-a7d4-d03142901eb1&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">end_date</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-01-21]</span><span class="p">,</span><span class="w">
+    </span><span class="ss">inserted_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0190401601-5">#</span><span class="nc" data-group-id="0190401601-5">DateTime</span><span class="p" data-group-id="0190401601-5">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455175</span><span class="nc">Z</span><span class="p" data-group-id="0190401601-5">&gt;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">is_active</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w">
+    </span><span class="ss">legal_entity_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;980d4d01-3427-4f7f-bbdd-bd7c1b25b1e2&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">person_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;071a2783-f752-42d9-bcfc-44ddc7eb923d&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">reason</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+    </span><span class="ss">reason_description</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+    </span><span class="ss">scope</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">signed_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0190401601-6">#</span><span class="nc" data-group-id="0190401601-6">DateTime</span><span class="p" data-group-id="0190401601-6">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">20</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.442837</span><span class="nc">Z</span><span class="p" data-group-id="0190401601-6">&gt;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">start_date</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-01-20]</span><span class="p">,</span><span class="w">
+    </span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">updated_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0190401601-7">#</span><span class="nc" data-group-id="0190401601-7">DateTime</span><span class="p" data-group-id="0190401601-7">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455185</span><span class="nc">Z</span><span class="p" data-group-id="0190401601-7">&gt;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">updated_by</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;8dac0fc6-04fd-4e62-9711-a85c0a42992d&quot;</span><span class="w">
+  </span><span class="p" data-group-id="0190401601-4">}</span><span class="w">
+</span><span class="p" data-group-id="0190401601-3">}</span></code></pre>
+  </section>
+</div>
+        </section>
+
+          <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.19.1),
+          </span>
+          <span class="line">
+            designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+            </span>
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+  <script src="dist/app-a0c90688fa.js"></script>
+  
+  </body>
+</html>
+

@@ -11,7 +11,7 @@ defmodule Ops.MixProject do
       start_permanent: Mix.env() == :prod,
       test_coverage: [tool: ExCoveralls],
       deps: deps(),
-      docs: [filter_prefix: "Core.Rpc"]
+      docs: [filter_prefix: "OPS.Rpc"]
     ]
   end
 
