@@ -1,12 +1,12 @@
-defmodule Core.RpcTest do
+defmodule OPS.RpcTest do
   @moduledoc false
 
   use Core.DataCase
 
   alias Core.MedicationRequests.MedicationRequest
-  alias Core.Declarations.Declaration
-  alias Core.Rpc
   alias Ecto.UUID
+  alias OPS.Rpc
+  alias OPS.Web.DeclarationView
 
   describe "last_medication_request_dates/1" do
     test "returns medication request dates with max ended_at when medication requests are found" do
@@ -156,8 +156,10 @@ defmodule Core.RpcTest do
       declaration1 = %{id: declaration_id} = insert(:declaration)
       declaration2 = %{declaration_number: declaration_number} = insert(:declaration)
 
-      assert declaration1 == Rpc.get_declaration(id: declaration_id)
-      assert declaration2 == Rpc.get_declaration(declaration_number: declaration_number)
+      {:ok, resp_entity1} = Rpc.get_declaration(id: declaration_id)
+      {:ok, resp_entity2} = Rpc.get_declaration(declaration_number: declaration_number)
+
+      assert_declarations_equal([declaration1, declaration2], [resp_entity1, resp_entity2])
     end
 
     test "not found" do
@@ -168,52 +170,52 @@ defmodule Core.RpcTest do
   describe "search_declarations/3" do
     test "success with limit, offset" do
       insert(:declaration)
-      declaration1 = insert(:declaration)
-      declaration2 = insert(:declaration)
+      declarations = insert_list(2, :declaration)
       insert(:declaration)
 
-      assert {:ok, [declaration1, declaration2]} == Rpc.search_declarations([], [], {1, 2})
+      assert {:ok, resp_entities} = Rpc.search_declarations([{:is_active, :equal, true}], [], {1, 2})
+      assert_declarations_equal(declarations, resp_entities)
     end
 
     test "success only with filter" do
       today = Date.utc_today()
       start_date = ~D[2010-10-10]
-      [declaration1, declaration2] = insert_list(2, :declaration, start_date: start_date)
+      declarations = insert_list(2, :declaration, start_date: start_date)
       insert_list(4, :declaration, start_date: today)
 
-      {:ok, declarations} = Rpc.search_declarations([{:start_date, :less_than, today}])
-      assert 2 == length(declarations)
-      assert declaration1 in declarations
-      assert declaration2 in declarations
+      {:ok, resp_entities} = Rpc.search_declarations([{:start_date, :less_than, today}])
+      assert 2 == length(resp_entities)
+      assert_declarations_equal(declarations, resp_entities)
     end
 
     test "success by person_id" do
       person_id = UUID.generate()
       insert_list(3, :declaration)
-      [declaration1, declaration2] = insert_list(2, :declaration, person_id: person_id)
+      declarations = insert_list(2, :declaration, person_id: person_id)
 
-      {:ok, declarations} = Rpc.search_declarations([{:person_id, :in, [person_id]}], [], {0, 10})
-
-      assert 2 == length(declarations)
-      assert declaration1 in declarations
-      assert declaration2 in declarations
+      assert {:ok, resp_entities} = Rpc.search_declarations([{:person_id, :in, [person_id]}], [], {0, 10})
+      assert 2 == length(resp_entities)
+      assert_declarations_equal(declarations, resp_entities)
     end
 
     test "success with order by" do
       declaration1 = insert(:declaration)
       insert_list(3, :declaration, is_active: false)
       declaration2 = insert(:declaration)
+      declarations = [declaration1, declaration2]
 
-      assert {:ok, [declaration1, declaration2]} == Rpc.search_declarations([], [desc: :is_active], {0, 2})
+      assert {:ok, resp_entities} = Rpc.search_declarations([{:scope, :equal, ""}], [desc: :is_active], {0, 2})
+      assert_declarations_equal(declarations, resp_entities)
     end
   end
 
   describe "update_declaration/2" do
     test "success" do
-      declaration = insert(:declaration, is_active: true, status: "active", scope: "family_doctor")
+      %{id: declaration_id} = insert(:declaration, is_active: true, status: "active", scope: "family_doctor")
       patch = %{status: "closed", is_active: false, updated_by: UUID.generate()}
 
-      assert {:ok, %Declaration{status: "closed", is_active: false}} = Rpc.update_declaration(declaration.id, patch)
+      assert {:ok, %{id: ^declaration_id, status: "closed", is_active: false}} =
+               Rpc.update_declaration(declaration_id, patch)
     end
 
     test "invalid status transaction" do
@@ -230,17 +232,28 @@ defmodule Core.RpcTest do
 
   describe "terminate_declaration/2" do
     test "success" do
-      declaration = insert(:declaration, status: "active")
+      %{id: declaration_id} = insert(:declaration, status: "active")
       patch = %{"updated_by" => UUID.generate(), "reason" => "manual_person"}
 
-      assert {:ok, %Declaration{status: "terminated"}} = Rpc.terminate_declaration(declaration.id, patch)
+      assert {:ok, %{id: ^declaration_id, status: "terminated"}} = Rpc.terminate_declaration(declaration_id, patch)
     end
 
     test "invalid status" do
-      declaration = insert(:declaration, status: "terminated")
+      %{id: declaration_id} = insert(:declaration, status: "terminated")
       patch = %{"updated_by" => UUID.generate(), "reason" => "manual_person"}
 
-      assert {:error, %Ecto.Changeset{valid?: false}} = Rpc.terminate_declaration(declaration.id, patch)
+      assert {:error, %Ecto.Changeset{valid?: false}} = Rpc.terminate_declaration(declaration_id, patch)
     end
+  end
+
+  defp assert_declarations_equal([_ | _] = prepared_declarations, [_ | _] = response_declarations) do
+    Enum.each(response_declarations, fn declaration ->
+      refute Map.has_key?(declaration, :__struct__)
+      refute Map.has_key?(declaration, :__meta__)
+    end)
+
+    rendered = DeclarationView.render("index.json", %{declarations: prepared_declarations})
+
+    assert MapSet.new(rendered) == MapSet.new(response_declarations)
   end
 end

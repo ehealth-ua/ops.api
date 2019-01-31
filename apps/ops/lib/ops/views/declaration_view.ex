@@ -2,6 +2,7 @@ defmodule OPS.Web.DeclarationView do
   @moduledoc false
 
   use OPS.Web, :view
+
   alias Core.Declarations.Declaration
   alias OPS.Web.DeclarationView
 
