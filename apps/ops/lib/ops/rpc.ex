@@ -123,15 +123,14 @@ defmodule OPS.Rpc do
 
   ## Examples
       iex> OPS.Rpc.declarations_by_employees(["4671ab27-57f8-4c55-a618-a042a68c7add"], [:legal_entity_id])
-      {:ok, [%{legal_entity_id: "43ec9534-2250-42bb-94ec-e0a7ad33afd3"}]}
+      [%{legal_entity_id: "43ec9534-2250-42bb-94ec-e0a7ad33afd3"}]
   """
   @spec declarations_by_employees(employee_ids :: list(), fields :: list(atom)) :: list
   def declarations_by_employees(employee_ids, [_ | _] = fields) when is_list(employee_ids) do
-    {:ok,
-     Declaration
-     |> select([d], map(d, ^fields))
-     |> where([d], d.employee_id in ^employee_ids)
-     |> @read_repo.all()}
+    Declaration
+    |> select([d], map(d, ^fields))
+    |> where([d], d.employee_id in ^employee_ids)
+    |> @read_repo.all()
   end
 
   @doc """

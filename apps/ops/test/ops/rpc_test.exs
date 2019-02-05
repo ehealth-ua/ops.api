@@ -137,7 +137,7 @@ defmodule OPS.RpcTest do
 
   describe "declarations_by_employees/2" do
     test "get declarations by empty list of employees" do
-      assert {:ok, []} = Rpc.declarations_by_employees([], [:id])
+      assert [] = Rpc.declarations_by_employees([], [:id])
     end
 
     test "success get declarations" do
@@ -146,7 +146,7 @@ defmodule OPS.RpcTest do
       legal_entity_id1 = declaration1.legal_entity_id
       legal_entity_id2 = declaration2.legal_entity_id
 
-      assert {:ok, [%{legal_entity_id: ^legal_entity_id1}, %{legal_entity_id: ^legal_entity_id2}]} =
+      assert [%{legal_entity_id: ^legal_entity_id1}, %{legal_entity_id: ^legal_entity_id2}] =
                Rpc.declarations_by_employees([declaration1.employee_id, declaration2.employee_id], [:legal_entity_id])
     end
   end
