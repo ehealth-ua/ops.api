@@ -7,6 +7,7 @@ defmodule OPS.RpcTest do
   alias Ecto.UUID
   alias OPS.Rpc
   alias OPS.Web.DeclarationView
+  alias OPS.Web.MedicationRequestView
 
   describe "last_medication_request_dates/1" do
     test "returns medication request dates with max ended_at when medication requests are found" do
@@ -243,6 +244,19 @@ defmodule OPS.RpcTest do
       patch = %{"updated_by" => UUID.generate(), "reason" => "manual_person"}
 
       assert {:error, %Ecto.Changeset{valid?: false}} = Rpc.terminate_declaration(declaration_id, patch)
+    end
+  end
+
+  describe "medication_request_by_id/1" do
+    test "success" do
+      medication_request = insert(:medication_request)
+      expected_data = MedicationRequestView.render("show.json", %{medication_request: medication_request})
+
+      assert expected_data == Rpc.medication_request_by_id(medication_request.id)
+    end
+
+    test "id does not exist" do
+      refute Rpc.medication_request_by_id(UUID.generate())
     end
   end
 

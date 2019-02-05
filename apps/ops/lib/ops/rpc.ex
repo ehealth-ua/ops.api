@@ -7,12 +7,14 @@ defmodule OPS.Rpc do
 
   alias Core.Declarations
   alias Core.Declarations.Declaration
+  alias Core.MedicationRequest
   alias Core.MedicationRequest.Search
   alias Core.MedicationRequests
   alias Core.MedicationRequests.MedicationRequest
   alias Ecto.Changeset
   alias EView.Views.ValidationError
   alias OPS.Web.DeclarationView
+  alias OPS.Web.MedicationRequestView
 
   @read_repo Application.get_env(:core, :repos)[:read_repo]
 
@@ -57,6 +59,38 @@ defmodule OPS.Rpc do
           type: :validation_failed,
           invalid: errors,
           message: binary()
+        }
+
+  @type medication_request :: %{
+          id: Ecto.UUID.type(),
+          request_number: binary(),
+          created_at: Date.t(),
+          started_at: Date.t(),
+          ended_at: Date.t(),
+          dispense_valid_from: Date.t(),
+          dispense_valid_to: Date.t(),
+          person_id: Ecto.UUID.type(),
+          employee_id: Ecto.UUID.type(),
+          division_id: Ecto.UUID.type(),
+          medication_id: Ecto.UUID.type(),
+          medication_qty: float(),
+          status: binary(),
+          is_active: boolean(),
+          rejected_at: Date.t(),
+          rejected_by: Ecto.UUID.type(),
+          reject_reason: binary(),
+          medication_request_requests_id: Ecto.UUID.type(),
+          medical_program_id: Ecto.UUID.type(),
+          inserted_by: Ecto.UUID.type(),
+          updated_by: Ecto.UUID.type(),
+          verification_code: binary(),
+          legal_entity_id: Ecto.UUID.type(),
+          intent: binary(),
+          category: binary(),
+          context: map(),
+          dosage_instruction: list(map()),
+          inserted_at: DateTime.t(),
+          updated_at: DateTime.t()
         }
 
   @doc """
@@ -321,6 +355,186 @@ defmodule OPS.Rpc do
     else
       %Changeset{} = changeset -> {:error, changeset}
       err -> err
+    end
+  end
+
+  @doc """
+  Get medication request by id
+
+  ## Examples
+      iex> OPS.Rpc.medication_request_by_id("0469f379-ff2e-4a69-81e8-2cbfadf88d6b")
+      %{
+        category: "community",
+        context: %{
+          "identifier" => %{
+            "type" => %{
+              "coding" => [%{"code" => "encounter", "system" => "eHealth/resources"}]
+            },
+            "value" => "e3e2a3cc-388a-4555-9e16-a51ccb109724"
+          }
+        },
+        created_at: ~D[2019-02-05],
+        dispense_valid_from: ~D[2019-02-05],
+        dispense_valid_to: ~D[2019-02-08],
+        division_id: "406e4831-db4d-45a8-a26f-a246172705f5",
+        dosage_instruction: [
+          %{
+            "additional_instruction" => [
+              %{
+                "coding" => [
+                  %{
+                    "code" => "311504000",
+                    "system" => "eHealth/SNOMED/additional_dosage_instructions"
+                  }
+                ]
+              }
+            ],
+            "as_needed_boolean" => true,
+            "dose_and_rate" => %{
+              "dose_range" => %{
+                "high" => %{
+                  "code" => "mg",
+                  "system" => "eHealth/ucum/units",
+                  "unit" => "mg",
+                  "value" => 13
+                },
+                "low" => %{
+                  "code" => "mg",
+                  "system" => "eHealth/ucum/units",
+                  "unit" => "mg",
+                  "value" => 13
+                }
+              },
+              "rate_ratio" => %{
+                "denominator" => %{
+                  "code" => "mg",
+                  "system" => "eHealth/ucum/units",
+                  "unit" => "mg",
+                  "value" => 13
+                },
+                "numerator" => %{
+                  "code" => "mg",
+                  "system" => "eHealth/ucum/units",
+                  "unit" => "mg",
+                  "value" => 13
+                }
+              },
+              "type" => %{
+                "coding" => [
+                  %{"code" => "ordered", "system" => "eHealth/dose_and_rate"}
+                ]
+              }
+            },
+            "max_dose_per_administration" => %{
+              "code" => "mg",
+              "system" => "eHealth/ucum/units",
+              "unit" => "mg",
+              "value" => 13
+            },
+            "max_dose_per_lifetime" => %{
+              "code" => "mg",
+              "system" => "eHealth/ucum/units",
+              "unit" => "mg",
+              "value" => 13
+            },
+            "max_dose_per_period" => %{
+              "denominator" => %{
+                "code" => "mg",
+                "system" => "eHealth/ucum/units",
+                "unit" => "mg",
+                "value" => 13
+              },
+              "numerator" => %{
+                "code" => "mg",
+                "system" => "eHealth/ucum/units",
+                "unit" => "mg",
+                "value" => 13
+              }
+            },
+            "method" => %{
+              "coding" => [
+                %{
+                  "code" => "419747000",
+                  "system" => "eHealth/SNOMED/administration_methods"
+                }
+              ]
+            },
+            "patient_instruction" => "0.25mg PO every 6-12 hours as needed for menses from Jan 15-20, 2015.  Do not exceed more than 4mg per day",
+            "route" => %{
+              "coding" => [
+                %{"code" => "46713006", "system" => "eHealth/SNOMED/route_codes"}
+              ]
+            },
+            "sequence" => 1,
+            "site" => %{
+              "coding" => [
+                %{
+                  "code" => "344001",
+                  "system" => "eHealth/SNOMED/anatomical_structure_administration_site_codes"
+                }
+              ]
+            },
+            "text" => "0.25mg PO every 6-12 hours as needed for menses from Jan 15-20, 2015.  Do not exceed more than 4mg per day",
+            "timing" => %{
+              "code" => %{
+                "coding" => [%{"code" => "AM", "system" => "TIMING_ABBREVIATION"}]
+              },
+              "event" => ["2017-04-20T19:14:13Z"],
+              "repeat" => %{
+                "bounds_duration" => %{
+                  "code" => "d",
+                  "system" => "eHealth/ucum/units",
+                  "unit" => "days",
+                  "value" => 10
+                },
+                "count" => 2,
+                "count_max" => 4,
+                "day_of_week" => ["mon"],
+                "duration" => 4,
+                "duration_max" => 6,
+                "duration_unit" => "d",
+                "frequency" => 1,
+                "frequency_max" => 2,
+                "offset" => 4,
+                "period" => 4,
+                "period_max" => 6,
+                "period_unit" => "d",
+                "time_of_day" => ["2017-04-20T19:14:13Z"],
+                "when" => ["WAKE"]
+              }
+            }
+          }
+        ],
+        employee_id: "43606f23-8a18-4902-93c4-0856cb2390ae",
+        ended_at: ~D[2019-02-08],
+        id: "0469f379-ff2e-4a69-81e8-2cbfadf88d6b",
+        inserted_at: ~N[2019-02-05 11:29:57.064635],
+        inserted_by: "34531e8a-ff95-4329-8de6-8c7bb9cb94a3",
+        intent: "order",
+        is_active: true,
+        legal_entity_id: "be484454-c92e-4a1e-98ec-e1149b6c6bc3",
+        medical_program_id: "f088cc19-ac1d-49fb-a95c-e659914960d9",
+        medication_id: "7b8f8f3c-ce67-4b64-89b3-e0d31d0a1a2e",
+        medication_qty: 10.0,
+        medication_request_requests_id: "3dcaf3ee-6469-483f-bacd-befbf74716b8",
+        person_id: "09564c9f-f4ef-4b8a-85c7-08ec48e5e562",
+        reject_reason: "Помилка призначення. Несумісні препарати.",
+        rejected_at: ~D[2019-02-08],
+        rejected_by: "fb6c877f-1ed9-4589-b00a-023c69f8fca0",
+        request_number: "0000-X2HA-157X-0214",
+        started_at: ~D[2019-02-05],
+        status: "EXPIRED",
+        updated_at: ~N[2019-02-05 09:35:00.027131],
+        updated_by: "4261eacf-8008-4e62-899f-de1e2f7065f0",
+        verification_code: "7291"
+      }
+  """
+  @spec medication_request_by_id(binary) :: medication_request | nil
+  def medication_request_by_id(medication_request_id) do
+    query = where(MedicationRequest, [mr], mr.id == ^medication_request_id)
+
+    with %MedicationRequest{} = medication_request <- @read_repo.one(query) do
+      MedicationRequestView.render("show.json", %{medication_request: medication_request})
     end
   end
 end

@@ -9,7 +9,7 @@ defmodule OpsScheduler.Jobs.MedicationDispensesTerminatorTest do
   alias OpsScheduler.Jobs.MedicationDispensesTerminator
 
   test "run/0" do
-    inserted_at = NaiveDateTime.add(NaiveDateTime.utc_now(), -86_400 * 10, :seconds)
+    inserted_at = NaiveDateTime.add(NaiveDateTime.utc_now(), -86_400 * 10, :second)
     %{id: id} = insert(:medication_dispense, inserted_at: inserted_at)
     assert 1 == count_by_status(MedicationDispense.status(:new))
 

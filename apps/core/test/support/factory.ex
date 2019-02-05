@@ -10,8 +10,13 @@ defmodule Core.Factory do
   alias Ecto.UUID
 
   def declaration_factory do
-    start_date = NaiveDateTime.utc_now() |> NaiveDateTime.add(days_to_seconds(-10), :seconds)
-    end_date = NaiveDateTime.add(start_date, days_to_seconds(1), :seconds)
+    signed_at = NaiveDateTime.utc_now() |> NaiveDateTime.add(days_to_seconds(-10))
+    start_date = NaiveDateTime.to_date(signed_at)
+
+    end_date =
+      signed_at
+      |> NaiveDateTime.add(days_to_seconds(1))
+      |> NaiveDateTime.to_date()
 
     %Declaration{
       id: UUID.generate(),
@@ -19,7 +24,7 @@ defmodule Core.Factory do
       start_date: start_date,
       end_date: end_date,
       status: Declaration.status(:active),
-      signed_at: start_date,
+      signed_at: signed_at,
       created_by: UUID.generate(),
       updated_by: UUID.generate(),
       employee_id: UUID.generate(),
@@ -92,16 +97,16 @@ defmodule Core.Factory do
 
   def medical_events_context_factory do
     %{
-      identifier: %{
-        type: %{
-          coding: [
+      "identifier" => %{
+        "type" => %{
+          "coding" => [
             %{
-              system: "eHealth/resources",
-              code: "encounter"
+              "system" => "eHealth/resources",
+              "code" => "encounter"
             }
           ]
         },
-        value: UUID.generate()
+        "value" => UUID.generate()
       }
     }
   end
