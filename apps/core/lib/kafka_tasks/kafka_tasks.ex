@@ -9,8 +9,8 @@ defmodule Core.KafkaTasks do
     @topics [
       %{
         topic: "deactivate_declaration_events",
-        num_partitions: 4,
-        replication_factor: 1,
+        num_partitions: 1,
+        replication_factor: 3,
         replica_assignment: [],
         config_entries: []
       }

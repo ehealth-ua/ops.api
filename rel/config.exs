@@ -15,7 +15,7 @@ environment :default do
 end
 
 release :ops do
-  set(pre_start_hooks: "bin/hooks/")
+  set(pre_start_hooks: "bin/hooks/ops/")
   set(version: current_version(:ops))
 
   set(
@@ -41,6 +41,7 @@ release :ops_scheduler do
 end
 
 release :deactivate_declaration_consumer do
+  set(pre_start_hooks: "bin/hooks/deactivate_declaration_consumer/")
   set(version: current_version(:deactivate_declaration_consumer))
 
   set(
