@@ -69,7 +69,7 @@ defmodule OPS.Web.DeclarationController do
       |> Map.drop(["user_id"])
       |> Map.put("actor_id", user_id)
 
-    with {:ok, terminated_declarations} <- Declarations.terminate_declarations(attrs) do
+    with {:ok, terminated_declarations, _} <- Declarations.terminate_declarations(attrs) do
       render(conn, "terminated_declarations.json", declarations: terminated_declarations)
     end
   end

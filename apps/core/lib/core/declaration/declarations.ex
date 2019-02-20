@@ -175,7 +175,7 @@ defmodule Core.Declarations do
     end
   end
 
-  def terminate_declarations(attrs) do
+  def terminate_declarations(attrs, limit \\ 0) do
     query = where(Declaration, [d], d.status in ^[Declaration.status(:active), Declaration.status(:pending)])
 
     query =
@@ -183,6 +183,13 @@ defmodule Core.Declarations do
         where(query, [d], d.person_id == ^Map.get(attrs, "person_id"))
       else
         where(query, [d], d.employee_id == ^Map.get(attrs, "employee_id"))
+      end
+
+    query =
+      if limit != 0 do
+        limit(query, ^limit)
+      else
+        query
       end
 
     status = Declaration.status(:terminated)
@@ -196,10 +203,19 @@ defmodule Core.Declarations do
       updated_at: DateTime.utc_now()
     ]
 
-    {_, declarations} = Repo.update_all(query, [set: updates], returning: updated_fields_list(updates))
+    query = from(d in Declaration, join: s in subquery(query), on: s.id == d.id)
+
+    {count, declarations} = Repo.update_all(query, [set: updates], returning: updated_fields_list(updates))
 
     log_status_updates(declarations, status, user_id)
-    {:ok, declarations}
+    {:ok, declarations, count}
+  end
+
+  def chunk_terminate_declarations(attrs, limit) do
+    case terminate_declarations(attrs, limit) do
+      {:ok, _, 0} -> :ok
+      {:ok, _, _} -> chunk_terminate_declarations(attrs, limit)
+    end
   end
 
   def get_person_ids([]), do: []
