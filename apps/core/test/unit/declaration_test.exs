@@ -247,7 +247,7 @@ defmodule Core.DeclarationTest do
       dec3 = insert(:declaration, person_id: person_id, status: Declaration.status(:closed))
       dec4 = insert(:declaration, person_id: person_id, status: Declaration.status(:rejected))
 
-      assert {:ok, _} =
+      assert {:ok, _, _} =
                Core.Declarations.terminate_declarations(%{
                  "reason_description" => String.duplicate("reason-", 50),
                  "actor_id" => user_id,

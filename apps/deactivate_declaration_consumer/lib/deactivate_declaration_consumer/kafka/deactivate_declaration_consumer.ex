@@ -19,25 +19,11 @@ defmodule DeactivateDeclarationConsumer.Kafka.DeactivateDeclarationEventConsumer
   end
 
   def consume(%{"actor_id" => _} = attrs) do
-    with {:ok, _} <- Declarations.terminate_declarations(attrs) do
-      :ok
-    else
-      {:error, %Changeset{} = changeset} ->
-        errors =
-          Changeset.traverse_errors(changeset, fn {msg, opts} ->
-            Enum.reduce(opts, msg, fn {key, value}, acc ->
-              String.replace(acc, "%{#{key}}", to_string(value))
-            end)
-          end)
-
-        Logger.error("failed to deactivate declarations with: #{inspect(errors)}")
-
-      {:error, reason} ->
-        Logger.error("failed to deactivate declarations with: #{inspect(reason)}")
-    end
+    Declarations.chunk_terminate_declarations(attrs, 100)
   rescue
     e ->
       Logger.error("failed to deactivate declarations with: #{inspect(e)}")
+      :error
   end
 
   def consume(value) do

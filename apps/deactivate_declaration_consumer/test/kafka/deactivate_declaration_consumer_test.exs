@@ -2,8 +2,9 @@ defmodule DeactivateDeclarationConsumer.Kafka.DeactivateDeclarationEventConsumer
   @moduledoc false
 
   use Core.DataCase
-  alias Core.Declarations
+  import Ecto.Query
   alias Core.Declarations.Declaration
+  alias Core.Repo
   alias DeactivateDeclarationConsumer.Kafka.DeactivateDeclarationEventConsumer
 
   describe "consume" do
@@ -13,17 +14,9 @@ defmodule DeactivateDeclarationConsumer.Kafka.DeactivateDeclarationEventConsumer
       reason = "some reason"
       reason_description = "some_reason_description"
 
-      declaration1 = insert(:declaration, person_id: person_id)
-      declaration2 = insert(:declaration, person_id: person_id)
-      declaration3 = insert(:declaration, person_id: Ecto.UUID.generate())
+      for _ <- 1..205, do: insert(:declaration, person_id: person_id)
 
-      assert Declaration.status(:active) == declaration1.status
-      assert Declaration.status(:active) == declaration2.status
-      assert Declaration.status(:active) == declaration3.status
-
-      refute actor_id == declaration1.updated_by
-      refute actor_id == declaration2.updated_by
-      refute actor_id == declaration3.updated_by
+      for _ <- 1..15, do: insert(:declaration)
 
       assert :ok ==
                DeactivateDeclarationEventConsumer.consume(%{
@@ -33,25 +26,33 @@ defmodule DeactivateDeclarationConsumer.Kafka.DeactivateDeclarationEventConsumer
                  "reason_description" => reason_description
                })
 
-      declaration1 = Declarations.get_declaration!(declaration1.id)
-      declaration2 = Declarations.get_declaration!(declaration2.id)
-      declaration3 = Declarations.get_declaration!(declaration3.id)
+      employee_declarations =
+        from(
+          d in Declaration,
+          where: d.person_id == ^person_id
+        )
+        |> Repo.all()
 
-      assert Declaration.status(:terminated) == declaration1.status
-      assert Declaration.status(:terminated) == declaration2.status
-      assert Declaration.status(:active) == declaration3.status
+      other_declarations =
+        from(
+          d in Declaration,
+          where: d.person_id != ^person_id
+        )
+        |> Repo.all()
 
-      assert actor_id == declaration1.updated_by
-      assert actor_id == declaration2.updated_by
-      refute actor_id == declaration3.updated_by
+      for employee_declaration <- employee_declarations do
+        assert Declaration.status(:terminated) == employee_declaration.status
+        assert reason == employee_declaration.reason
+        assert reason_description == employee_declaration.reason_description
+        assert actor_id == employee_declaration.updated_by
+      end
 
-      assert reason == declaration1.reason
-      assert reason == declaration2.reason
-      refute reason == declaration3.reason
-
-      assert reason_description == declaration1.reason_description
-      assert reason_description == declaration2.reason_description
-      refute reason_description == declaration3.reason_description
+      for other_declaration <- other_declarations do
+        assert Declaration.status(:active) == other_declaration.status
+        refute reason == other_declaration.reason
+        refute reason_description == other_declaration.reason_description
+        refute actor_id == other_declaration.updated_by
+      end
     end
 
     test "success consume employee event" do
@@ -60,17 +61,9 @@ defmodule DeactivateDeclarationConsumer.Kafka.DeactivateDeclarationEventConsumer
       reason = "some reason"
       reason_description = "some_reason_description"
 
-      declaration1 = insert(:declaration, employee_id: employee_id)
-      declaration2 = insert(:declaration, employee_id: employee_id)
-      declaration3 = insert(:declaration, employee_id: Ecto.UUID.generate())
+      for _ <- 1..205, do: insert(:declaration, employee_id: employee_id)
 
-      assert Declaration.status(:active) == declaration1.status
-      assert Declaration.status(:active) == declaration2.status
-      assert Declaration.status(:active) == declaration3.status
-
-      refute actor_id == declaration1.updated_by
-      refute actor_id == declaration2.updated_by
-      refute actor_id == declaration3.updated_by
+      for _ <- 1..15, do: insert(:declaration)
 
       assert :ok ==
                DeactivateDeclarationEventConsumer.consume(%{
@@ -80,25 +73,48 @@ defmodule DeactivateDeclarationConsumer.Kafka.DeactivateDeclarationEventConsumer
                  "reason_description" => reason_description
                })
 
-      declaration1 = Declarations.get_declaration!(declaration1.id)
-      declaration2 = Declarations.get_declaration!(declaration2.id)
-      declaration3 = Declarations.get_declaration!(declaration3.id)
+      employee_declarations =
+        from(
+          d in Declaration,
+          where: d.employee_id == ^employee_id
+        )
+        |> Repo.all()
 
-      assert Declaration.status(:terminated) == declaration1.status
-      assert Declaration.status(:terminated) == declaration2.status
-      assert Declaration.status(:active) == declaration3.status
+      other_declarations =
+        from(
+          d in Declaration,
+          where: d.employee_id != ^employee_id
+        )
+        |> Repo.all()
 
-      assert actor_id == declaration1.updated_by
-      assert actor_id == declaration2.updated_by
-      refute actor_id == declaration3.updated_by
+      for employee_declaration <- employee_declarations do
+        assert Declaration.status(:terminated) == employee_declaration.status
+        assert reason == employee_declaration.reason
+        assert reason_description == employee_declaration.reason_description
+        assert actor_id == employee_declaration.updated_by
+      end
 
-      assert reason == declaration1.reason
-      assert reason == declaration2.reason
-      refute reason == declaration3.reason
+      for other_declaration <- other_declarations do
+        assert Declaration.status(:active) == other_declaration.status
+        refute reason == other_declaration.reason
+        refute reason_description == other_declaration.reason_description
+        refute actor_id == other_declaration.updated_by
+      end
+    end
 
-      assert reason_description == declaration1.reason_description
-      assert reason_description == declaration2.reason_description
-      refute reason_description == declaration3.reason_description
+    test "success consume event when there are no active/pending declarations found" do
+      employee_id = Ecto.UUID.generate()
+      actor_id = Ecto.UUID.generate()
+      reason = "some reason"
+      reason_description = "some_reason_description"
+
+      assert :ok ==
+               DeactivateDeclarationEventConsumer.consume(%{
+                 "employee_id" => employee_id,
+                 "actor_id" => actor_id,
+                 "reason" => reason,
+                 "reason_description" => reason_description
+               })
     end
   end
 end
