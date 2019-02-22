@@ -30,7 +30,7 @@
   "idna": {:hex, :idna, "6.0.0", "689c46cbcdf3524c44d5f3dde8001f364cd7608a99556d8fbd8239a5798d4c10", [:rebar3], [{:unicode_util_compat, "0.4.1", [hex: :unicode_util_compat, repo: "hexpm", optional: false]}], "hexpm"},
   "jason": {:hex, :jason, "1.1.2", "b03dedea67a99223a2eaf9f1264ce37154564de899fd3d8b9a21b1a6fd64afe7", [:mix], [{:decimal, "~> 1.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm"},
   "kafka_ex": {:hex, :kafka_ex, "0.9.0", "d653b38f2584627965c71a118d9be69bf6bd3174d5f3dca29e071c928af2f53a", [:mix], [], "hexpm"},
-  "kube_rpc": {:git, "https://github.com/edenlabllc/kube_rpc.git", "11d7a0574d95d6e68e9dbaae4c044caecf4bad25", []},
+  "kube_rpc": {:git, "https://github.com/edenlabllc/kube_rpc.git", "77adce1dc1836a546142c04463697f5a61b3889b", []},
   "libring": {:hex, :libring, "1.4.0", "41246ba2f3fbc76b3971f6bce83119dfec1eee17e977a48d8a9cfaaf58c2a8d6", [:mix], [], "hexpm"},
   "makeup": {:hex, :makeup, "0.5.6", "da47b331b1fe0a5f0380cc3a6967200eac5e1daaa9c6bff4b0310b3fcc12b98f", [:mix], [{:nimble_parsec, "~> 0.4.0", [hex: :nimble_parsec, repo: "hexpm", optional: false]}], "hexpm"},
   "makeup_elixir": {:hex, :makeup_elixir, "0.10.0", "0f09c2ddf352887a956d84f8f7e702111122ca32fbbc84c2f0569b8b65cbf7fa", [:mix], [{:makeup, "~> 0.5.5", [hex: :makeup, repo: "hexpm", optional: false]}], "hexpm"},
