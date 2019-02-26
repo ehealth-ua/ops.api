@@ -7,8 +7,6 @@ defmodule OPS.Web.Router do
   More info at: https://hexdocs.pm/phoenix/Phoenix.Router.html
   """
   use OPS.Web, :router
-  use Plug.ErrorHandler
-  alias Plug.LoggerJSON
   require Logger
 
   pipeline :api do
@@ -39,11 +37,4 @@ defmodule OPS.Web.Router do
     get("/prequalify_medication_requests", MedicationRequestController, :prequalify_list)
     get("/latest_block", BlockController, :latest_block)
   end
-
-  defp handle_errors(%Plug.Conn{status: 500} = conn, %{kind: kind, reason: reason, stack: stacktrace}) do
-    LoggerJSON.log_error(kind, reason, stacktrace)
-    send_resp(conn, 500, Jason.encode!(%{errors: %{detail: "Internal server error"}}))
-  end
-
-  defp handle_errors(_, _), do: nil
 end

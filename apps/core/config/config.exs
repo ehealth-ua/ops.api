@@ -83,4 +83,12 @@ config :core, :current_block_version, "v2"
 
 config :ecto_trail, table_name: "audit_log"
 
+config :logger_json, :backend,
+  formatter: EhealthLogger.Formatter,
+  metadata: :all
+
+config :logger,
+  backends: [LoggerJSON],
+  level: :info
+
 import_config "#{Mix.env()}.exs"
