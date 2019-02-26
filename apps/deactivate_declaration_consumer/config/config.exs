@@ -28,16 +28,12 @@ use Mix.Config
 # here (which is why it is important to import them last).
 #
 
-config :kafka_ex,
-  brokers: "localhost:9092",
-  consumer_group: "ops",
-  disable_default_worker: false,
-  sync_timeout: 3000,
-  max_restarts: 10,
-  max_seconds: 60,
-  commit_interval: 5_000,
-  auto_offset_reset: :earliest,
-  commit_threshold: 100,
-  kafka_version: "1.1.0"
+config :deactivate_declaration_consumer,
+  kaffe_consumer: [
+    endpoints: [localhost: 9092],
+    topics: ["deactivate_declaration_events"],
+    consumer_group: "ops",
+    message_handler: DeactivateDeclarationConsumer.Kafka.DeactivateDeclarationEventConsumer
+  ]
 
 import_config "#{Mix.env()}.exs"

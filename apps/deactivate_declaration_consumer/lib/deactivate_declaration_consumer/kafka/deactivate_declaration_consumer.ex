@@ -1,21 +1,18 @@
 defmodule DeactivateDeclarationConsumer.Kafka.DeactivateDeclarationEventConsumer do
   @moduledoc false
 
-  use KafkaEx.GenConsumer
   alias Core.Declarations
-  alias Ecto.Changeset
-  alias KafkaEx.Protocol.Fetch.Message
   require Logger
 
-  def handle_message_set(message_set, state) do
-    for %Message{value: message, offset: offset} <- message_set do
-      value = :erlang.binary_to_term(message)
+  def handle_messages(messages) do
+    for %{value: value, offset: offset} <- messages do
+      value = :erlang.binary_to_term(value)
       Logger.debug(fn -> "message: " <> inspect(value) end)
       Logger.info(fn -> "offset: #{offset}" end)
       :ok = consume(value)
     end
 
-    {:async_commit, state}
+    :ok
   end
 
   def consume(%{"actor_id" => _} = attrs) do

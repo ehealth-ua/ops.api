@@ -1,3 +1,9 @@
 use Mix.Config
 
-config :kafka_ex, brokers: {:system, :string, "KAFKA_BROKERS"}
+config :deactivate_declaration_consumer,
+  kaffe_consumer: [
+    endpoints: {:system, :string, "KAFKA_BROKERS"},
+    topics: ["deactivate_declaration_events"],
+    consumer_group: "ops",
+    message_handler: DeactivateDeclarationConsumer.Kafka.DeactivateDeclarationEventConsumer
+  ]

@@ -30,7 +30,7 @@ defmodule DeactivateDeclarationConsumer.MixProject do
   defp deps do
     [
       {:confex_config_provider, "~> 0.1.0"},
-      {:kafka_ex, "~> 0.9.0"},
+      {:kaffe, git: "https://github.com/AlexKovalevych/kaffe.git", branch: "string_endpoints_sasl"},
       {:core, in_umbrella: true}
     ]
   end
