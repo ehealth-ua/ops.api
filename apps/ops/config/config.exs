@@ -7,7 +7,8 @@ use Mix.Config
 config :ops, OPS.Web.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "4LcL78vtzM1yVeVCuY1351HuU/62qpTtDKykdJxAKKgwnTtH5JzkXNEUouzDBc1D",
-  render_errors: [view: EView.Views.PhoenixError, accepts: ~w(json)]
+  render_errors: [view: EView.Views.PhoenixError, accepts: ~w(json)],
+  instrumenters: [LoggerJSON.Phoenix.Instruments]
 
 config :phoenix, json_library: Jason
 
