@@ -51,6 +51,6 @@ defmodule Core.MedicationRequests.MedicationRequest do
     field(:context, :map)
     field(:dosage_instruction, {:array, :map})
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 end

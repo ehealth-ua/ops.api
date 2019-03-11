@@ -13,6 +13,6 @@ defmodule Core.EventManager.Event do
     field(:event_time, :naive_datetime)
     field(:changed_by, UUID)
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 end
