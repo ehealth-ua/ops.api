@@ -9,7 +9,6 @@ config :core,
   ]
 
 config :core, Core.ReadRepo,
-  adapter: Ecto.Adapters.Postgres,
   username: "postgres",
   password: "postgres",
   database: "ops_test",
@@ -18,7 +17,6 @@ config :core, Core.ReadRepo,
   ownership_timeout: 120_000_000
 
 config :core, Core.Repo,
-  adapter: Ecto.Adapters.Postgres,
   username: "postgres",
   password: "postgres",
   database: "ops_test",
@@ -27,7 +25,6 @@ config :core, Core.Repo,
   ownership_timeout: 120_000_000
 
 config :core, Core.BlockRepo,
-  adapter: Ecto.Adapters.Postgres,
   username: "postgres",
   password: "postgres",
   database: "seed_test",
@@ -36,7 +33,6 @@ config :core, Core.BlockRepo,
   ownership_timeout: 120_000_000
 
 config :core, Core.EventManagerRepo,
-  adapter: Ecto.Adapters.Postgres,
   username: "postgres",
   password: "postgres",
   database: "event_manager_test",

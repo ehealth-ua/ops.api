@@ -4,7 +4,6 @@ defmodule OpsScheduler.Jobs.DeclarationsTerminator do
   use Confex, otp_app: :ops_scheduler
   alias Core.Declarations
   alias Core.Declarations.Declaration
-  alias Core.Repo
   import Ecto.Query
   require Logger
 
@@ -41,7 +40,7 @@ defmodule OpsScheduler.Jobs.DeclarationsTerminator do
       |> limit(^limit)
 
     updates = [status: Declaration.status(:closed), updated_by: user_id, updated_at: DateTime.utc_now()]
-    query = join(Declaration, :inner, [d], dr in subquery(subquery), dr.id == d.id)
+    query = join(Declaration, :inner, [d], dr in subquery(subquery), on: dr.id == d.id)
 
     case Declarations.update_rows(query, updates) do
       {:ok, rows_updated} when rows_updated >= limit ->

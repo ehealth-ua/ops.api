@@ -33,18 +33,19 @@ defmodule Core.MixProject do
   defp deps do
     [
       {:httpoison, "~> 1.4"},
-      {:kube_rpc, git: "https://github.com/edenlabllc/kube_rpc.git"},
+      {:kube_rpc, "~> 0.1.0"},
       {:confex, "~> 3.4"},
-      {:mox, "~> 0.4.0"},
+      {:mox, "~> 0.4.0", only: [:test]},
       {:jason, "~> 1.1"},
-      {:ecto, "~> 2.2"},
-      {:ex_machina, "~> 2.2"},
-      {:ecto_trail, "~> 0.2.4"},
-      {:phoenix_ecto, "~> 3.6"},
-      {:scrivener_ecto, "~> 1.3"},
-      {:postgrex, ">= 0.0.0"},
+      {:ecto, "~> 3.0"},
+      {:ecto_sql, "~> 3.0"},
+      {:ex_machina, "~> 2.2", only: [:dev, :test]},
+      {:ecto_trail, "~> 0.4.1"},
+      {:phoenix_ecto, "~> 4.0"},
+      {:scrivener_ecto, git: "https://github.com/AlexKovalevych/scrivener_ecto.git", branch: "fix_page_number"},
+      {:postgrex, "~> 0.14.1"},
       {:ehealth_logger, git: "https://github.com/edenlabllc/ehealth_logger.git"},
-      {:ecto_filter, git: "https://github.com/edenlabllc/ecto_filter"}
+      {:ecto_filter, git: "https://github.com/edenlabllc/ecto_filter", branch: "ecto_3"}
     ]
   end
 

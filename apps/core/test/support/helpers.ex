@@ -5,7 +5,7 @@ defmodule Core.Test.Helpers do
   alias Core.BlockRepo
 
   def insert_initial_block do
-    {:ok, block_start, 0} = DateTime.from_iso8601("1970-01-01T00:00:00Z")
+    block_start = DateTime.from_naive!(~N[1970-01-01 00:00:00.000000], "Etc/UTC")
     block_end = DateTime.utc_now()
 
     block = %Block{

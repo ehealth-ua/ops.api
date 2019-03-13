@@ -95,7 +95,7 @@ defmodule Core.MedicationRequests do
       |> Map.to_list()
 
     MedicationRequest
-    |> join(:left, [mr], d in Declaration, d.person_id == mr.person_id and d.status == ^Declaration.status(:active))
+    |> join(:left, [mr], d in Declaration, on: d.person_id == mr.person_id and d.status == ^Declaration.status(:active))
     |> where([mr], ^filters)
     |> filter_by_employees(employee_ids)
     |> add_created_at_doctor(Map.get(changes, :created_from), Map.get(changes, :created_to))
@@ -140,7 +140,7 @@ defmodule Core.MedicationRequests do
       case pre_or_qualify do
         :qualify ->
           query
-          |> join(:inner, [mr], md in MedicationDispense, md.medication_request_id == mr.id)
+          |> join(:inner, [mr], md in MedicationDispense, on: md.medication_request_id == mr.id)
           |> where([mr, md], md.status == ^MedicationDispense.status(:processed))
 
         :prequalify ->
@@ -182,7 +182,7 @@ defmodule Core.MedicationRequests do
     |> put_change(:is_active, true)
   end
 
-  def log_changes(%{medication_requests: {_, medication_requests}}) do
+  def log_changes(_repo, %{medication_requests: {_, medication_requests}}) do
     {_, changelog} =
       medication_requests
       |> Enum.map(fn mr ->
@@ -198,7 +198,7 @@ defmodule Core.MedicationRequests do
     {:ok, changelog}
   end
 
-  def insert_events(multi, status, author_id) do
+  def insert_events(_repo, multi, status, author_id) do
     {_, medication_requests} = multi.medication_requests
 
     Enum.each(medication_requests, fn medication_request ->

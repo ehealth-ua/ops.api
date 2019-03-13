@@ -109,7 +109,7 @@ defmodule Core.DeclarationTest do
     assert declaration.employee_id == create_attrs["employee_id"]
     assert declaration.legal_entity_id == create_attrs["legal_entity_id"]
 
-    assert {:error, %Ecto.Changeset{valid?: false, errors: [id: {"has already been taken", []}]}} =
+    assert {:error, %Ecto.Changeset{valid?: false, errors: [id: {"has already been taken", _}]}} =
              Declarations.create_declaration(create_attrs)
   end
 

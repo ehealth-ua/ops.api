@@ -16,6 +16,7 @@ defmodule OpsScheduler.Jobs.MedicationDispensesTerminator do
 
     query =
       MedicationDispense
+      |> select([md], [:id, :status, :updated_by])
       |> where([md], md.status == ^MedicationDispense.status(:new))
       |> where([md], md.inserted_at < datetime_add(^NaiveDateTime.utc_now(), ^(-expiration), "minute"))
 
@@ -29,9 +30,9 @@ defmodule OpsScheduler.Jobs.MedicationDispensesTerminator do
     ]
 
     Multi.new()
-    |> Multi.update_all(:medication_dispenses, query, [set: updates], returning: [:id, :status, :updated_by])
-    |> Multi.run(:insert_events, &MedicationDispenses.insert_events(&1, new_status, author_id))
-    |> Multi.run(:logged_terminations, &MedicationDispenses.log_changes(&1))
+    |> Multi.update_all(:medication_dispenses, query, set: updates)
+    |> Multi.run(:insert_events, &MedicationDispenses.insert_events(&1, &2, new_status, author_id))
+    |> Multi.run(:logged_terminations, &MedicationDispenses.log_changes/2)
     |> Repo.transaction()
   end
 end

@@ -46,7 +46,7 @@ defmodule Core.ReleaseTasks do
   end
 
   defp start_repo(repo) do
-    start_applications([:logger, :postgrex, :ecto, :hackney])
+    start_applications([:logger, :postgrex, :ecto, :ecto_sql, :hackney])
     Application.load(:core)
     repo.start_link()
     repo

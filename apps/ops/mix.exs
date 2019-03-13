@@ -44,10 +44,7 @@ defmodule OPS.MixProject do
       {:confex_config_provider, "~> 0.1.0"},
       {:eview, "~> 0.15.0"},
       {:phoenix, "~> 1.4.0"},
-      {:phoenix_pubsub, "~> 1.1"},
       {:plug_cowboy, "~> 2.0"},
-      {:confex, "~> 3.4"},
-      {:jason, "~> 1.1"},
       {:core, in_umbrella: true}
     ]
   end

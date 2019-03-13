@@ -138,28 +138,29 @@ defmodule Core.Declarations do
   end
 
   def create_declaration_with_termination_logic(%{"person_id" => person_id} = declaration_params) do
-    query =
-      Declaration
-      |> where([d], d.person_id == ^person_id)
-      |> where([d], d.status in ^[Declaration.status(:active), Declaration.status(:pending)])
-
     block = BlockAPI.get_latest()
     user_id = Map.get(declaration_params, "created_by")
     status = Declaration.status(:terminated)
     updates = [status: status, updated_by: user_id, updated_at: DateTime.utc_now()]
 
+    query =
+      Declaration
+      |> select([d], ^updated_fields_list(updates))
+      |> where([d], d.person_id == ^person_id)
+      |> where([d], d.status in ^[Declaration.status(:active), Declaration.status(:pending)])
+
     Multi.new()
-    |> Multi.update_all(:previous_declarations, query, [set: updates], returning: updated_fields_list(updates))
+    |> Multi.update_all(:previous_declarations, query, set: updates)
     |> Multi.insert(
       :new_declaration,
       declaration_changeset(%Declaration{seed: block.hash}, declaration_params),
       returning: true
     )
-    |> Multi.run(:log_declarations_update, fn response ->
+    |> Multi.run(:log_declarations_update, fn _repo, response ->
       {_, declarations} = response.previous_declarations
       log_status_updates(declarations, status, user_id)
     end)
-    |> Multi.run(:log_declaration_insert, &log_insert(&1.new_declaration))
+    |> Multi.run(:log_declaration_insert, &log_insert/2)
     |> Repo.transaction()
   end
 
@@ -203,10 +204,12 @@ defmodule Core.Declarations do
       updated_at: DateTime.utc_now()
     ]
 
-    query = from(d in Declaration, join: s in subquery(query), on: s.id == d.id)
+    query =
+      Declaration
+      |> select([d], ^updated_fields_list(updates))
+      |> join(:inner, [d], s in subquery(query), on: s.id == d.id)
 
-    {count, declarations} = Repo.update_all(query, [set: updates], returning: updated_fields_list(updates))
-
+    {count, declarations} = Repo.update_all(query, set: updates)
     log_status_updates(declarations, status, user_id)
     {:ok, declarations, count}
   end
@@ -249,9 +252,10 @@ defmodule Core.Declarations do
 
   def update_rows(query, status: status, updated_by: user_id, updated_at: updated_at) do
     updates = [status: status, updated_by: user_id, updated_at: updated_at]
+    query = select(query, [d], ^updated_fields_list(updates))
 
     Repo.transaction(fn ->
-      {rows_updated, declarations} = Repo.update_all(query, [set: updates], returning: updated_fields_list(updates))
+      {rows_updated, declarations} = Repo.update_all(query, set: updates)
       log_status_updates(declarations, status, user_id)
       rows_updated
     end)
@@ -277,7 +281,7 @@ defmodule Core.Declarations do
 
   def updated_fields_list(updates), do: [:id | Keyword.keys(updates)]
 
-  defp log_insert(%Declaration{} = declaration) do
+  defp log_insert(_repo, %{new_declaration: %Declaration{} = declaration}) do
     changes = %{
       actor_id: declaration.created_by,
       resource: "declarations",

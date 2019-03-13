@@ -10,9 +10,8 @@ defmodule Core.EventManager.Event do
     field(:entity_type, :string)
     field(:entity_id, UUID)
     field(:properties, :map)
-    field(:event_time, :utc_datetime)
+    field(:event_time, :utc_datetime_usec)
     field(:changed_by, UUID)
-
-    timestamps(type: :utc_datetime)
+    timestamps(type: :utc_datetime_usec)
   end
 end

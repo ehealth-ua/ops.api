@@ -13,6 +13,7 @@ defmodule OpsScheduler.Jobs.MedicationRequestsTerminator do
 
     query =
       MedicationRequest
+      |> select([mr], [:id, :status, :updated_by])
       |> where([mr], mr.status == ^MedicationRequest.status(:active))
       |> where([mr], mr.ended_at <= ^Date.utc_today())
 
@@ -26,9 +27,9 @@ defmodule OpsScheduler.Jobs.MedicationRequestsTerminator do
     ]
 
     Multi.new()
-    |> Multi.update_all(:medication_requests, query, [set: updates], returning: [:id, :status, :updated_by])
-    |> Multi.run(:insert_events, &MedicationRequests.insert_events(&1, new_status, author_id))
-    |> Multi.run(:logged_terminations, &MedicationRequests.log_changes(&1))
+    |> Multi.update_all(:medication_requests, query, set: updates)
+    |> Multi.run(:insert_events, &MedicationRequests.insert_events(&1, &2, new_status, author_id))
+    |> Multi.run(:logged_terminations, &MedicationRequests.log_changes/2)
     |> Repo.transaction()
   end
 end

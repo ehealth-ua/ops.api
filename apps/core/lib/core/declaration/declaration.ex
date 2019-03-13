@@ -17,7 +17,7 @@ defmodule Core.Declarations.Declaration do
     field(:start_date, :date)
     field(:end_date, :date)
     field(:status, :string)
-    field(:signed_at, :utc_datetime)
+    field(:signed_at, :utc_datetime_usec)
     field(:created_by, UUID)
     field(:updated_by, UUID)
     field(:is_active, :boolean, default: false)
@@ -31,7 +31,7 @@ defmodule Core.Declarations.Declaration do
     field(:overlimit, :boolean, default: false)
     field(:declaration_number, :string)
 
-    timestamps(type: :utc_datetime)
+    timestamps(type: :utc_datetime_usec)
   end
 
   def status(:active), do: @status_active

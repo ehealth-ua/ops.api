@@ -91,7 +91,7 @@ defmodule Core.MedicationDispenses do
     end
   end
 
-  def log_changes(%{medication_dispenses: {_, medication_dispenses}}) do
+  def log_changes(_repo, %{medication_dispenses: {_, medication_dispenses}}) do
     {_, changelog} =
       medication_dispenses
       |> Enum.map(fn md ->
@@ -164,7 +164,7 @@ defmodule Core.MedicationDispenses do
     |> validate_required(fields)
   end
 
-  def insert_events(multi, status, author_id) do
+  def insert_events(_repo, multi, status, author_id) do
     {_, medication_dispenses} = multi.medication_dispenses
 
     Enum.each(medication_dispenses, fn medication_dispense ->

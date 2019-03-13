@@ -21,7 +21,7 @@ defmodule Core.EventManager do
       entity_type: type,
       entity_id: entity.id,
       properties: %{"status" => %{"new_value" => new_status}},
-      event_time: NaiveDateTime.utc_now(),
+      event_time: DateTime.utc_now(),
       changed_by: user_id
     })
   end
@@ -39,10 +39,10 @@ defmodule Core.EventManager do
           entity_type: type,
           entity_id: entity.id,
           properties: %{"status" => %{"new_value" => new_status}},
-          event_time: NaiveDateTime.utc_now(),
+          event_time: DateTime.utc_now(),
           changed_by: user_id,
-          inserted_at: NaiveDateTime.utc_now(),
-          updated_at: NaiveDateTime.utc_now()
+          inserted_at: DateTime.utc_now(),
+          updated_at: DateTime.utc_now()
         }
       end)
 
