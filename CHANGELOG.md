@@ -5,6 +5,25 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [2.6.0](https://github.com/edenlabllc/ops.api/compare/2.5.0...2.6.0) (2019-3-27)
+
+
+
+
+### Features:
+
+* use ecto 3 (#198)
+
+* phoenix instruments (#194)
+
+### Bug Fixes:
+
+* allow out of range pages (#199)
+
+* core: return rest of datetime fields with timezones
+
+* refactor(core): return timestamps with timezones (#196)
+
 ## [2.5.0](https://github.com/edenlabllc/ops.api/compare/2.4.1...2.5.0) (2019-3-4)
 
 
