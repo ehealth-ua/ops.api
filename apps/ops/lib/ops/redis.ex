@@ -39,7 +39,7 @@ defmodule OPS.Redis do
 
   defp command(command) when is_list(command) do
     pool_size = config()[:pool_size]
-    connection_index = Enum.random(0..pool_size)
+    connection_index = Enum.random(0..(pool_size - 1))
     Redix.command(:"redis_#{connection_index}", command)
   end
 end
