@@ -5,6 +5,7 @@ cache:
 services:
   - docker
   - postgresql
+  - redis-server
 addons:
   postgresql: "9.6"
   apt:

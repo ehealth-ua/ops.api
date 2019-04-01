@@ -180,6 +180,7 @@ defmodule Core.MedicationRequests do
     |> cast(attrs, MedicationRequest.__schema__(:fields))
     |> put_change(:status, MedicationRequest.status(:active))
     |> put_change(:is_active, true)
+    |> unique_constraint(:id, name: :medication_requests_pkey)
   end
 
   def log_changes(_repo, %{medication_requests: {_, medication_requests}}) do
