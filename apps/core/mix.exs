@@ -44,6 +44,7 @@ defmodule Core.MixProject do
       {:phoenix_ecto, "~> 4.0"},
       {:scrivener_ecto, git: "https://github.com/AlexKovalevych/scrivener_ecto.git", branch: "fix_page_number"},
       {:postgrex, "~> 0.14.1"},
+      {:redix, ">= 0.0.0"},
       {:ehealth_logger, git: "https://github.com/edenlabllc/ehealth_logger.git"},
       {:ecto_filter, git: "https://github.com/edenlabllc/ecto_filter", branch: "ecto_3"}
     ]

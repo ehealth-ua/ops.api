@@ -11,6 +11,8 @@ defmodule Core.Declarations do
   alias Core.EventManager
   alias Core.Repo
   alias Ecto.Multi
+  alias OPS.Redis
+  alias Scrivener.Page
 
   import Core.AuditLogs, only: [create_audit_logs: 1, create_audit_log: 1]
   import Ecto.Changeset
@@ -21,9 +23,59 @@ defmodule Core.Declarations do
   @read_repo Application.get_env(:core, :repos)[:read_repo]
 
   def list_declarations(params) do
-    %DeclarationSearch{}
-    |> declaration_changeset(params)
-    |> search(params, Declaration)
+    %{changes: changes} = changeset = declaration_changeset(%DeclarationSearch{}, params)
+
+    if Enum.all?(~w(legal_entity_id is_active status)a, &Map.has_key?(changes, &1)) and
+         Enum.count(changes) == 3 do
+      query = get_search_query(Declaration, changes)
+
+      cache_key = "count_declarations_#{changes.legal_entity_id}#{changes.is_active}#{changes.status}"
+
+      count =
+        case Redis.get(cache_key) do
+          {:ok, count} ->
+            count
+
+          _ ->
+            count =
+              query
+              |> select([d], count(d.id))
+              |> exclude(:order_by)
+              |> @read_repo.one
+
+            Redis.setex(cache_key, Confex.fetch_env!(:ops, :cache)[:list_declarations_ttl], count)
+            count
+        end
+
+      page_number =
+        case Integer.parse(Map.get(params, "page", "1")) do
+          :error -> 1
+          {value, _} -> value
+        end
+
+      page_size =
+        case Integer.parse(Map.get(params, "page_size", "50")) do
+          :error -> 50
+          {value, _} -> min(value, 100)
+        end
+
+      query =
+        query
+        |> limit(^page_size)
+        |> offset(^((page_number - 1) * page_size))
+
+      entries = @read_repo.all(query)
+
+      %Page{
+        entries: entries,
+        page_number: page_number,
+        page_size: page_size,
+        total_entries: count,
+        total_pages: ceil(count / page_size)
+      }
+    else
+      search(changeset, params, Declaration)
+    end
   end
 
   def count_by_employee_ids(%{"ids" => employee_ids} = params) do

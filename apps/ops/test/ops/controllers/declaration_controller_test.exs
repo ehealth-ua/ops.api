@@ -89,6 +89,24 @@ defmodule OPS.Web.DeclarationControllerTest do
     assert Map.has_key?(resp_declaration, "reason_description")
   end
 
+  test "search declarations by legal_entity_id, is_active, status", %{conn: conn} do
+    %{legal_entity_id: legal_entity_id, id: id} = fixture(:declaration)
+    fixture(:declaration)
+
+    conn =
+      get(conn, declaration_path(conn, :index),
+        legal_entity_id: legal_entity_id,
+        is_active: true,
+        status: Declaration.status(:active)
+      )
+
+    assert [resp_declaration] = json_response(conn, 200)["data"]
+    assert id == resp_declaration["id"]
+    assert legal_entity_id == resp_declaration["legal_entity_id"]
+    assert Map.has_key?(resp_declaration, "reason")
+    assert Map.has_key?(resp_declaration, "reason_description")
+  end
+
   test "search declarations from cabinet", %{conn: conn} do
     person_id = UUID.generate()
     start_year = "2018"
