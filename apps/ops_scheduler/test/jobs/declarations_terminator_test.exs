@@ -7,8 +7,11 @@ defmodule OpsScheduler.Jobs.DeclarationsTerminatorTest do
   alias Core.Declarations.Declaration
   alias Core.Repo
   alias OpsScheduler.Jobs.DeclarationsTerminator
+  setup :verify_on_exit!
 
   test "run/0" do
+    expect(KafkaMock, :publish_to_event_manager, 10, fn _ -> :ok end)
+
     expect(IlMock, :get_global_parameters, fn ->
       {:ok,
        %{

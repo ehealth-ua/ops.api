@@ -32,12 +32,10 @@ defmodule Core.DataCase do
   setup tags do
     :ok = Sandbox.checkout(Core.Repo)
     :ok = Sandbox.checkout(Core.BlockRepo)
-    :ok = Sandbox.checkout(Core.EventManagerRepo)
 
     unless tags[:async] do
       Sandbox.mode(Core.Repo, {:shared, self()})
       Sandbox.mode(Core.BlockRepo, {:shared, self()})
-      Sandbox.mode(Core.EventManagerRepo, {:shared, self()})
     end
 
     :ok

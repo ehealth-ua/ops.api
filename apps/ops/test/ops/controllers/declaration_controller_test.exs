@@ -2,13 +2,13 @@ defmodule OPS.Web.DeclarationControllerTest do
   @moduledoc false
 
   use OPS.Web.ConnCase
+  import Mox
 
   alias Core.Declarations
   alias Core.Declarations.Declaration
   alias Core.Declarations.DeclarationStatusHistory
-  alias Core.EventManager.Event
-  alias Core.EventManagerRepo
   alias Ecto.UUID
+  setup :verify_on_exit!
 
   @create_attrs %{
     id: UUID.generate(),
@@ -79,9 +79,13 @@ defmodule OPS.Web.DeclarationControllerTest do
     %{employee_id: employee_id, legal_entity_id: legal_entity_id, id: id} = fixture(:declaration)
     fixture(:declaration)
 
-    conn = get(conn, declaration_path(conn, :index), legal_entity_id: legal_entity_id, employee_id: employee_id)
+    assert resp_declaration =
+             conn
+             |> get(declaration_path(conn, :index), legal_entity_id: legal_entity_id, employee_id: employee_id)
+             |> json_response(200)
+             |> Map.get("data")
+             |> hd()
 
-    assert [resp_declaration] = json_response(conn, 200)["data"]
     assert id == resp_declaration["id"]
     assert employee_id == resp_declaration["employee_id"]
     assert legal_entity_id == resp_declaration["legal_entity_id"]
@@ -111,18 +115,15 @@ defmodule OPS.Web.DeclarationControllerTest do
     person_id = UUID.generate()
     start_year = "2018"
     start_date_expected = "2018-01-01"
-
     insert(:declaration, person_id: person_id, status: Declaration.status(:active), start_date: start_date_expected)
     insert(:declaration, person_id: person_id, status: Declaration.status(:pending), start_date: "2017-01-01")
     insert(:declaration, person_id: person_id, status: Declaration.status(:rejected), start_date: start_date_expected)
     insert(:declaration, start_date: "2017-01-01")
-
     # search active
     response = perform_declaration_request(conn, %{person_id: person_id, status: Declaration.status(:active)})
     assert 1 === Enum.count(response)
     assert [person_id] === get_declarations_property(response, "person_id")
     assert [Declaration.status(:active)] === get_declarations_property(response, "status")
-
     # search with all with particual year
     response = perform_declaration_request(conn, %{person_id: person_id, start_year: start_year})
     assert [start_date_expected, start_date_expected] === get_declarations_property(response, "start_date")
@@ -144,17 +145,14 @@ defmodule OPS.Web.DeclarationControllerTest do
     %{id: id} = insert(:declaration, reason: "terminated")
     insert(:declaration, reason: "another reason")
     conn = get(conn, declaration_path(conn, :index), reason: "terminated")
-
     assert [%{"id" => ^id}] = json_response(conn, 200)["data"]
   end
 
   test "search declarations by statuses active and pending_verification", %{conn: conn} do
     fixture(:declaration)
     fixture(:declaration, Map.put(@create_attrs, :status, "pending_verification"))
-
-    conn = get(conn, declaration_path(conn, :index), status: "active,pending_verification")
-
-    assert length(json_response(conn, 200)["data"]) == 2
+    resp = conn |> get(declaration_path(conn, :index), status: "active,pending_verification") |> json_response(200)
+    assert length(resp["data"]) == 2
   end
 
   test "creates declaration and renders declaration when data is valid", %{conn: conn} do
@@ -168,7 +166,6 @@ defmodule OPS.Web.DeclarationControllerTest do
 
     conn = post(conn, declaration_path(conn, :create), declaration: params)
     assert %{"id" => id, "inserted_at" => inserted_at, "updated_at" => updated_at} = json_response(conn, 201)["data"]
-
     assert id == @create_attrs.id
     conn = get(conn, declaration_path(conn, :show, id))
 
@@ -204,6 +201,7 @@ defmodule OPS.Web.DeclarationControllerTest do
   end
 
   test "creates declaration and terminates other person declarations when data is valid", %{conn: conn} do
+    expect(KafkaMock, :publish_to_event_manager, fn _ -> :ok end)
     %{id: id1, person_id: person_id} = fixture(:declaration)
 
     params =
@@ -228,15 +226,6 @@ defmodule OPS.Web.DeclarationControllerTest do
 
     %{status: status} = Declarations.get_declaration!(id2)
     assert "active" == status
-
-    assert [event1] = EventManagerRepo.all(Event)
-
-    assert %Event{
-             entity_type: "Declaration",
-             entity_id: ^id1,
-             event_type: "StatusChangeEvent",
-             properties: %{"status" => %{"new_value" => "terminated"}}
-           } = event1
   end
 
   test "doesn't terminate other declarations and renders errors when data is invalid", %{conn: conn} do
@@ -251,12 +240,12 @@ defmodule OPS.Web.DeclarationControllerTest do
   end
 
   test "updates chosen declaration and renders declaration when data is valid", %{conn: conn} do
+    expect(KafkaMock, :publish_to_event_manager, fn _ -> :ok end)
     declaration_number = UUID.generate()
     declaration = insert(:declaration, declaration_number: declaration_number)
     %Declaration{id: id, declaration_request_id: declaration_request_id} = declaration
     conn = put(conn, declaration_path(conn, :update, declaration), declaration: @update_attrs)
     assert %{"id" => ^id, "inserted_at" => inserted_at, "updated_at" => updated_at} = json_response(conn, 200)["data"]
-
     conn = get(conn, declaration_path(conn, :show, id))
 
     assert json_response(conn, 200)["data"] == %{
@@ -285,14 +274,6 @@ defmodule OPS.Web.DeclarationControllerTest do
     assert Enum.all?(declaration_status_hstrs, &(Map.get(&1, :declaration_id) == id))
     assert 2 = Enum.count(declaration_status_hstrs)
     assert ~w(active closed) == Enum.map(declaration_status_hstrs, &Map.get(&1, :status))
-    assert [event] = EventManagerRepo.all(Event)
-
-    assert %Event{
-             entity_type: "Declaration",
-             entity_id: ^id,
-             event_type: "StatusChangeEvent",
-             properties: %{"status" => %{"new_value" => "closed"}}
-           } = event
   end
 
   @tag pending: true
@@ -313,11 +294,10 @@ defmodule OPS.Web.DeclarationControllerTest do
   end
 
   test "terminates declarations for given employee_id", %{conn: conn} do
+    expect(KafkaMock, :publish_to_event_manager, fn _ -> :ok end)
     user_id = "ab4b2245-55c9-46eb-9ac6-c751020a46e3"
     employee_id = "84e30a11-94bd-49fe-8b1f-f5511c5916d6"
-
     %{id: id} = insert(:declaration, employee_id: employee_id)
-
     payload = %{employee_id: employee_id, user_id: user_id, reason: "Manual", reason_description: "Employee dies"}
 
     response_decl =
@@ -347,6 +327,7 @@ defmodule OPS.Web.DeclarationControllerTest do
   end
 
   test "terminates declarations for given person_id", %{conn: conn} do
+    expect(KafkaMock, :publish_to_event_manager, fn _ -> :ok end)
     user_id = Confex.fetch_env!(:core, :system_user)
     person_id = "84e30a11-94bd-49fe-8b1f-f5511c5916d6"
 
@@ -369,6 +350,7 @@ defmodule OPS.Web.DeclarationControllerTest do
   end
 
   test "terminates declarations for given person_id with updated_by param", %{conn: conn} do
+    expect(KafkaMock, :publish_to_event_manager, fn _ -> :ok end)
     user_id = UUID.generate()
     person_id = "84e30a11-94bd-49fe-8b1f-f5511c5916d6"
 
@@ -392,6 +374,7 @@ defmodule OPS.Web.DeclarationControllerTest do
       employee_id2 = UUID.generate()
       insert(:declaration, employee_id: employee_id1)
       insert(:declaration, employee_id: employee_id2)
+
       conn = post(conn, declaration_path(conn, :declarations_count, ids: [employee_id1, employee_id2]))
 
       assert resp = json_response(conn, 200)
@@ -483,6 +466,7 @@ defmodule OPS.Web.DeclarationControllerTest do
     end
 
     test "success terminate declaration", %{conn: conn} do
+      expect(KafkaMock, :publish_to_event_manager, fn _ -> :ok end)
       declaration = insert(:declaration, status: Declaration.status(:active))
       updated_by = UUID.generate()
 
@@ -506,6 +490,7 @@ defmodule OPS.Web.DeclarationControllerTest do
     end
 
     test "success terminate pending_verification declaration", %{conn: conn} do
+      expect(KafkaMock, :publish_to_event_manager, fn _ -> :ok end)
       declaration = insert(:declaration, status: Declaration.status(:pending))
       updated_by = UUID.generate()
 

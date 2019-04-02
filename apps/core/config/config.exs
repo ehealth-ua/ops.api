@@ -3,7 +3,7 @@
 use Mix.Config
 
 config :core,
-  ecto_repos: [Core.Repo, Core.BlockRepo, Core.EventManagerRepo]
+  ecto_repos: [Core.Repo, Core.BlockRepo]
 
 config :core,
   system_user: {:system, "EHEALTH_SYSTEM_USER", "4261eacf-8008-4e62-899f-de1e2f7065f0"},
@@ -12,6 +12,9 @@ config :core,
   ],
   repos: [
     read_repo: Core.ReadRepo
+  ],
+  kafka: [
+    producer: Core.Kafka.Producer
   ]
 
 config :core, Core.AuditLogs, max_audit_record_insert: 100
@@ -80,6 +83,12 @@ config :core, Core.API.IL,
 config :core, :current_block_version, "v2"
 
 config :ecto_trail, table_name: "audit_log"
+
+config :kaffe,
+  producer: [
+    endpoints: [localhost: 9092],
+    topics: ["event_manager_topic"]
+  ]
 
 config :logger_json, :backend,
   formatter: EhealthLogger.Formatter,

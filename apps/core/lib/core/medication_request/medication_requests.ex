@@ -46,7 +46,7 @@ defmodule Core.MedicationRequests do
            |> changeset(attrs)
            |> Repo.update_and_log(Map.get(attrs, "updated_by")),
          author_id <- medication_request.updated_by,
-         _ <- EventManager.insert_change_status(medication_request, old_status, medication_request.status, author_id) do
+         _ <- EventManager.publish_change_status(medication_request, old_status, medication_request.status, author_id) do
       {:ok, medication_request}
     end
   end
@@ -203,7 +203,7 @@ defmodule Core.MedicationRequests do
     {_, medication_requests} = multi.medication_requests
 
     Enum.each(medication_requests, fn medication_request ->
-      EventManager.insert_change_status(medication_request, status, author_id)
+      EventManager.publish_change_status(medication_request, status, author_id)
     end)
 
     {:ok, medication_requests}

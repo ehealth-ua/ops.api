@@ -3,12 +3,16 @@ defmodule DeactivateDeclarationConsumer.Kafka.DeactivateDeclarationEventConsumer
 
   use Core.DataCase
   import Ecto.Query
+  import Mox
   alias Core.Declarations.Declaration
   alias Core.Repo
   alias DeactivateDeclarationConsumer.Kafka.DeactivateDeclarationEventConsumer
 
+  setup :verify_on_exit!
+
   describe "consume" do
     test "success consume person event" do
+      expect(KafkaMock, :publish_to_event_manager, 205, fn _ -> :ok end)
       person_id = Ecto.UUID.generate()
       actor_id = Ecto.UUID.generate()
       reason = "some reason"
@@ -56,6 +60,7 @@ defmodule DeactivateDeclarationConsumer.Kafka.DeactivateDeclarationEventConsumer
     end
 
     test "success consume employee event" do
+      expect(KafkaMock, :publish_to_event_manager, 205, fn _ -> :ok end)
       employee_id = Ecto.UUID.generate()
       actor_id = Ecto.UUID.generate()
       reason = "some reason"

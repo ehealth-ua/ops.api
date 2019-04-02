@@ -20,10 +20,3 @@ config :core, Core.BlockRepo,
   database: "seed_dev",
   hostname: "localhost",
   pool_size: 10
-
-config :core, Core.EventManagerRepo,
-  username: "postgres",
-  password: "postgres",
-  database: "event_manager_dev",
-  hostname: "localhost",
-  pool_size: 10

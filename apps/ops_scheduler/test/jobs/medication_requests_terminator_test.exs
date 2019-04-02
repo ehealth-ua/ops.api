@@ -1,30 +1,20 @@
 defmodule OpsScheduler.Jobs.MedicationRequestsTerminatorTest do
   @moduledoc false
-
   use Core.DataCase
-  alias Core.EventManager.Event
-  alias Core.EventManagerRepo
+  import Mox
+
   alias Core.MedicationRequests.MedicationRequest
   alias Core.Repo
   alias OpsScheduler.Jobs.MedicationRequestsTerminator
+  setup :verify_on_exit!
 
   test "run/0" do
-    %{id: id} = insert(:medication_request, ended_at: "2017-01-01")
-
+    expect(KafkaMock, :publish_to_event_manager, fn _ -> :ok end)
+    insert(:medication_request, ended_at: "2017-01-01")
     assert 1 == count_by_status(MedicationRequest.status(:active))
-
     MedicationRequestsTerminator.run()
-
     assert 0 == count_by_status(MedicationRequest.status(:active))
     assert 1 == count_by_status(MedicationRequest.status(:expired))
-    assert [event] = EventManagerRepo.all(Event)
-
-    assert %Event{
-             entity_type: "MedicationRequest",
-             entity_id: ^id,
-             event_type: "StatusChangeEvent",
-             properties: %{"status" => %{"new_value" => "EXPIRED"}}
-           } = event
   end
 
   defp count_by_status(status) do

@@ -1,11 +1,12 @@
 defmodule OPS.Web.MedicationRequestControllerTest do
   use OPS.Web.ConnCase
+  import Mox
 
   alias Core.MedicationRequests.MedicationRequest
   alias Core.MedicationDispenses.MedicationDispense
-  alias Core.EventManagerRepo
-  alias Core.EventManager.Event
   alias Ecto.UUID
+
+  setup :verify_on_exit!
 
   setup %{conn: conn} do
     medication_request1 =
@@ -41,10 +42,13 @@ defmodule OPS.Web.MedicationRequestControllerTest do
     end
 
     test "success search by person_id", %{conn: conn, data: [medication_request1, _]} do
-      conn = get(conn, medication_request_path(conn, :index, person_id: medication_request1.person_id))
-      resp = json_response(conn, 200)["data"]
-      assert 1 == length(resp)
-      assert medication_request1.person_id == hd(resp)["person_id"]
+      resp =
+        conn
+        |> get(medication_request_path(conn, :index, person_id: medication_request1.person_id))
+        |> json_response(200)
+
+      assert 1 == length(resp["data"])
+      assert medication_request1.person_id == hd(resp["data"])["person_id"]
     end
 
     test "success search by employee_id", %{conn: conn, data: [medication_request1, _]} do
@@ -141,11 +145,7 @@ defmodule OPS.Web.MedicationRequestControllerTest do
 
   describe "search medication requests for doctors" do
     test "success search", %{conn: conn, data: [medication_request, _]} do
-      insert(
-        :declaration,
-        employee_id: medication_request.employee_id,
-        person_id: medication_request.person_id
-      )
+      insert(:declaration, employee_id: medication_request.employee_id, person_id: medication_request.person_id)
 
       conn =
         post(conn, medication_request_path(conn, :doctor_list), %{
@@ -164,12 +164,7 @@ defmodule OPS.Web.MedicationRequestControllerTest do
     end
 
     test "empty search", %{conn: conn, data: [medication_request, _]} do
-      insert(
-        :declaration,
-        employee_id: medication_request.employee_id,
-        person_id: medication_request.person_id
-      )
-
+      insert(:declaration, employee_id: medication_request.employee_id, person_id: medication_request.person_id)
       conn = post(conn, medication_request_path(conn, :doctor_list), %{"status" => "invalid"})
       resp = json_response(conn, 200)["data"]
       assert Enum.empty?(resp)
@@ -180,11 +175,7 @@ defmodule OPS.Web.MedicationRequestControllerTest do
     test "success search", %{conn: conn, data: [medication_request, _]} do
       %{person_id: person_id, medication_id: medication_id} = medication_request
 
-      insert(
-        :medication_dispense,
-        medication_request: medication_request,
-        status: MedicationDispense.status(:processed)
-      )
+      insert(:medication_dispense, medication_request: medication_request, status: MedicationDispense.status(:processed))
 
       today = Date.utc_today()
 
@@ -241,6 +232,7 @@ defmodule OPS.Web.MedicationRequestControllerTest do
 
   describe "update medication request" do
     test "success update", %{conn: conn, data: [medication_request, _]} do
+      expect(KafkaMock, :publish_to_event_manager, fn _ -> :ok end)
       id = medication_request.id
       status = MedicationRequest.status(:completed)
 
@@ -254,14 +246,6 @@ defmodule OPS.Web.MedicationRequestControllerTest do
 
       resp = json_response(conn, 200)
       assert status == resp["data"]["status"]
-      assert [event] = EventManagerRepo.all(Event)
-
-      assert %Event{
-               entity_type: "MedicationRequest",
-               entity_id: ^id,
-               event_type: "StatusChangeEvent",
-               properties: %{"status" => %{"new_value" => ^status}}
-             } = event
     end
   end
 

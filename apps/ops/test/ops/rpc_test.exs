@@ -2,12 +2,15 @@ defmodule OPS.RpcTest do
   @moduledoc false
 
   use Core.DataCase
+  import Mox
 
   alias Core.MedicationRequests.MedicationRequest
   alias Ecto.UUID
   alias OPS.Rpc
   alias OPS.Web.DeclarationView
   alias OPS.Web.MedicationRequestView
+
+  setup :verify_on_exit!
 
   describe "last_medication_request_dates/1" do
     test "returns medication request dates with max ended_at when medication requests are found" do
@@ -156,10 +159,8 @@ defmodule OPS.RpcTest do
     test "success" do
       declaration1 = %{id: declaration_id} = insert(:declaration)
       declaration2 = %{declaration_number: declaration_number} = insert(:declaration)
-
       {:ok, resp_entity1} = Rpc.get_declaration(id: declaration_id)
       {:ok, resp_entity2} = Rpc.get_declaration(declaration_number: declaration_number)
-
       assert_declarations_equal([declaration1, declaration2], [resp_entity1, resp_entity2])
     end
 
@@ -173,7 +174,6 @@ defmodule OPS.RpcTest do
       insert(:declaration)
       declarations = insert_list(2, :declaration)
       insert(:declaration)
-
       assert {:ok, resp_entities} = Rpc.search_declarations([{:is_active, :equal, true}], [], {1, 2})
       assert_declarations_equal(declarations, resp_entities)
     end
@@ -183,7 +183,6 @@ defmodule OPS.RpcTest do
       start_date = ~D[2010-10-10]
       declarations = insert_list(2, :declaration, start_date: start_date)
       insert_list(4, :declaration, start_date: today)
-
       {:ok, resp_entities} = Rpc.search_declarations([{:start_date, :less_than, today}])
       assert 2 == length(resp_entities)
       assert_declarations_equal(declarations, resp_entities)
@@ -193,7 +192,6 @@ defmodule OPS.RpcTest do
       person_id = UUID.generate()
       insert_list(3, :declaration)
       declarations = insert_list(2, :declaration, person_id: person_id)
-
       assert {:ok, resp_entities} = Rpc.search_declarations([{:person_id, :in, [person_id]}], [], {0, 10})
       assert 2 == length(resp_entities)
       assert_declarations_equal(declarations, resp_entities)
@@ -204,7 +202,6 @@ defmodule OPS.RpcTest do
       insert_list(3, :declaration, is_active: false)
       declaration2 = insert(:declaration)
       declarations = [declaration1, declaration2]
-
       assert {:ok, resp_entities} = Rpc.search_declarations([{:scope, :equal, ""}], [desc: :is_active], {0, 2})
       assert_declarations_equal(declarations, resp_entities)
     end
@@ -212,6 +209,7 @@ defmodule OPS.RpcTest do
 
   describe "update_declaration/2" do
     test "success" do
+      expect(KafkaMock, :publish_to_event_manager, fn _ -> :ok end)
       %{id: declaration_id} = insert(:declaration, is_active: true, status: "active", scope: "family_doctor")
       patch = %{status: "closed", is_active: false, updated_by: UUID.generate()}
 
@@ -222,7 +220,6 @@ defmodule OPS.RpcTest do
     test "invalid status transaction" do
       declaration = insert(:declaration, status: "closed")
       patch = %{status: "closed", updated_by: UUID.generate()}
-
       assert {:error, %Ecto.Changeset{valid?: false}} = Rpc.update_declaration(declaration.id, patch)
     end
 
@@ -233,16 +230,15 @@ defmodule OPS.RpcTest do
 
   describe "terminate_declaration/2" do
     test "success" do
+      expect(KafkaMock, :publish_to_event_manager, fn _ -> :ok end)
       %{id: declaration_id} = insert(:declaration, status: "active")
       patch = %{"updated_by" => UUID.generate(), "reason" => "manual_person"}
-
       assert {:ok, %{id: ^declaration_id, status: "terminated"}} = Rpc.terminate_declaration(declaration_id, patch)
     end
 
     test "invalid status" do
       %{id: declaration_id} = insert(:declaration, status: "terminated")
       patch = %{"updated_by" => UUID.generate(), "reason" => "manual_person"}
-
       assert {:error, %Ecto.Changeset{valid?: false}} = Rpc.terminate_declaration(declaration_id, patch)
     end
   end
@@ -251,7 +247,6 @@ defmodule OPS.RpcTest do
     test "success" do
       medication_request = insert(:medication_request)
       expected_data = MedicationRequestView.render("show.json", %{medication_request: medication_request})
-
       assert expected_data == Rpc.medication_request_by_id(medication_request.id)
     end
 
@@ -267,7 +262,6 @@ defmodule OPS.RpcTest do
     end)
 
     rendered = DeclarationView.render("index.json", %{declarations: prepared_declarations})
-
     assert MapSet.new(rendered) == MapSet.new(response_declarations)
   end
 end

@@ -86,7 +86,7 @@ defmodule Core.MedicationDispenses do
            |> Repo.update_and_log(Map.get(attrs, "updated_by")),
          author_id <- medication_dispense.updated_by,
          status <- medication_dispense.status,
-         _ <- EventManager.insert_change_status(medication_dispense, old_status, status, author_id) do
+         _ <- EventManager.publish_change_status(medication_dispense, old_status, status, author_id) do
       {:ok, @read_repo.preload(medication_dispense, :medication_request, force: true)}
     end
   end
@@ -168,7 +168,7 @@ defmodule Core.MedicationDispenses do
     {_, medication_dispenses} = multi.medication_dispenses
 
     Enum.each(medication_dispenses, fn medication_dispense ->
-      EventManager.insert_change_status(medication_dispense, status, author_id)
+      EventManager.publish_change_status(medication_dispense, status, author_id)
     end)
 
     {:ok, medication_dispenses}

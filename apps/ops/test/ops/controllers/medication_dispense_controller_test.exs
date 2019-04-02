@@ -1,8 +1,11 @@
 defmodule OPS.Web.MedicationDispenseControllerTest do
   use OPS.Web.ConnCase
 
+  import Mox
   alias Core.MedicationDispenses.MedicationDispense
   alias Ecto.UUID
+
+  setup :verify_on_exit!
 
   @create_attrs %{
     id: UUID.generate(),
@@ -63,58 +66,59 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
       |> Repo.preload(:medication_request)
 
     insert(:medication_dispense_details, medication_dispense_id: medication_dispense2.id)
-    conn1 = get(conn, medication_dispense_path(conn, :index))
-    response_data = json_response(conn1, 200)["data"]
-    assert 2 == length(response_data)
+    resp = conn |> get(medication_dispense_path(conn, :index)) |> json_response(200)
+    assert 2 == length(resp["data"])
 
-    conn2 = get(conn, medication_dispense_path(conn, :index, id: medication_dispense1.id))
-    response_data = json_response(conn2, 200)["data"]
-    assert 1 == length(response_data)
-    assert medication_dispense1.id == hd(response_data)["id"]
+    resp = conn |> get(medication_dispense_path(conn, :index, id: medication_dispense1.id)) |> json_response(200)
+    assert 1 == length(resp["data"])
+    assert medication_dispense1.id == hd(resp["data"])["id"]
 
-    conn3 =
-      get(
-        conn,
-        medication_dispense_path(conn, :index, medication_request_id: medication_dispense1.medication_request_id)
-      )
+    resp =
+      conn
+      |> get(medication_dispense_path(conn, :index, medication_request_id: medication_dispense1.medication_request_id))
+      |> json_response(200)
 
-    response_data = json_response(conn3, 200)["data"]
-    assert 1 == length(response_data)
-    assert medication_dispense1.medication_request.id == hd(response_data)["medication_request"]["id"]
+    assert 1 == length(resp["data"])
+    assert medication_dispense1.medication_request.id == hd(resp["data"])["medication_request"]["id"]
 
-    conn4 = get(conn, medication_dispense_path(conn, :index, legal_entity_id: medication_dispense1.legal_entity_id))
-    response_data = json_response(conn4, 200)["data"]
-    assert 1 == length(response_data)
-    assert medication_dispense1.legal_entity_id == hd(response_data)["legal_entity_id"]
+    resp =
+      conn
+      |> get(medication_dispense_path(conn, :index, legal_entity_id: medication_dispense1.legal_entity_id))
+      |> json_response(200)
 
-    conn5 = get(conn, medication_dispense_path(conn, :index, division_id: medication_dispense1.division_id))
-    response_data = json_response(conn5, 200)["data"]
-    assert 1 == length(response_data)
-    assert medication_dispense1.division_id == hd(response_data)["division_id"]
+    assert 1 == length(resp["data"])
+    assert medication_dispense1.legal_entity_id == hd(resp["data"])["legal_entity_id"]
 
-    conn6 = get(conn, medication_dispense_path(conn, :index, status: medication_dispense2.status))
-    response_data = json_response(conn6, 200)["data"]
-    assert 1 == length(response_data)
-    assert medication_dispense2.status == hd(response_data)["status"]
+    resp =
+      conn
+      |> get(medication_dispense_path(conn, :index, division_id: medication_dispense1.division_id))
+      |> json_response(200)
 
-    conn7 =
-      get(
-        conn,
-        medication_dispense_path(
-          conn,
-          :index,
+    assert 1 == length(resp["data"])
+    assert medication_dispense1.division_id == hd(resp["data"])["division_id"]
+
+    resp =
+      conn |> get(medication_dispense_path(conn, :index, status: medication_dispense2.status)) |> json_response(200)
+
+    assert 1 == length(resp["data"])
+    assert medication_dispense2.status == hd(resp["data"])["status"]
+
+    resp =
+      conn
+      |> get(
+        medication_dispense_path(conn, :index,
           dispensed_from: to_string(medication_dispense1.dispensed_at),
           dispensed_to: to_string(medication_dispense1.dispensed_at)
         )
       )
+      |> json_response(200)
 
-    response_data = json_response(conn7, 200)["data"]
-    assert 1 == length(response_data)
-    assert to_string(medication_dispense1.dispensed_at) == hd(response_data)["dispensed_at"]
+    assert 1 == length(resp["data"])
+    assert to_string(medication_dispense1.dispensed_at) == hd(resp["data"])["dispensed_at"]
 
-    conn8 =
-      get(
-        conn,
+    resp =
+      conn
+      |> get(
         medication_dispense_path(
           conn,
           :index,
@@ -125,13 +129,13 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
           dispensed_at: to_string(medication_dispense2.dispensed_at)
         )
       )
+      |> json_response(200)
 
-    response_data = json_response(conn8, 200)["data"]
-    assert 1 == length(response_data)
-    assert medication_dispense2.status == hd(response_data)["status"]
-    assert medication_dispense2.legal_entity_id == hd(response_data)["legal_entity_id"]
-    assert medication_dispense2.division_id == hd(response_data)["division_id"]
-    assert medication_dispense2.medication_request.id == hd(response_data)["medication_request"]["id"]
+    assert 1 == length(resp["data"])
+    assert medication_dispense2.status == hd(resp["data"])["status"]
+    assert medication_dispense2.legal_entity_id == hd(resp["data"])["legal_entity_id"]
+    assert medication_dispense2.division_id == hd(resp["data"])["division_id"]
+    assert medication_dispense2.medication_request.id == hd(resp["data"])["medication_request"]["id"]
   end
 
   test "search dispenses with pagination", %{conn: conn} do
@@ -141,8 +145,7 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
       |> Repo.preload(:medication_request)
     end)
 
-    conn = get(conn, medication_dispense_path(conn, :index, %{"page_size" => 1}))
-    response = json_response(conn, 200)
+    response = conn |> get(medication_dispense_path(conn, :index, %{"page_size" => 1})) |> json_response(200)
     assert %{"page_number" => 1, "page_size" => 1, "total_entries" => 2, "total_pages" => 2} == response["paging"]
   end
 
@@ -178,15 +181,16 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
            } = response_data
   end
 
-  test "creates medication dispense when data is valid and does not contain medical_program_id", %{conn: conn} do
+  test "creates medication dispense when data is valid and does not contain medical_program_id",
+       %{conn: conn} do
     insert(:medication_request, id: @create_attrs.medication_request_id)
 
-    conn =
-      post(conn, medication_dispense_path(conn, :create),
+    resp =
+      conn
+      |> post(medication_dispense_path(conn, :create),
         medication_dispense: Map.delete(@create_attrs, :medical_program_id)
       )
-
-    response_data = json_response(conn, 201)["data"]
+      |> json_response(201)
 
     medication_request_id = @create_attrs.medication_request_id
     division_id = @create_attrs.division_id
@@ -211,14 +215,13 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
              "status" => ^status,
              "inserted_by" => ^inserted_by,
              "updated_by" => ^updated_by
-           } = response_data
+           } = resp["data"]
   end
 
   test "creates medication dispense without optional params", %{conn: conn} do
     insert(:medication_request, id: @create_attrs.medication_request_id)
     params = Map.drop(@create_attrs, ~w(payment_id payment_amount dispensed_by)a)
-    conn = post(conn, medication_dispense_path(conn, :create), medication_dispense: params)
-    response_data = json_response(conn, 201)["data"]
+    resp = conn |> post(medication_dispense_path(conn, :create), medication_dispense: params) |> json_response(201)
 
     medication_request_id = @create_attrs.medication_request_id
     division_id = @create_attrs.division_id
@@ -239,7 +242,7 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
              "status" => ^status,
              "inserted_by" => ^inserted_by,
              "updated_by" => ^updated_by
-           } = response_data
+           } = resp["data"]
   end
 
   test "create medication dispense with invalid params", %{conn: conn} do
@@ -248,11 +251,13 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
   end
 
   test "updates medication dispense when data is valid", %{conn: conn} do
+    expect(KafkaMock, :publish_to_event_manager, fn _ -> :ok end)
     %MedicationDispense{id: id} = insert(:medication_dispense)
     medication_request_id = @update_attrs.medication_request_id
     insert(:medication_request, id: medication_request_id)
-    conn = put(conn, medication_dispense_path(conn, :update, id), medication_dispense: @update_attrs)
-    response_data = json_response(conn, 200)["data"]
+
+    resp =
+      conn |> put(medication_dispense_path(conn, :update, id), medication_dispense: @update_attrs) |> json_response(200)
 
     division_id = @update_attrs.division_id
     legal_entity_id = @update_attrs.legal_entity_id
@@ -272,6 +277,6 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
              "status" => ^status,
              "inserted_by" => ^inserted_by,
              "updated_by" => ^updated_by
-           } = response_data
+           } = resp["data"]
   end
 end

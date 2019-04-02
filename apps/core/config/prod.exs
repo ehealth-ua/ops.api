@@ -27,11 +27,8 @@ config :core, Core.BlockRepo,
   pool_size: {:system, :integer, "BLOCK_DB_POOL_SIZE", 10},
   timeout: 15_000
 
-config :core, Core.EventManagerRepo,
-  database: {:system, :string, "EVENT_MANAGER_DB_NAME"},
-  username: {:system, :string, "EVENT_MANAGER_DB_USER"},
-  password: {:system, :string, "EVENT_MANAGER_DB_PASSWORD"},
-  hostname: {:system, :string, "EVENT_MANAGER_DB_HOST"},
-  port: {:system, :integer, "EVENT_MANAGER_DB_PORT"},
-  pool_size: {:system, :integer, "EVENT_MANAGER_DB_POOL_SIZE", 10},
-  timeout: 15_000
+config :kaffe,
+  producer: [
+    endpoints: {:system, :string, "KAFKA_BROKERS"},
+    topics: ["event_manager_topic"]
+  ]

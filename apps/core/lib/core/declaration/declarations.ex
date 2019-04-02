@@ -115,7 +115,7 @@ defmodule Core.Declarations do
            declaration
            |> declaration_changeset(attrs)
            |> Repo.update_and_log(updated_by),
-         _ <- EventManager.insert_change_status(declaration, old_status, declaration.status, declaration.updated_by) do
+         _ <- EventManager.publish_change_status(declaration, old_status, declaration.status, declaration.updated_by) do
       {:ok, declaration}
     end
   end
@@ -223,7 +223,7 @@ defmodule Core.Declarations do
          updated_by <- Map.fetch!(attrs, "updated_by"),
          %Ecto.Changeset{valid?: true} = changeset <- terminate_changeset(declaration, attrs),
          {:ok, declaration} <- Repo.update_and_log(changeset, updated_by),
-         {:ok, _} <- EventManager.insert_change_status(declaration, declaration.status, declaration.updated_by) do
+         {:ok, _} <- EventManager.publish_change_status(declaration, declaration.status, declaration.updated_by) do
       {:ok, declaration}
     end
   end
@@ -266,11 +266,14 @@ defmodule Core.Declarations do
     {:ok, declarations, count}
   end
 
-  def chunk_terminate_declarations(attrs, limit) do
-    case terminate_declarations(attrs, limit) do
-      {:ok, _, 0} -> :ok
-      {:ok, _, _} -> chunk_terminate_declarations(attrs, limit)
-    end
+  def chunk_terminate_declarations(attrs, limit), do: chunk_terminate_declarations({:ok, [], 1}, attrs, limit)
+
+  def chunk_terminate_declarations({:ok, _, 0}, _attrs, _limit), do: :ok
+
+  def chunk_terminate_declarations({:ok, _, _}, attrs, limit) do
+    attrs
+    |> terminate_declarations(limit)
+    |> chunk_terminate_declarations(attrs, limit)
   end
 
   def get_person_ids([]), do: []
@@ -314,7 +317,7 @@ defmodule Core.Declarations do
   end
 
   def log_status_updates(declarations, status, user_id) do
-    EventManager.insert_change_statuses(declarations, status, user_id)
+    EventManager.publish_change_statuses(declarations, status, user_id)
 
     {_, changelog} =
       declarations

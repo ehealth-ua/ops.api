@@ -32,16 +32,12 @@ config :core, Core.BlockRepo,
   pool: Ecto.Adapters.SQL.Sandbox,
   ownership_timeout: 120_000_000
 
-config :core, Core.EventManagerRepo,
-  username: "postgres",
-  password: "postgres",
-  database: "event_manager_test",
-  hostname: "localhost",
-  pool: Ecto.Adapters.SQL.Sandbox,
-  ownership_timeout: 120_000_000
-
 # Print only warnings and errors during test
 config :logger, level: :warn
 
 # Run acceptance test in concurrent mode
-config :core, sql_sandbox: true
+config :core,
+  sql_sandbox: true,
+  kafka: [
+    producer: KafkaMock
+  ]

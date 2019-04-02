@@ -2,6 +2,7 @@ defmodule Core.DeclarationTest do
   @moduledoc false
 
   use Core.DataCase
+  import Mox
 
   alias Core.Declarations
   alias Core.Declarations.Declaration
@@ -43,6 +44,8 @@ defmodule Core.DeclarationTest do
   @invalid_attrs %{
     "division_id" => "invalid"
   }
+
+  setup :verify_on_exit!
 
   setup do
     {:ok, initial_block} = insert_initial_block()
@@ -120,6 +123,7 @@ defmodule Core.DeclarationTest do
 
   describe "create_declaration_with_termination_logic/1" do
     test "with valid data creates declaration and terminates other person declarations" do
+      expect(KafkaMock, :publish_to_event_manager, fn _ -> :ok end)
       %{id: id1, person_id: person_id} = fixture(:declaration)
 
       params =
@@ -150,6 +154,7 @@ defmodule Core.DeclarationTest do
 
   describe "update_declaration/2" do
     test "updates the declaration when data is valid" do
+      expect(KafkaMock, :publish_to_event_manager, fn _ -> :ok end)
       declaration = fixture(:declaration)
       declaration_number = declaration.declaration_number
 
@@ -179,6 +184,7 @@ defmodule Core.DeclarationTest do
     end
 
     test "successfully transitions declaration to a new status" do
+      expect(KafkaMock, :publish_to_event_manager, fn _ -> :ok end)
       declaration = fixture(:declaration, Map.put(@create_attrs, "status", "pending_verification"))
       updates = %{"status" => "active", "updated_by" => Ecto.UUID.generate()}
       {:ok, _update_result} = Declarations.update_declaration(declaration, updates)
@@ -206,6 +212,7 @@ defmodule Core.DeclarationTest do
 
   describe "terminate_declarations/1" do
     test "declaration termination is audited" do
+      expect(KafkaMock, :publish_to_event_manager, 3, fn _ -> :ok end)
       user_id = "ab4b2245-55c9-46eb-9ac6-c751020a46e3"
       employee_id = "84e30a11-94bd-49fe-8b1f-f5511c5916d6"
 
@@ -238,6 +245,7 @@ defmodule Core.DeclarationTest do
     end
 
     test "terminates person declarations" do
+      expect(KafkaMock, :publish_to_event_manager, 2, fn _ -> :ok end)
       user_id = Confex.fetch_env!(:core, :system_user)
       person_id = "84e30a11-94bd-49fe-8b1f-f5511c5916d6"
 
@@ -281,6 +289,7 @@ defmodule Core.DeclarationTest do
     end
 
     test "terminates employee declarations" do
+      expect(KafkaMock, :publish_to_event_manager, 2, fn _ -> :ok end)
       user_id = Confex.fetch_env!(:core, :system_user)
       employee_id = "84e30a11-94bd-49fe-8b1f-f5511c5916d6"
 
