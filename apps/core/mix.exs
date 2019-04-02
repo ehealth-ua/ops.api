@@ -33,6 +33,7 @@ defmodule Core.MixProject do
   defp deps do
     [
       {:httpoison, "~> 1.4"},
+      {:kaffe, "~> 1.11"},
       {:kube_rpc, "~> 0.1.0"},
       {:confex, "~> 3.4"},
       {:mox, "~> 0.4.0", only: [:test]},
