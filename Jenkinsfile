@@ -4,7 +4,7 @@ def author() {
 pipeline {
   agent {
     node { 
-      label 'ehealth-build-big' 
+      label 'ehealth-build' 
       }
   }
   environment {
