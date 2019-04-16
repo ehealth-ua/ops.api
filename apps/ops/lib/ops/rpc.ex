@@ -98,12 +98,12 @@ defmodule OPS.Rpc do
 
   Available parameters (all of them are required):
 
-  | Parameter           | Type                         | Example                                | Description                     |
-  | :-----------------: | :--------------------------: | :------------------------------------: | :-----------------------------: |
-  | person_id           | `UUID`                       | `72b38c55-4fc9-4ab3-b656-1091af4c557c` |                                 |
-  | medication_id       | `UUID`                       | `64841249-7e59-4dfd-93ae-9a48b0f70595` |                                 |
-  | medical_program_id  | `UUID`                       | `c4b3bf60-8352-4454-a762-fc67847e3797` |                                 |
-  | status              | `binary` or list of `binary` | `ACTIVE` or [`ACTIVE`, `COMPLETED`]    |                                 |
+  | Parameter           | Type                                                                   | Example                                | Description                     |
+  | :-----------------: | :--------------------------------------------------------------------: | :------------------------------------: | :-----------------------------: |
+  | person_id           | `UUID`                                                                 | `72b38c55-4fc9-4ab3-b656-1091af4c557c` |                                 |
+  | medication_id       | `binary` (lists are represented as binary with comma-separated values) | `64841249-7e59-4dfd-93ae-9a48b0f70595` or `7ac0d860-0430-4df5-9d56-0c267b64dfac,486bf854-9bae-496b-be13-1eeec5d57fed` |                                 |
+  | medical_program_id  | `UUID`                                                                 | `c4b3bf60-8352-4454-a762-fc67847e3797` |                                 |
+  | status              | `binary` (lists are represented as binary with comma-separated values) | `ACTIVE` or `ACTIVE,COMPLETED`         |                                 |
 
   Returns
     `{:ok, %{"started_at" => Date.t(), "ended_at" => Date.t()}` when medication request is found.
@@ -130,14 +130,16 @@ defmodule OPS.Rpc do
 
   defp search_last_medication_request_dates(%Ecto.Changeset{valid?: true, changes: changes}) do
     statuses = changes |> Map.get(:status, "") |> String.split(",")
-    params = changes |> Map.delete(:status) |> Map.to_list()
+    medication_ids = changes |> Map.get(:medication_id, "") |> String.split(",")
+    params = changes |> Map.drop(~w(status medication_id)a) |> Map.to_list()
 
     result =
       MedicationRequest
       |> select([mr], %{"started_at" => mr.started_at, "ended_at" => mr.ended_at})
       |> where([mr], ^params)
-      |> order_by([mr], desc: :ended_at)
+      |> add_query_medication_ids(medication_ids)
       |> add_query_statuses(statuses)
+      |> order_by([mr], desc: :ended_at)
       |> limit([mr], 1)
       |> @read_repo.all()
 
@@ -148,8 +150,10 @@ defmodule OPS.Rpc do
     {:error, ValidationError.render("422.query.json", changeset)}
   end
 
+  defp add_query_medication_ids(query, [""]), do: query
+  defp add_query_medication_ids(query, medication_ids), do: where(query, [mr], mr.medication_id in ^medication_ids)
+
   defp add_query_statuses(query, [""]), do: query
-  defp add_query_statuses(query, [status]), do: where(query, [mr], mr.status == ^status)
   defp add_query_statuses(query, statuses), do: where(query, [mr], mr.status in ^statuses)
 
   @doc """

@@ -41,9 +41,6 @@ defmodule Core.Search do
       def get_search_query(entity, _changes), do: from(e in entity, order_by: [desc: :inserted_at])
 
       defp add_query_statuses(query, [""]), do: query
-
-      defp add_query_statuses(query, [status]), do: where(query, [e], e.status == ^status)
-
       defp add_query_statuses(query, statuses), do: where(query, [e], e.status in ^statuses)
 
       defp add_query_start_year(query, nil), do: query

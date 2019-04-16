@@ -25,7 +25,9 @@ defmodule OPS.RpcTest do
 
     test "returns medication request dates with max ended_at when medication requests are found (using search params)" do
       person_id = UUID.generate()
-      medication_id = UUID.generate()
+      medication_id_1 = UUID.generate()
+      medication_id_2 = UUID.generate()
+      medication_id = Enum.join([medication_id_1, medication_id_2], ",")
       medical_program_id = UUID.generate()
 
       search_params = %{
@@ -42,7 +44,7 @@ defmodule OPS.RpcTest do
       insert(:medication_request,
         ended_at: Date.add(Date.utc_today(), 1),
         person_id: person_id,
-        medication_id: medication_id,
+        medication_id: medication_id_1,
         medical_program_id: medical_program_id,
         status: MedicationRequest.status(:completed)
       )
@@ -50,7 +52,7 @@ defmodule OPS.RpcTest do
       insert(:medication_request,
         ended_at: max_ended_at,
         person_id: person_id,
-        medication_id: medication_id,
+        medication_id: medication_id_2,
         medical_program_id: medical_program_id,
         status: MedicationRequest.status(:active)
       )
@@ -58,7 +60,7 @@ defmodule OPS.RpcTest do
       insert(:medication_request,
         ended_at: Date.add(Date.utc_today(), 2),
         person_id: person_id,
-        medication_id: medication_id,
+        medication_id: medication_id_1,
         medical_program_id: medical_program_id,
         status: MedicationRequest.status(:completed)
       )
@@ -68,7 +70,7 @@ defmodule OPS.RpcTest do
       insert(:medication_request,
         ended_at: Date.add(Date.utc_today(), 4),
         person_id: person_id,
-        medication_id: medication_id,
+        medication_id: medication_id_2,
         medical_program_id: medical_program_id,
         status: MedicationRequest.status(:rejected)
       )
@@ -76,7 +78,7 @@ defmodule OPS.RpcTest do
       insert(:medication_request,
         ended_at: Date.add(Date.utc_today(), 5),
         person_id: UUID.generate(),
-        medication_id: medication_id,
+        medication_id: UUID.generate(),
         medical_program_id: medical_program_id,
         status: MedicationRequest.status(:active)
       )
