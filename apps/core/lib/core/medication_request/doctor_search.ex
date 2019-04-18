@@ -3,13 +3,12 @@ defmodule Core.MedicationRequest.DoctorSearch do
 
   use Ecto.Schema
   alias Ecto.UUID
-  alias Ecto.UUIDsList
 
   @primary_key false
   schema "medication_request_doctor_search" do
     field(:id, UUID)
+    field(:employee_id, :string)
     field(:legal_entity_id, UUID)
-    field(:employee_id, UUIDsList)
     field(:person_id, UUID)
     field(:status, :string)
     field(:request_number, :string)

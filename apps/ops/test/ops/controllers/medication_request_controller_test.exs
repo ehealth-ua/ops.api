@@ -149,7 +149,7 @@ defmodule OPS.Web.MedicationRequestControllerTest do
 
       conn =
         post(conn, medication_request_path(conn, :doctor_list), %{
-          "employee_id" => "#{medication_request.employee_id},#{UUID.generate()}",
+          "employee_id" => medication_request.employee_id,
           "person_id" => medication_request.person_id,
           "id" => medication_request.id,
           "created_from" => to_string(medication_request.created_at),

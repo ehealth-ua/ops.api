@@ -2,7 +2,6 @@ defmodule Core.MedicationRequests do
   @moduledoc false
 
   use Core.Search
-  alias Core.Declarations.Declaration
   alias Core.EventManager
   alias Core.MedicationDispenses.MedicationDispense
   alias Core.MedicationRequest.DoctorSearch
@@ -82,22 +81,14 @@ defmodule Core.MedicationRequests do
     where(query, [mr], fragment("?::date = ?", mr.created_at, ^value))
   end
 
-  defp doctor_search(%Ecto.Changeset{valid?: true, changes: changes} = changeset) do
-    employee_ids =
-      changeset
-      |> get_change(:employee_id, "")
-      |> String.split(",")
-      |> Enum.filter(&(&1 != ""))
-
+  defp doctor_search(%Ecto.Changeset{valid?: true, changes: changes}) do
     filters =
       changes
-      |> Map.drop(~w(employee_id created_from created_to)a)
+      |> Map.drop(~w(created_from created_to)a)
       |> Map.to_list()
 
     MedicationRequest
-    |> join(:left, [mr], d in Declaration, on: d.person_id == mr.person_id and d.status == ^Declaration.status(:active))
     |> where([mr], ^filters)
-    |> filter_by_employees(employee_ids)
     |> add_created_at_doctor(Map.get(changes, :created_from), Map.get(changes, :created_to))
   end
 
@@ -148,12 +139,6 @@ defmodule Core.MedicationRequests do
       end
 
     {:ok, @read_repo.all(query)}
-  end
-
-  defp filter_by_employees(query, []), do: query
-
-  defp filter_by_employees(query, employee_ids) do
-    where(query, [mr, d], mr.employee_id in ^employee_ids or d.employee_id in ^employee_ids)
   end
 
   def changeset(%Search{} = search, attrs) do

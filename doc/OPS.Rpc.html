@@ -8,7 +8,7 @@
     <meta name="project" content=" v2.6.0">
     <title>OPS.Rpc —  v2.6.0</title>
     <link rel="stylesheet" href="dist/html-75c73d59b7f14fe4fa4e.css" />
-    <script src="dist/sidebar_items-2bde410e2b.js"></script>
+    <script src="dist/sidebar_items-08af76b377.js"></script>
       <script src="docs_config.js"></script>
     <script async src="dist/html-75c73d59b7f14fe4fa4e.js"></script>
     
@@ -108,6 +108,11 @@ OPS.Rpc              </h1>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="#t:page_medication_requests/0">page_medication_requests()</a>
+  </div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="#t:validation_changeset_error/0">validation_changeset_error()</a>
   </div>
 </div>
@@ -139,6 +144,12 @@ OPS.Rpc              </h1>
     <a href="#medication_request_by_id/1">medication_request_by_id(medication_request_id)</a>
   </div>
     <div class="summary-synopsis"><p>Get medication request by id</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#medication_requests/1">medication_requests(params)</a>
+  </div>
+    <div class="summary-synopsis"><p>Search medication requests</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
@@ -280,6 +291,27 @@ Types          </h1>
   <section class="docstring">
   </section>
 </section>
+<section class="detail" id="t:page_medication_requests/0">
+    <div class="detail-header">
+    <a href="#t:page_medication_requests/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">page_medication_requests()</span>
+        
+      <div class="specs">
+          <pre>page_medication_requests() :: %Scrivener.Page{
+  entries: [<a href="#t:medication_request/0">medication_request</a>()],
+  page_number: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">number</a>(),
+  page_size: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">number</a>(),
+  total_entries: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">number</a>(),
+  total_pages: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">number</a>()
+}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+  </section>
+</section>
 <section class="detail" id="t:validation_changeset_error/0">
     <div class="detail-header">
     <a href="#t:validation_changeset_error/0" class="detail-link" title="Link to this type">
@@ -328,8 +360,8 @@ Functions          </h1>
   Examples
 </h2>
 
-<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">OPS.Rpc</span><span class="o">.</span><span class="n">declarations_by_employees</span><span class="p" data-group-id="6997965272-1">(</span><span class="p" data-group-id="6997965272-2">[</span><span class="s">&quot;4671ab27-57f8-4c55-a618-a042a68c7add&quot;</span><span class="p" data-group-id="6997965272-2">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="6997965272-3">[</span><span class="ss">:legal_entity_id</span><span class="p" data-group-id="6997965272-3">]</span><span class="p" data-group-id="6997965272-1">)</span><span class="w">
-</span><span class="p" data-group-id="6997965272-4">[</span><span class="p" data-group-id="6997965272-5">%{</span><span class="ss">legal_entity_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;43ec9534-2250-42bb-94ec-e0a7ad33afd3&quot;</span><span class="p" data-group-id="6997965272-5">}</span><span class="p" data-group-id="6997965272-4">]</span></code></pre>
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">OPS.Rpc</span><span class="o">.</span><span class="n">declarations_by_employees</span><span class="p" data-group-id="2568831808-1">(</span><span class="p" data-group-id="2568831808-2">[</span><span class="s">&quot;4671ab27-57f8-4c55-a618-a042a68c7add&quot;</span><span class="p" data-group-id="2568831808-2">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2568831808-3">[</span><span class="ss">:legal_entity_id</span><span class="p" data-group-id="2568831808-3">]</span><span class="p" data-group-id="2568831808-1">)</span><span class="w">
+</span><span class="p" data-group-id="2568831808-4">[</span><span class="p" data-group-id="2568831808-5">%{</span><span class="ss">legal_entity_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;43ec9534-2250-42bb-94ec-e0a7ad33afd3&quot;</span><span class="p" data-group-id="2568831808-5">}</span><span class="p" data-group-id="2568831808-4">]</span></code></pre>
   </section>
 </section>
 <section class="detail" id="get_declaration/1">
@@ -351,8 +383,8 @@ Functions          </h1>
   Examples
 </h2>
 
-<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">OPS.Rpc</span><span class="o">.</span><span class="n">get_declaration</span><span class="p" data-group-id="8586182415-1">(</span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0042500e-6ac0-45fb-b82a-25f7857c49a8&quot;</span><span class="p" data-group-id="8586182415-1">)</span><span class="w">
-</span><span class="p" data-group-id="8586182415-2">%{</span><span class="w">
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">OPS.Rpc</span><span class="o">.</span><span class="n">get_declaration</span><span class="p" data-group-id="5939614023-1">(</span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0042500e-6ac0-45fb-b82a-25f7857c49a8&quot;</span><span class="p" data-group-id="5939614023-1">)</span><span class="w">
+</span><span class="p" data-group-id="5939614023-2">%{</span><span class="w">
   </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cdb4a85b-f12c-46c6-b840-590467e26acf&quot;</span><span class="p">,</span><span class="w">
   </span><span class="ss">created_by</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;738c8cc1-ae9b-42a5-8660-4b7612b2b35c&quot;</span><span class="p">,</span><span class="w">
   </span><span class="ss">declaration_number</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0&quot;</span><span class="p">,</span><span class="w">
@@ -360,19 +392,19 @@ Functions          </h1>
   </span><span class="ss">division_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;bb15bdde-ffd2-4683-8ca9-03c86b1e6846&quot;</span><span class="p">,</span><span class="w">
   </span><span class="ss">employee_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;f8cc0822-f214-4eea-a7d4-d03142901eb1&quot;</span><span class="p">,</span><span class="w">
   </span><span class="ss">end_date</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-01-21]</span><span class="p">,</span><span class="w">
-  </span><span class="ss">inserted_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8586182415-3">#</span><span class="nc" data-group-id="8586182415-3">DateTime</span><span class="p" data-group-id="8586182415-3">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455175</span><span class="nc">Z</span><span class="p" data-group-id="8586182415-3">&gt;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">inserted_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="5939614023-3">#</span><span class="nc" data-group-id="5939614023-3">DateTime</span><span class="p" data-group-id="5939614023-3">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455175</span><span class="nc">Z</span><span class="p" data-group-id="5939614023-3">&gt;</span><span class="p">,</span><span class="w">
   </span><span class="ss">is_active</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w">
   </span><span class="ss">legal_entity_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;980d4d01-3427-4f7f-bbdd-bd7c1b25b1e2&quot;</span><span class="p">,</span><span class="w">
   </span><span class="ss">person_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;071a2783-f752-42d9-bcfc-44ddc7eb923d&quot;</span><span class="p">,</span><span class="w">
   </span><span class="ss">reason</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
   </span><span class="ss">reason_description</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
   </span><span class="ss">scope</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w">
-  </span><span class="ss">signed_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8586182415-4">#</span><span class="nc" data-group-id="8586182415-4">DateTime</span><span class="p" data-group-id="8586182415-4">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">20</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.442837</span><span class="nc">Z</span><span class="p" data-group-id="8586182415-4">&gt;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">signed_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="5939614023-4">#</span><span class="nc" data-group-id="5939614023-4">DateTime</span><span class="p" data-group-id="5939614023-4">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">20</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.442837</span><span class="nc">Z</span><span class="p" data-group-id="5939614023-4">&gt;</span><span class="p">,</span><span class="w">
   </span><span class="ss">start_date</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-01-20]</span><span class="p">,</span><span class="w">
   </span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="p">,</span><span class="w">
-  </span><span class="ss">updated_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8586182415-5">#</span><span class="nc" data-group-id="8586182415-5">DateTime</span><span class="p" data-group-id="8586182415-5">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455185</span><span class="nc">Z</span><span class="p" data-group-id="8586182415-5">&gt;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">updated_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="5939614023-5">#</span><span class="nc" data-group-id="5939614023-5">DateTime</span><span class="p" data-group-id="5939614023-5">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455185</span><span class="nc">Z</span><span class="p" data-group-id="5939614023-5">&gt;</span><span class="p">,</span><span class="w">
   </span><span class="ss">updated_by</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;8dac0fc6-04fd-4e62-9711-a85c0a42992d&quot;</span><span class="w">
-</span><span class="p" data-group-id="8586182415-2">}</span></code></pre>
+</span><span class="p" data-group-id="5939614023-2">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="last_medication_request_dates/1">
@@ -425,14 +457,14 @@ Functions          </h1>
   Examples
 </h2>
 
-<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">OPS.Rpc</span><span class="o">.</span><span class="n">last_medication_request_dates</span><span class="p" data-group-id="1973316540-1">(</span><span class="p" data-group-id="1973316540-2">%{</span><span class="w">
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">OPS.Rpc</span><span class="o">.</span><span class="n">last_medication_request_dates</span><span class="p" data-group-id="5141552494-1">(</span><span class="p" data-group-id="5141552494-2">%{</span><span class="w">
    </span><span class="s">&quot;person_id&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;4671ab27-57f8-4c55-a618-a042a68c7add&quot;</span><span class="p">,</span><span class="w">
    </span><span class="s">&quot;medication_id&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;43ec9534-2250-42bb-94ec-e0a7ad33afd3&quot;</span><span class="p">,</span><span class="w">
    </span><span class="s">&quot;medical_program_id&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
    </span><span class="s">&quot;status&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;ACTIVE&quot;</span><span class="w">
-   </span><span class="p" data-group-id="1973316540-2">}</span><span class="p" data-group-id="1973316540-1">)</span><span class="w">
+   </span><span class="p" data-group-id="5141552494-2">}</span><span class="p" data-group-id="5141552494-1">)</span><span class="w">
 
-</span><span class="p" data-group-id="1973316540-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1973316540-4">%{</span><span class="s">&quot;ended_at&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="ld">~D[2018-12-17]</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;started_at&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="ld">~D[2018-12-17]</span><span class="p" data-group-id="1973316540-4">}</span><span class="p" data-group-id="1973316540-3">}</span></code></pre>
+</span><span class="p" data-group-id="5141552494-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5141552494-4">%{</span><span class="s">&quot;ended_at&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="ld">~D[2018-12-17]</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;started_at&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="ld">~D[2018-12-17]</span><span class="p" data-group-id="5141552494-4">}</span><span class="p" data-group-id="5141552494-3">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="medication_request_by_id/1">
@@ -454,134 +486,134 @@ Functions          </h1>
   Examples
 </h2>
 
-<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">OPS.Rpc</span><span class="o">.</span><span class="n">medication_request_by_id</span><span class="p" data-group-id="1577174612-1">(</span><span class="s">&quot;0469f379-ff2e-4a69-81e8-2cbfadf88d6b&quot;</span><span class="p" data-group-id="1577174612-1">)</span><span class="w">
-</span><span class="p" data-group-id="1577174612-2">%{</span><span class="w">
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">OPS.Rpc</span><span class="o">.</span><span class="n">medication_request_by_id</span><span class="p" data-group-id="8595819125-1">(</span><span class="s">&quot;0469f379-ff2e-4a69-81e8-2cbfadf88d6b&quot;</span><span class="p" data-group-id="8595819125-1">)</span><span class="w">
+</span><span class="p" data-group-id="8595819125-2">%{</span><span class="w">
   </span><span class="ss">category</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;community&quot;</span><span class="p">,</span><span class="w">
-  </span><span class="ss">context</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1577174612-3">%{</span><span class="w">
-    </span><span class="s">&quot;identifier&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-4">%{</span><span class="w">
-      </span><span class="s">&quot;type&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-5">%{</span><span class="w">
-        </span><span class="s">&quot;coding&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-6">[</span><span class="p" data-group-id="1577174612-7">%{</span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;encounter&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/resources&quot;</span><span class="p" data-group-id="1577174612-7">}</span><span class="p" data-group-id="1577174612-6">]</span><span class="w">
-      </span><span class="p" data-group-id="1577174612-5">}</span><span class="p">,</span><span class="w">
+  </span><span class="ss">context</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8595819125-3">%{</span><span class="w">
+    </span><span class="s">&quot;identifier&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-4">%{</span><span class="w">
+      </span><span class="s">&quot;type&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-5">%{</span><span class="w">
+        </span><span class="s">&quot;coding&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-6">[</span><span class="p" data-group-id="8595819125-7">%{</span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;encounter&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/resources&quot;</span><span class="p" data-group-id="8595819125-7">}</span><span class="p" data-group-id="8595819125-6">]</span><span class="w">
+      </span><span class="p" data-group-id="8595819125-5">}</span><span class="p">,</span><span class="w">
       </span><span class="s">&quot;value&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;e3e2a3cc-388a-4555-9e16-a51ccb109724&quot;</span><span class="w">
-    </span><span class="p" data-group-id="1577174612-4">}</span><span class="w">
-  </span><span class="p" data-group-id="1577174612-3">}</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="8595819125-4">}</span><span class="w">
+  </span><span class="p" data-group-id="8595819125-3">}</span><span class="p">,</span><span class="w">
   </span><span class="ss">created_at</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-02-05]</span><span class="p">,</span><span class="w">
   </span><span class="ss">dispense_valid_from</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-02-05]</span><span class="p">,</span><span class="w">
   </span><span class="ss">dispense_valid_to</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-02-08]</span><span class="p">,</span><span class="w">
   </span><span class="ss">division_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;406e4831-db4d-45a8-a26f-a246172705f5&quot;</span><span class="p">,</span><span class="w">
-  </span><span class="ss">dosage_instruction</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1577174612-8">[</span><span class="w">
-    </span><span class="p" data-group-id="1577174612-9">%{</span><span class="w">
-      </span><span class="s">&quot;additional_instruction&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-10">[</span><span class="w">
-        </span><span class="p" data-group-id="1577174612-11">%{</span><span class="w">
-          </span><span class="s">&quot;coding&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-12">[</span><span class="w">
-            </span><span class="p" data-group-id="1577174612-13">%{</span><span class="w">
+  </span><span class="ss">dosage_instruction</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8595819125-8">[</span><span class="w">
+    </span><span class="p" data-group-id="8595819125-9">%{</span><span class="w">
+      </span><span class="s">&quot;additional_instruction&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-10">[</span><span class="w">
+        </span><span class="p" data-group-id="8595819125-11">%{</span><span class="w">
+          </span><span class="s">&quot;coding&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-12">[</span><span class="w">
+            </span><span class="p" data-group-id="8595819125-13">%{</span><span class="w">
               </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;311504000&quot;</span><span class="p">,</span><span class="w">
               </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/SNOMED/additional_dosage_instructions&quot;</span><span class="w">
-            </span><span class="p" data-group-id="1577174612-13">}</span><span class="w">
-          </span><span class="p" data-group-id="1577174612-12">]</span><span class="w">
-        </span><span class="p" data-group-id="1577174612-11">}</span><span class="w">
-      </span><span class="p" data-group-id="1577174612-10">]</span><span class="p">,</span><span class="w">
+            </span><span class="p" data-group-id="8595819125-13">}</span><span class="w">
+          </span><span class="p" data-group-id="8595819125-12">]</span><span class="w">
+        </span><span class="p" data-group-id="8595819125-11">}</span><span class="w">
+      </span><span class="p" data-group-id="8595819125-10">]</span><span class="p">,</span><span class="w">
       </span><span class="s">&quot;as_needed_boolean&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w">
-      </span><span class="s">&quot;dose_and_rate&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-14">%{</span><span class="w">
-        </span><span class="s">&quot;dose_range&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-15">%{</span><span class="w">
-          </span><span class="s">&quot;high&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-16">%{</span><span class="w">
+      </span><span class="s">&quot;dose_and_rate&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-14">%{</span><span class="w">
+        </span><span class="s">&quot;dose_range&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-15">%{</span><span class="w">
+          </span><span class="s">&quot;high&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-16">%{</span><span class="w">
             </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
             </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/ucum/units&quot;</span><span class="p">,</span><span class="w">
             </span><span class="s">&quot;unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
             </span><span class="s">&quot;value&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">13</span><span class="w">
-          </span><span class="p" data-group-id="1577174612-16">}</span><span class="p">,</span><span class="w">
-          </span><span class="s">&quot;low&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-17">%{</span><span class="w">
+          </span><span class="p" data-group-id="8595819125-16">}</span><span class="p">,</span><span class="w">
+          </span><span class="s">&quot;low&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-17">%{</span><span class="w">
             </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
             </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/ucum/units&quot;</span><span class="p">,</span><span class="w">
             </span><span class="s">&quot;unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
             </span><span class="s">&quot;value&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">13</span><span class="w">
-          </span><span class="p" data-group-id="1577174612-17">}</span><span class="w">
-        </span><span class="p" data-group-id="1577174612-15">}</span><span class="p">,</span><span class="w">
-        </span><span class="s">&quot;rate_ratio&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-18">%{</span><span class="w">
-          </span><span class="s">&quot;denominator&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-19">%{</span><span class="w">
+          </span><span class="p" data-group-id="8595819125-17">}</span><span class="w">
+        </span><span class="p" data-group-id="8595819125-15">}</span><span class="p">,</span><span class="w">
+        </span><span class="s">&quot;rate_ratio&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-18">%{</span><span class="w">
+          </span><span class="s">&quot;denominator&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-19">%{</span><span class="w">
             </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
             </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/ucum/units&quot;</span><span class="p">,</span><span class="w">
             </span><span class="s">&quot;unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
             </span><span class="s">&quot;value&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">13</span><span class="w">
-          </span><span class="p" data-group-id="1577174612-19">}</span><span class="p">,</span><span class="w">
-          </span><span class="s">&quot;numerator&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-20">%{</span><span class="w">
+          </span><span class="p" data-group-id="8595819125-19">}</span><span class="p">,</span><span class="w">
+          </span><span class="s">&quot;numerator&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-20">%{</span><span class="w">
             </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
             </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/ucum/units&quot;</span><span class="p">,</span><span class="w">
             </span><span class="s">&quot;unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
             </span><span class="s">&quot;value&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">13</span><span class="w">
-          </span><span class="p" data-group-id="1577174612-20">}</span><span class="w">
-        </span><span class="p" data-group-id="1577174612-18">}</span><span class="p">,</span><span class="w">
-        </span><span class="s">&quot;type&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-21">%{</span><span class="w">
-          </span><span class="s">&quot;coding&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-22">[</span><span class="w">
-            </span><span class="p" data-group-id="1577174612-23">%{</span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;ordered&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/dose_and_rate&quot;</span><span class="p" data-group-id="1577174612-23">}</span><span class="w">
-          </span><span class="p" data-group-id="1577174612-22">]</span><span class="w">
-        </span><span class="p" data-group-id="1577174612-21">}</span><span class="w">
-      </span><span class="p" data-group-id="1577174612-14">}</span><span class="p">,</span><span class="w">
-      </span><span class="s">&quot;max_dose_per_administration&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-24">%{</span><span class="w">
+          </span><span class="p" data-group-id="8595819125-20">}</span><span class="w">
+        </span><span class="p" data-group-id="8595819125-18">}</span><span class="p">,</span><span class="w">
+        </span><span class="s">&quot;type&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-21">%{</span><span class="w">
+          </span><span class="s">&quot;coding&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-22">[</span><span class="w">
+            </span><span class="p" data-group-id="8595819125-23">%{</span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;ordered&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/dose_and_rate&quot;</span><span class="p" data-group-id="8595819125-23">}</span><span class="w">
+          </span><span class="p" data-group-id="8595819125-22">]</span><span class="w">
+        </span><span class="p" data-group-id="8595819125-21">}</span><span class="w">
+      </span><span class="p" data-group-id="8595819125-14">}</span><span class="p">,</span><span class="w">
+      </span><span class="s">&quot;max_dose_per_administration&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-24">%{</span><span class="w">
         </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
         </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/ucum/units&quot;</span><span class="p">,</span><span class="w">
         </span><span class="s">&quot;unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
         </span><span class="s">&quot;value&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">13</span><span class="w">
-      </span><span class="p" data-group-id="1577174612-24">}</span><span class="p">,</span><span class="w">
-      </span><span class="s">&quot;max_dose_per_lifetime&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-25">%{</span><span class="w">
+      </span><span class="p" data-group-id="8595819125-24">}</span><span class="p">,</span><span class="w">
+      </span><span class="s">&quot;max_dose_per_lifetime&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-25">%{</span><span class="w">
         </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
         </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/ucum/units&quot;</span><span class="p">,</span><span class="w">
         </span><span class="s">&quot;unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
         </span><span class="s">&quot;value&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">13</span><span class="w">
-      </span><span class="p" data-group-id="1577174612-25">}</span><span class="p">,</span><span class="w">
-      </span><span class="s">&quot;max_dose_per_period&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-26">%{</span><span class="w">
-        </span><span class="s">&quot;denominator&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-27">%{</span><span class="w">
+      </span><span class="p" data-group-id="8595819125-25">}</span><span class="p">,</span><span class="w">
+      </span><span class="s">&quot;max_dose_per_period&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-26">%{</span><span class="w">
+        </span><span class="s">&quot;denominator&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-27">%{</span><span class="w">
           </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
           </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/ucum/units&quot;</span><span class="p">,</span><span class="w">
           </span><span class="s">&quot;unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
           </span><span class="s">&quot;value&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">13</span><span class="w">
-        </span><span class="p" data-group-id="1577174612-27">}</span><span class="p">,</span><span class="w">
-        </span><span class="s">&quot;numerator&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-28">%{</span><span class="w">
+        </span><span class="p" data-group-id="8595819125-27">}</span><span class="p">,</span><span class="w">
+        </span><span class="s">&quot;numerator&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-28">%{</span><span class="w">
           </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
           </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/ucum/units&quot;</span><span class="p">,</span><span class="w">
           </span><span class="s">&quot;unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
           </span><span class="s">&quot;value&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">13</span><span class="w">
-        </span><span class="p" data-group-id="1577174612-28">}</span><span class="w">
-      </span><span class="p" data-group-id="1577174612-26">}</span><span class="p">,</span><span class="w">
-      </span><span class="s">&quot;method&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-29">%{</span><span class="w">
-        </span><span class="s">&quot;coding&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-30">[</span><span class="w">
-          </span><span class="p" data-group-id="1577174612-31">%{</span><span class="w">
+        </span><span class="p" data-group-id="8595819125-28">}</span><span class="w">
+      </span><span class="p" data-group-id="8595819125-26">}</span><span class="p">,</span><span class="w">
+      </span><span class="s">&quot;method&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-29">%{</span><span class="w">
+        </span><span class="s">&quot;coding&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-30">[</span><span class="w">
+          </span><span class="p" data-group-id="8595819125-31">%{</span><span class="w">
             </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;419747000&quot;</span><span class="p">,</span><span class="w">
             </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/SNOMED/administration_methods&quot;</span><span class="w">
-          </span><span class="p" data-group-id="1577174612-31">}</span><span class="w">
-        </span><span class="p" data-group-id="1577174612-30">]</span><span class="w">
-      </span><span class="p" data-group-id="1577174612-29">}</span><span class="p">,</span><span class="w">
+          </span><span class="p" data-group-id="8595819125-31">}</span><span class="w">
+        </span><span class="p" data-group-id="8595819125-30">]</span><span class="w">
+      </span><span class="p" data-group-id="8595819125-29">}</span><span class="p">,</span><span class="w">
       </span><span class="s">&quot;patient_instruction&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;0.25mg PO every 6-12 hours as needed for menses from Jan 15-20, 2015.  Do not exceed more than 4mg per day&quot;</span><span class="p">,</span><span class="w">
-      </span><span class="s">&quot;route&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-32">%{</span><span class="w">
-        </span><span class="s">&quot;coding&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-33">[</span><span class="w">
-          </span><span class="p" data-group-id="1577174612-34">%{</span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;46713006&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/SNOMED/route_codes&quot;</span><span class="p" data-group-id="1577174612-34">}</span><span class="w">
-        </span><span class="p" data-group-id="1577174612-33">]</span><span class="w">
-      </span><span class="p" data-group-id="1577174612-32">}</span><span class="p">,</span><span class="w">
+      </span><span class="s">&quot;route&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-32">%{</span><span class="w">
+        </span><span class="s">&quot;coding&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-33">[</span><span class="w">
+          </span><span class="p" data-group-id="8595819125-34">%{</span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;46713006&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/SNOMED/route_codes&quot;</span><span class="p" data-group-id="8595819125-34">}</span><span class="w">
+        </span><span class="p" data-group-id="8595819125-33">]</span><span class="w">
+      </span><span class="p" data-group-id="8595819125-32">}</span><span class="p">,</span><span class="w">
       </span><span class="s">&quot;sequence&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-      </span><span class="s">&quot;site&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-35">%{</span><span class="w">
-        </span><span class="s">&quot;coding&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-36">[</span><span class="w">
-          </span><span class="p" data-group-id="1577174612-37">%{</span><span class="w">
+      </span><span class="s">&quot;site&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-35">%{</span><span class="w">
+        </span><span class="s">&quot;coding&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-36">[</span><span class="w">
+          </span><span class="p" data-group-id="8595819125-37">%{</span><span class="w">
             </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;344001&quot;</span><span class="p">,</span><span class="w">
             </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/SNOMED/anatomical_structure_administration_site_codes&quot;</span><span class="w">
-          </span><span class="p" data-group-id="1577174612-37">}</span><span class="w">
-        </span><span class="p" data-group-id="1577174612-36">]</span><span class="w">
-      </span><span class="p" data-group-id="1577174612-35">}</span><span class="p">,</span><span class="w">
+          </span><span class="p" data-group-id="8595819125-37">}</span><span class="w">
+        </span><span class="p" data-group-id="8595819125-36">]</span><span class="w">
+      </span><span class="p" data-group-id="8595819125-35">}</span><span class="p">,</span><span class="w">
       </span><span class="s">&quot;text&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;0.25mg PO every 6-12 hours as needed for menses from Jan 15-20, 2015.  Do not exceed more than 4mg per day&quot;</span><span class="p">,</span><span class="w">
-      </span><span class="s">&quot;timing&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-38">%{</span><span class="w">
-        </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-39">%{</span><span class="w">
-          </span><span class="s">&quot;coding&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-40">[</span><span class="p" data-group-id="1577174612-41">%{</span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;AM&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;TIMING_ABBREVIATION&quot;</span><span class="p" data-group-id="1577174612-41">}</span><span class="p" data-group-id="1577174612-40">]</span><span class="w">
-        </span><span class="p" data-group-id="1577174612-39">}</span><span class="p">,</span><span class="w">
-        </span><span class="s">&quot;event&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-42">[</span><span class="s">&quot;2017-04-20T19:14:13Z&quot;</span><span class="p" data-group-id="1577174612-42">]</span><span class="p">,</span><span class="w">
-        </span><span class="s">&quot;repeat&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-43">%{</span><span class="w">
-          </span><span class="s">&quot;bounds_duration&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-44">%{</span><span class="w">
+      </span><span class="s">&quot;timing&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-38">%{</span><span class="w">
+        </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-39">%{</span><span class="w">
+          </span><span class="s">&quot;coding&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-40">[</span><span class="p" data-group-id="8595819125-41">%{</span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;AM&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;TIMING_ABBREVIATION&quot;</span><span class="p" data-group-id="8595819125-41">}</span><span class="p" data-group-id="8595819125-40">]</span><span class="w">
+        </span><span class="p" data-group-id="8595819125-39">}</span><span class="p">,</span><span class="w">
+        </span><span class="s">&quot;event&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-42">[</span><span class="s">&quot;2017-04-20T19:14:13Z&quot;</span><span class="p" data-group-id="8595819125-42">]</span><span class="p">,</span><span class="w">
+        </span><span class="s">&quot;repeat&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-43">%{</span><span class="w">
+          </span><span class="s">&quot;bounds_duration&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-44">%{</span><span class="w">
             </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="p">,</span><span class="w">
             </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/ucum/units&quot;</span><span class="p">,</span><span class="w">
             </span><span class="s">&quot;unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;days&quot;</span><span class="p">,</span><span class="w">
             </span><span class="s">&quot;value&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">10</span><span class="w">
-          </span><span class="p" data-group-id="1577174612-44">}</span><span class="p">,</span><span class="w">
+          </span><span class="p" data-group-id="8595819125-44">}</span><span class="p">,</span><span class="w">
           </span><span class="s">&quot;count&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
           </span><span class="s">&quot;count_max&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
-          </span><span class="s">&quot;day_of_week&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-45">[</span><span class="s">&quot;mon&quot;</span><span class="p" data-group-id="1577174612-45">]</span><span class="p">,</span><span class="w">
+          </span><span class="s">&quot;day_of_week&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-45">[</span><span class="s">&quot;mon&quot;</span><span class="p" data-group-id="8595819125-45">]</span><span class="p">,</span><span class="w">
           </span><span class="s">&quot;duration&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
           </span><span class="s">&quot;duration_max&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w">
           </span><span class="s">&quot;duration_unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="p">,</span><span class="w">
@@ -591,12 +623,12 @@ Functions          </h1>
           </span><span class="s">&quot;period&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
           </span><span class="s">&quot;period_max&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w">
           </span><span class="s">&quot;period_unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="p">,</span><span class="w">
-          </span><span class="s">&quot;time_of_day&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-46">[</span><span class="s">&quot;2017-04-20T19:14:13Z&quot;</span><span class="p" data-group-id="1577174612-46">]</span><span class="p">,</span><span class="w">
-          </span><span class="s">&quot;when&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1577174612-47">[</span><span class="s">&quot;WAKE&quot;</span><span class="p" data-group-id="1577174612-47">]</span><span class="w">
-        </span><span class="p" data-group-id="1577174612-43">}</span><span class="w">
-      </span><span class="p" data-group-id="1577174612-38">}</span><span class="w">
-    </span><span class="p" data-group-id="1577174612-9">}</span><span class="w">
-  </span><span class="p" data-group-id="1577174612-8">]</span><span class="p">,</span><span class="w">
+          </span><span class="s">&quot;time_of_day&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-46">[</span><span class="s">&quot;2017-04-20T19:14:13Z&quot;</span><span class="p" data-group-id="8595819125-46">]</span><span class="p">,</span><span class="w">
+          </span><span class="s">&quot;when&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8595819125-47">[</span><span class="s">&quot;WAKE&quot;</span><span class="p" data-group-id="8595819125-47">]</span><span class="w">
+        </span><span class="p" data-group-id="8595819125-43">}</span><span class="w">
+      </span><span class="p" data-group-id="8595819125-38">}</span><span class="w">
+    </span><span class="p" data-group-id="8595819125-9">}</span><span class="w">
+  </span><span class="p" data-group-id="8595819125-8">]</span><span class="p">,</span><span class="w">
   </span><span class="ss">employee_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;43606f23-8a18-4902-93c4-0856cb2390ae&quot;</span><span class="p">,</span><span class="w">
   </span><span class="ss">ended_at</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-02-08]</span><span class="p">,</span><span class="w">
   </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0469f379-ff2e-4a69-81e8-2cbfadf88d6b&quot;</span><span class="p">,</span><span class="w">
@@ -619,7 +651,224 @@ Functions          </h1>
   </span><span class="ss">updated_at</span><span class="p">:</span><span class="w"> </span><span class="ld">~N[2019-02-05 09:35:00.027131]</span><span class="p">,</span><span class="w">
   </span><span class="ss">updated_by</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4261eacf-8008-4e62-899f-de1e2f7065f0&quot;</span><span class="p">,</span><span class="w">
   </span><span class="ss">verification_code</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;7291&quot;</span><span class="w">
-</span><span class="p" data-group-id="1577174612-2">}</span></code></pre>
+</span><span class="p" data-group-id="8595819125-2">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="medication_requests/1">
+    <div class="detail-header">
+    <a href="#medication_requests/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">medication_requests(params)</span>
+        
+      <div class="specs">
+          <pre>medication_requests(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) :: {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()} | <a href="#t:page_medication_requests/0">page_medication_requests</a>()</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Search medication requests</p>
+<h2 id="medication_requests/1-examples" class="section-heading">
+  <a href="#medication_requests/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">OPS.Rpc</span><span class="o">.</span><span class="n">medication_requests</span><span class="p" data-group-id="1898771100-1">(</span><span class="p" data-group-id="1898771100-2">%{</span><span class="s">&quot;legal_entity_id&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;4d958f02-c2c3-4228-8ea3-ac4a7a7a286a&quot;</span><span class="p" data-group-id="1898771100-2">}</span><span class="p" data-group-id="1898771100-1">)</span><span class="w">
+</span><span class="p" data-group-id="1898771100-3">%</span><span class="nc" data-group-id="1898771100-3">Scrivener.Page</span><span class="p" data-group-id="1898771100-3">{</span><span class="w">
+  </span><span class="ss">entries</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1898771100-4">[</span><span class="w">
+    </span><span class="p" data-group-id="1898771100-5">%{</span><span class="w">
+      </span><span class="ss">category</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;community&quot;</span><span class="p">,</span><span class="w">
+      </span><span class="ss">context</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1898771100-6">%{</span><span class="w">
+        </span><span class="s">&quot;identifier&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-7">%{</span><span class="w">
+          </span><span class="s">&quot;type&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-8">%{</span><span class="w">
+            </span><span class="s">&quot;coding&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-9">[</span><span class="w">
+              </span><span class="p" data-group-id="1898771100-10">%{</span><span class="w">
+                </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;encounter&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/resources&quot;</span><span class="w">
+              </span><span class="p" data-group-id="1898771100-10">}</span><span class="w">
+            </span><span class="p" data-group-id="1898771100-9">]</span><span class="w">
+          </span><span class="p" data-group-id="1898771100-8">}</span><span class="p">,</span><span class="w">
+          </span><span class="s">&quot;value&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;b766941c-6cf0-42e2-888f-595a6658e1b4&quot;</span><span class="w">
+        </span><span class="p" data-group-id="1898771100-7">}</span><span class="w">
+      </span><span class="p" data-group-id="1898771100-6">}</span><span class="p">,</span><span class="w">
+      </span><span class="ss">created_at</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-04-17]</span><span class="p">,</span><span class="w">
+      </span><span class="ss">dispense_valid_from</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-04-17]</span><span class="p">,</span><span class="w">
+      </span><span class="ss">dispense_valid_to</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-04-17]</span><span class="p">,</span><span class="w">
+      </span><span class="ss">division_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dc1fa9a2-46f1-4fcc-ae33-68c21f9c549a&quot;</span><span class="p">,</span><span class="w">
+      </span><span class="ss">dosage_instruction</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1898771100-11">[</span><span class="w">
+        </span><span class="p" data-group-id="1898771100-12">%{</span><span class="w">
+          </span><span class="s">&quot;additional_instruction&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-13">[</span><span class="w">
+            </span><span class="p" data-group-id="1898771100-14">%{</span><span class="w">
+              </span><span class="s">&quot;coding&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-15">[</span><span class="w">
+                </span><span class="p" data-group-id="1898771100-16">%{</span><span class="w">
+                  </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;311504000&quot;</span><span class="p">,</span><span class="w">
+                  </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/SNOMED/additional_dosage_instructions&quot;</span><span class="w">
+                </span><span class="p" data-group-id="1898771100-16">}</span><span class="w">
+              </span><span class="p" data-group-id="1898771100-15">]</span><span class="w">
+            </span><span class="p" data-group-id="1898771100-14">}</span><span class="w">
+          </span><span class="p" data-group-id="1898771100-13">]</span><span class="p">,</span><span class="w">
+          </span><span class="s">&quot;as_needed_boolean&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w">
+          </span><span class="s">&quot;dose_and_rate&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-17">%{</span><span class="w">
+            </span><span class="s">&quot;dose_range&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-18">%{</span><span class="w">
+              </span><span class="s">&quot;high&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-19">%{</span><span class="w">
+                </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;comparator&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;&gt;&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/units&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;value&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">13</span><span class="w">
+              </span><span class="p" data-group-id="1898771100-19">}</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;low&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-20">%{</span><span class="w">
+                </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;comparator&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;&gt;&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/units&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;value&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">13</span><span class="w">
+              </span><span class="p" data-group-id="1898771100-20">}</span><span class="w">
+            </span><span class="p" data-group-id="1898771100-18">}</span><span class="p">,</span><span class="w">
+            </span><span class="s">&quot;rate_ratio&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-21">%{</span><span class="w">
+              </span><span class="s">&quot;denominator&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-22">%{</span><span class="w">
+                </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;comparator&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;&gt;&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/units&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;value&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">13</span><span class="w">
+              </span><span class="p" data-group-id="1898771100-22">}</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;numerator&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-23">%{</span><span class="w">
+                </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;comparator&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;&gt;&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/units&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;value&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">13</span><span class="w">
+              </span><span class="p" data-group-id="1898771100-23">}</span><span class="w">
+            </span><span class="p" data-group-id="1898771100-21">}</span><span class="p">,</span><span class="w">
+            </span><span class="s">&quot;type&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-24">%{</span><span class="w">
+              </span><span class="s">&quot;coding&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-25">[</span><span class="w">
+                </span><span class="p" data-group-id="1898771100-26">%{</span><span class="w">
+                  </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;&#39;ordered&#39;&quot;</span><span class="p">,</span><span class="w">
+                  </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/dose_and_rate&quot;</span><span class="w">
+                </span><span class="p" data-group-id="1898771100-26">}</span><span class="w">
+              </span><span class="p" data-group-id="1898771100-25">]</span><span class="w">
+            </span><span class="p" data-group-id="1898771100-24">}</span><span class="w">
+          </span><span class="p" data-group-id="1898771100-17">}</span><span class="p">,</span><span class="w">
+          </span><span class="s">&quot;max_dose_per_administration&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-27">%{</span><span class="w">
+            </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
+            </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/units&quot;</span><span class="p">,</span><span class="w">
+            </span><span class="s">&quot;unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
+            </span><span class="s">&quot;value&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">13</span><span class="w">
+          </span><span class="p" data-group-id="1898771100-27">}</span><span class="p">,</span><span class="w">
+          </span><span class="s">&quot;max_dose_per_lifetime&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-28">%{</span><span class="w">
+            </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
+            </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/units&quot;</span><span class="p">,</span><span class="w">
+            </span><span class="s">&quot;unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
+            </span><span class="s">&quot;value&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">13</span><span class="w">
+          </span><span class="p" data-group-id="1898771100-28">}</span><span class="p">,</span><span class="w">
+          </span><span class="s">&quot;max_dose_per_period&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-29">%{</span><span class="w">
+            </span><span class="s">&quot;denominator&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-30">%{</span><span class="w">
+              </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;comparator&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;&gt;&quot;</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/units&quot;</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;value&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">13</span><span class="w">
+            </span><span class="p" data-group-id="1898771100-30">}</span><span class="p">,</span><span class="w">
+            </span><span class="s">&quot;numerator&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-31">%{</span><span class="w">
+              </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;comparator&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;&gt;&quot;</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/units&quot;</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mg&quot;</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;value&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">13</span><span class="w">
+            </span><span class="p" data-group-id="1898771100-31">}</span><span class="w">
+          </span><span class="p" data-group-id="1898771100-29">}</span><span class="p">,</span><span class="w">
+          </span><span class="s">&quot;method&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-32">%{</span><span class="w">
+            </span><span class="s">&quot;coding&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-33">[</span><span class="w">
+              </span><span class="p" data-group-id="1898771100-34">%{</span><span class="w">
+                </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;419747000&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/SNOMED/administration_methods&quot;</span><span class="w">
+              </span><span class="p" data-group-id="1898771100-34">}</span><span class="w">
+            </span><span class="p" data-group-id="1898771100-33">]</span><span class="w">
+          </span><span class="p" data-group-id="1898771100-32">}</span><span class="p">,</span><span class="w">
+          </span><span class="s">&quot;patient_instruction&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;0.25mg PO every 6-12 hours as needed for menses from Jan 15-20, 2015.  Do not exceed more than 4mg per day&quot;</span><span class="p">,</span><span class="w">
+          </span><span class="s">&quot;route&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-35">%{</span><span class="w">
+            </span><span class="s">&quot;coding&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-36">[</span><span class="w">
+              </span><span class="p" data-group-id="1898771100-37">%{</span><span class="w">
+                </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;46713006&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/SNOMED/route_codes&quot;</span><span class="w">
+              </span><span class="p" data-group-id="1898771100-37">}</span><span class="w">
+            </span><span class="p" data-group-id="1898771100-36">]</span><span class="w">
+          </span><span class="p" data-group-id="1898771100-35">}</span><span class="p">,</span><span class="w">
+          </span><span class="s">&quot;sequence&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+          </span><span class="s">&quot;site&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-38">%{</span><span class="w">
+            </span><span class="s">&quot;coding&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-39">[</span><span class="w">
+              </span><span class="p" data-group-id="1898771100-40">%{</span><span class="w">
+                </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;344001&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/SNOMED/anatomical_structure_administration_site_codes&quot;</span><span class="w">
+              </span><span class="p" data-group-id="1898771100-40">}</span><span class="w">
+            </span><span class="p" data-group-id="1898771100-39">]</span><span class="w">
+          </span><span class="p" data-group-id="1898771100-38">}</span><span class="p">,</span><span class="w">
+          </span><span class="s">&quot;text&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;0.25mg PO every 6-12 hours as needed for menses from Jan 15-20, 2015.  Do not exceed more than 4mg per day&quot;</span><span class="p">,</span><span class="w">
+          </span><span class="s">&quot;timing&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-41">%{</span><span class="w">
+            </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-42">%{</span><span class="w">
+              </span><span class="s">&quot;coding&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-43">[</span><span class="w">
+                </span><span class="p" data-group-id="1898771100-44">%{</span><span class="w">
+                  </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;patient&quot;</span><span class="p">,</span><span class="w">
+                  </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;eHealth/timing_abbreviation&quot;</span><span class="w">
+                </span><span class="p" data-group-id="1898771100-44">}</span><span class="w">
+              </span><span class="p" data-group-id="1898771100-43">]</span><span class="w">
+            </span><span class="p" data-group-id="1898771100-42">}</span><span class="p">,</span><span class="w">
+            </span><span class="s">&quot;event&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-45">[</span><span class="s">&quot;2017-04-20T19:14:13Z&quot;</span><span class="p" data-group-id="1898771100-45">]</span><span class="p">,</span><span class="w">
+            </span><span class="s">&quot;repeat&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-46">%{</span><span class="w">
+              </span><span class="s">&quot;bounds_duration&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-47">%{</span><span class="w">
+                </span><span class="s">&quot;code&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;system&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;http://unitsofmeasure.org&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;days&quot;</span><span class="p">,</span><span class="w">
+                </span><span class="s">&quot;value&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">10</span><span class="w">
+              </span><span class="p" data-group-id="1898771100-47">}</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;count&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;count_max&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;day_of_week&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-48">[</span><span class="s">&quot;mon&quot;</span><span class="p" data-group-id="1898771100-48">]</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;duration&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;duration_max&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;duration_unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;frequency&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;frequency_max&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;offset&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;period&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;period_max&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;period_unit&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;time_of_day&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-49">[</span><span class="s">&quot;2017-04-20T19:14:13Z&quot;</span><span class="p" data-group-id="1898771100-49">]</span><span class="p">,</span><span class="w">
+              </span><span class="s">&quot;when&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1898771100-50">[</span><span class="s">&quot;WAKE&quot;</span><span class="p" data-group-id="1898771100-50">]</span><span class="w">
+            </span><span class="p" data-group-id="1898771100-46">}</span><span class="w">
+          </span><span class="p" data-group-id="1898771100-41">}</span><span class="w">
+        </span><span class="p" data-group-id="1898771100-12">}</span><span class="w">
+      </span><span class="p" data-group-id="1898771100-11">]</span><span class="p">,</span><span class="w">
+      </span><span class="ss">employee_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;bed1bc93-ef2e-4ca0-9f07-e58f52b312c6&quot;</span><span class="p">,</span><span class="w">
+      </span><span class="ss">ended_at</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-04-17]</span><span class="p">,</span><span class="w">
+      </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;e9b4d92a-dc7c-483f-9ae9-f4b57bc89c4d&quot;</span><span class="p">,</span><span class="w">
+      </span><span class="ss">inserted_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1898771100-51">#</span><span class="nc" data-group-id="1898771100-51">DateTime</span><span class="p" data-group-id="1898771100-51">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">04</span><span class="o">-</span><span class="mi">17</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">50</span><span class="p">:</span><span class="mi">22</span><span class="nc">Z</span><span class="p" data-group-id="1898771100-51">&gt;</span><span class="p">,</span><span class="w">
+      </span><span class="ss">inserted_by</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1630ef83-1b03-4d15-b03f-33f6b13a44b7&quot;</span><span class="p">,</span><span class="w">
+      </span><span class="ss">intent</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;order&quot;</span><span class="p">,</span><span class="w">
+      </span><span class="ss">is_active</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w">
+      </span><span class="ss">legal_entity_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4d958f02-c2c3-4228-8ea3-ac4a7a7a286a&quot;</span><span class="p">,</span><span class="w">
+      </span><span class="ss">medical_program_id</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+      </span><span class="ss">medication_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;85e70454-6fd6-4a3d-8e5f-78fdf657d24b&quot;</span><span class="p">,</span><span class="w">
+      </span><span class="ss">medication_qty</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w">
+      </span><span class="ss">medication_request_requests_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;64878c2f-9960-4536-a92a-6f8571b0f4ed&quot;</span><span class="p">,</span><span class="w">
+      </span><span class="ss">person_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;13630bed-1a1c-4854-afaf-ff50cf5164d9&quot;</span><span class="p">,</span><span class="w">
+      </span><span class="ss">reject_reason</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+      </span><span class="ss">rejected_at</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+      </span><span class="ss">rejected_by</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+      </span><span class="ss">request_number</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0.7320575476812545&quot;</span><span class="p">,</span><span class="w">
+      </span><span class="ss">started_at</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-04-17]</span><span class="p">,</span><span class="w">
+      </span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ACTIVE&quot;</span><span class="p">,</span><span class="w">
+      </span><span class="ss">updated_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1898771100-52">#</span><span class="nc" data-group-id="1898771100-52">DateTime</span><span class="p" data-group-id="1898771100-52">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">04</span><span class="o">-</span><span class="mi">17</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">50</span><span class="p">:</span><span class="mi">22</span><span class="nc">Z</span><span class="p" data-group-id="1898771100-52">&gt;</span><span class="p">,</span><span class="w">
+      </span><span class="ss">updated_by</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;649ae8e4-eea3-46d5-b19f-747b9cdb2c39&quot;</span><span class="p">,</span><span class="w">
+      </span><span class="ss">verification_code</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="w">
+    </span><span class="p" data-group-id="1898771100-5">}</span><span class="w">
+  </span><span class="p" data-group-id="1898771100-4">]</span><span class="p">,</span><span class="w">
+  </span><span class="ss">page_number</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="ss">page_size</span><span class="p">:</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w">
+  </span><span class="ss">total_entries</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="ss">total_pages</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
+</span><span class="p" data-group-id="1898771100-3">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="search_declarations/3">
@@ -670,9 +919,9 @@ Check avaiable formats for filter here https://github.com/edenlabllc/ecto_filter
   Examples
 </h2>
 
-<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">OPS.Rpc</span><span class="o">.</span><span class="n">search_declarations</span><span class="p" data-group-id="7753063940-1">(</span><span class="p" data-group-id="7753063940-2">[</span><span class="p" data-group-id="7753063940-3">{</span><span class="ss">:person_id</span><span class="p">,</span><span class="w"> </span><span class="ss">:in</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7753063940-4">[</span><span class="s">&quot;0042500e-6ac0-45fb-b82a-25f7857c49a8&quot;</span><span class="p" data-group-id="7753063940-4">]</span><span class="p" data-group-id="7753063940-3">}</span><span class="p" data-group-id="7753063940-2">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7753063940-5">[</span><span class="ss">start_date</span><span class="p">:</span><span class="w"> </span><span class="ss">:asc</span><span class="p" data-group-id="7753063940-5">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7753063940-6">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p" data-group-id="7753063940-6">}</span><span class="p" data-group-id="7753063940-1">)</span><span class="w">
-</span><span class="p" data-group-id="7753063940-7">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7753063940-8">[</span><span class="w">
-  </span><span class="p" data-group-id="7753063940-9">%{</span><span class="w">
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">OPS.Rpc</span><span class="o">.</span><span class="n">search_declarations</span><span class="p" data-group-id="1842474881-1">(</span><span class="p" data-group-id="1842474881-2">[</span><span class="p" data-group-id="1842474881-3">{</span><span class="ss">:person_id</span><span class="p">,</span><span class="w"> </span><span class="ss">:in</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1842474881-4">[</span><span class="s">&quot;0042500e-6ac0-45fb-b82a-25f7857c49a8&quot;</span><span class="p" data-group-id="1842474881-4">]</span><span class="p" data-group-id="1842474881-3">}</span><span class="p" data-group-id="1842474881-2">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1842474881-5">[</span><span class="ss">start_date</span><span class="p">:</span><span class="w"> </span><span class="ss">:asc</span><span class="p" data-group-id="1842474881-5">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1842474881-6">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p" data-group-id="1842474881-6">}</span><span class="p" data-group-id="1842474881-1">)</span><span class="w">
+</span><span class="p" data-group-id="1842474881-7">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1842474881-8">[</span><span class="w">
+  </span><span class="p" data-group-id="1842474881-9">%{</span><span class="w">
     </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cdb4a85b-f12c-46c6-b840-590467e26acf&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">created_by</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;738c8cc1-ae9b-42a5-8660-4b7612b2b35c&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">declaration_number</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0&quot;</span><span class="p">,</span><span class="w">
@@ -680,20 +929,20 @@ Check avaiable formats for filter here https://github.com/edenlabllc/ecto_filter
     </span><span class="ss">division_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;bb15bdde-ffd2-4683-8ca9-03c86b1e6846&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">employee_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;f8cc0822-f214-4eea-a7d4-d03142901eb1&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">end_date</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-01-21]</span><span class="p">,</span><span class="w">
-    </span><span class="ss">inserted_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="7753063940-10">#</span><span class="nc" data-group-id="7753063940-10">DateTime</span><span class="p" data-group-id="7753063940-10">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455175</span><span class="nc">Z</span><span class="p" data-group-id="7753063940-10">&gt;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">inserted_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1842474881-10">#</span><span class="nc" data-group-id="1842474881-10">DateTime</span><span class="p" data-group-id="1842474881-10">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455175</span><span class="nc">Z</span><span class="p" data-group-id="1842474881-10">&gt;</span><span class="p">,</span><span class="w">
     </span><span class="ss">is_active</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w">
     </span><span class="ss">legal_entity_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;980d4d01-3427-4f7f-bbdd-bd7c1b25b1e2&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">person_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;071a2783-f752-42d9-bcfc-44ddc7eb923d&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">reason</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
     </span><span class="ss">reason_description</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
     </span><span class="ss">scope</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w">
-    </span><span class="ss">signed_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="7753063940-11">#</span><span class="nc" data-group-id="7753063940-11">DateTime</span><span class="p" data-group-id="7753063940-11">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">20</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.442837</span><span class="nc">Z</span><span class="p" data-group-id="7753063940-11">&gt;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">signed_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1842474881-11">#</span><span class="nc" data-group-id="1842474881-11">DateTime</span><span class="p" data-group-id="1842474881-11">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">20</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.442837</span><span class="nc">Z</span><span class="p" data-group-id="1842474881-11">&gt;</span><span class="p">,</span><span class="w">
     </span><span class="ss">start_date</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-01-20]</span><span class="p">,</span><span class="w">
     </span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="p">,</span><span class="w">
-    </span><span class="ss">updated_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="7753063940-12">#</span><span class="nc" data-group-id="7753063940-12">DateTime</span><span class="p" data-group-id="7753063940-12">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455185</span><span class="nc">Z</span><span class="p" data-group-id="7753063940-12">&gt;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">updated_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1842474881-12">#</span><span class="nc" data-group-id="1842474881-12">DateTime</span><span class="p" data-group-id="1842474881-12">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455185</span><span class="nc">Z</span><span class="p" data-group-id="1842474881-12">&gt;</span><span class="p">,</span><span class="w">
     </span><span class="ss">updated_by</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;8dac0fc6-04fd-4e62-9711-a85c0a42992d&quot;</span><span class="w">
-  </span><span class="p" data-group-id="7753063940-9">}</span><span class="w">
-</span><span class="p" data-group-id="7753063940-8">]</span><span class="p" data-group-id="7753063940-7">}</span></code></pre>
+  </span><span class="p" data-group-id="1842474881-9">}</span><span class="w">
+</span><span class="p" data-group-id="1842474881-8">]</span><span class="p" data-group-id="1842474881-7">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="terminate_declaration/2">
@@ -760,9 +1009,9 @@ Check avaiable formats for filter here https://github.com/edenlabllc/ecto_filter
   Examples
 </h2>
 
-<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">OPS.Rpc</span><span class="o">.</span><span class="n">terminate_declaration</span><span class="p" data-group-id="0868474603-1">(</span><span class="s">&quot;0042500e-6ac0-45fb-b82a-25f7857c49a8&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0868474603-2">%{</span><span class="s">&quot;updated_by&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;11225aae-7ac0-45fb-b82a-25f7857c49b0&quot;</span><span class="p" data-group-id="0868474603-2">}</span><span class="p" data-group-id="0868474603-1">)</span><span class="w">
-</span><span class="p" data-group-id="0868474603-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
-  </span><span class="p" data-group-id="0868474603-4">%{</span><span class="w">
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">OPS.Rpc</span><span class="o">.</span><span class="n">terminate_declaration</span><span class="p" data-group-id="4016621750-1">(</span><span class="s">&quot;0042500e-6ac0-45fb-b82a-25f7857c49a8&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="4016621750-2">%{</span><span class="s">&quot;updated_by&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;11225aae-7ac0-45fb-b82a-25f7857c49b0&quot;</span><span class="p" data-group-id="4016621750-2">}</span><span class="p" data-group-id="4016621750-1">)</span><span class="w">
+</span><span class="p" data-group-id="4016621750-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="4016621750-4">%{</span><span class="w">
     </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cdb4a85b-f12c-46c6-b840-590467e26acf&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">created_by</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;738c8cc1-ae9b-42a5-8660-4b7612b2b35c&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">declaration_number</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0&quot;</span><span class="p">,</span><span class="w">
@@ -770,20 +1019,20 @@ Check avaiable formats for filter here https://github.com/edenlabllc/ecto_filter
     </span><span class="ss">division_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;bb15bdde-ffd2-4683-8ca9-03c86b1e6846&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">employee_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;f8cc0822-f214-4eea-a7d4-d03142901eb1&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">end_date</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-01-21]</span><span class="p">,</span><span class="w">
-    </span><span class="ss">inserted_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0868474603-5">#</span><span class="nc" data-group-id="0868474603-5">DateTime</span><span class="p" data-group-id="0868474603-5">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455175</span><span class="nc">Z</span><span class="p" data-group-id="0868474603-5">&gt;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">inserted_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="4016621750-5">#</span><span class="nc" data-group-id="4016621750-5">DateTime</span><span class="p" data-group-id="4016621750-5">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455175</span><span class="nc">Z</span><span class="p" data-group-id="4016621750-5">&gt;</span><span class="p">,</span><span class="w">
     </span><span class="ss">is_active</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w">
     </span><span class="ss">legal_entity_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;980d4d01-3427-4f7f-bbdd-bd7c1b25b1e2&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">person_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;071a2783-f752-42d9-bcfc-44ddc7eb923d&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">reason</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
     </span><span class="ss">reason_description</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
     </span><span class="ss">scope</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w">
-    </span><span class="ss">signed_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0868474603-6">#</span><span class="nc" data-group-id="0868474603-6">DateTime</span><span class="p" data-group-id="0868474603-6">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">20</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.442837</span><span class="nc">Z</span><span class="p" data-group-id="0868474603-6">&gt;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">signed_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="4016621750-6">#</span><span class="nc" data-group-id="4016621750-6">DateTime</span><span class="p" data-group-id="4016621750-6">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">20</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.442837</span><span class="nc">Z</span><span class="p" data-group-id="4016621750-6">&gt;</span><span class="p">,</span><span class="w">
     </span><span class="ss">start_date</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-01-20]</span><span class="p">,</span><span class="w">
     </span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="p">,</span><span class="w">
-    </span><span class="ss">updated_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0868474603-7">#</span><span class="nc" data-group-id="0868474603-7">DateTime</span><span class="p" data-group-id="0868474603-7">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455185</span><span class="nc">Z</span><span class="p" data-group-id="0868474603-7">&gt;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">updated_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="4016621750-7">#</span><span class="nc" data-group-id="4016621750-7">DateTime</span><span class="p" data-group-id="4016621750-7">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455185</span><span class="nc">Z</span><span class="p" data-group-id="4016621750-7">&gt;</span><span class="p">,</span><span class="w">
     </span><span class="ss">updated_by</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;8dac0fc6-04fd-4e62-9711-a85c0a42992d&quot;</span><span class="w">
-  </span><span class="p" data-group-id="0868474603-4">}</span><span class="w">
-</span><span class="p" data-group-id="0868474603-3">}</span></code></pre>
+  </span><span class="p" data-group-id="4016621750-4">}</span><span class="w">
+</span><span class="p" data-group-id="4016621750-3">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="update_declaration/2">
@@ -881,9 +1130,9 @@ Check avaiable formats for filter here https://github.com/edenlabllc/ecto_filter
   Examples
 </h2>
 
-<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">OPS.Rpc</span><span class="o">.</span><span class="n">update_declaration</span><span class="p" data-group-id="8707519682-1">(</span><span class="s">&quot;0042500e-6ac0-45fb-b82a-25f7857c49a8&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8707519682-2">%{</span><span class="s">&quot;status&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="p" data-group-id="8707519682-2">}</span><span class="p" data-group-id="8707519682-1">)</span><span class="w">
-</span><span class="p" data-group-id="8707519682-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
-  </span><span class="p" data-group-id="8707519682-4">%{</span><span class="w">
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">OPS.Rpc</span><span class="o">.</span><span class="n">update_declaration</span><span class="p" data-group-id="2287439379-1">(</span><span class="s">&quot;0042500e-6ac0-45fb-b82a-25f7857c49a8&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2287439379-2">%{</span><span class="s">&quot;status&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="p" data-group-id="2287439379-2">}</span><span class="p" data-group-id="2287439379-1">)</span><span class="w">
+</span><span class="p" data-group-id="2287439379-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="2287439379-4">%{</span><span class="w">
     </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cdb4a85b-f12c-46c6-b840-590467e26acf&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">created_by</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;738c8cc1-ae9b-42a5-8660-4b7612b2b35c&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">declaration_number</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0&quot;</span><span class="p">,</span><span class="w">
@@ -891,20 +1140,20 @@ Check avaiable formats for filter here https://github.com/edenlabllc/ecto_filter
     </span><span class="ss">division_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;bb15bdde-ffd2-4683-8ca9-03c86b1e6846&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">employee_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;f8cc0822-f214-4eea-a7d4-d03142901eb1&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">end_date</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-01-21]</span><span class="p">,</span><span class="w">
-    </span><span class="ss">inserted_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8707519682-5">#</span><span class="nc" data-group-id="8707519682-5">DateTime</span><span class="p" data-group-id="8707519682-5">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455175</span><span class="nc">Z</span><span class="p" data-group-id="8707519682-5">&gt;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">inserted_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="2287439379-5">#</span><span class="nc" data-group-id="2287439379-5">DateTime</span><span class="p" data-group-id="2287439379-5">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455175</span><span class="nc">Z</span><span class="p" data-group-id="2287439379-5">&gt;</span><span class="p">,</span><span class="w">
     </span><span class="ss">is_active</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w">
     </span><span class="ss">legal_entity_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;980d4d01-3427-4f7f-bbdd-bd7c1b25b1e2&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">person_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;071a2783-f752-42d9-bcfc-44ddc7eb923d&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">reason</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
     </span><span class="ss">reason_description</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
     </span><span class="ss">scope</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w">
-    </span><span class="ss">signed_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8707519682-6">#</span><span class="nc" data-group-id="8707519682-6">DateTime</span><span class="p" data-group-id="8707519682-6">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">20</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.442837</span><span class="nc">Z</span><span class="p" data-group-id="8707519682-6">&gt;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">signed_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="2287439379-6">#</span><span class="nc" data-group-id="2287439379-6">DateTime</span><span class="p" data-group-id="2287439379-6">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">20</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.442837</span><span class="nc">Z</span><span class="p" data-group-id="2287439379-6">&gt;</span><span class="p">,</span><span class="w">
     </span><span class="ss">start_date</span><span class="p">:</span><span class="w"> </span><span class="ld">~D[2019-01-20]</span><span class="p">,</span><span class="w">
     </span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="p">,</span><span class="w">
-    </span><span class="ss">updated_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8707519682-7">#</span><span class="nc" data-group-id="8707519682-7">DateTime</span><span class="p" data-group-id="8707519682-7">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455185</span><span class="nc">Z</span><span class="p" data-group-id="8707519682-7">&gt;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">updated_at</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="2287439379-7">#</span><span class="nc" data-group-id="2287439379-7">DateTime</span><span class="p" data-group-id="2287439379-7">&lt;</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mf">36.455185</span><span class="nc">Z</span><span class="p" data-group-id="2287439379-7">&gt;</span><span class="p">,</span><span class="w">
     </span><span class="ss">updated_by</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;8dac0fc6-04fd-4e62-9711-a85c0a42992d&quot;</span><span class="w">
-  </span><span class="p" data-group-id="8707519682-4">}</span><span class="w">
-</span><span class="p" data-group-id="8707519682-3">}</span></code></pre>
+  </span><span class="p" data-group-id="2287439379-4">}</span><span class="w">
+</span><span class="p" data-group-id="2287439379-3">}</span></code></pre>
   </section>
 </section>
           </div>

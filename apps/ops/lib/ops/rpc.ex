@@ -15,6 +15,7 @@ defmodule OPS.Rpc do
   alias EView.Views.ValidationError
   alias OPS.Web.DeclarationView
   alias OPS.Web.MedicationRequestView
+  alias Scrivener.Page
 
   @read_repo Application.get_env(:core, :repos)[:read_repo]
 
@@ -24,6 +25,14 @@ defmodule OPS.Rpc do
     medical_program_id
     status
   )
+
+  @type page_medication_requests() :: %Page{
+          entries: list(medication_request),
+          page_number: number(),
+          page_size: number(),
+          total_entries: number(),
+          total_pages: number()
+        }
 
   @type declaration :: %{
           id: Ecto.UUID.type(),
@@ -539,6 +548,214 @@ defmodule OPS.Rpc do
 
     with %MedicationRequest{} = medication_request <- @read_repo.one(query) do
       MedicationRequestView.render("show.json", %{medication_request: medication_request})
+    end
+  end
+
+  @doc """
+  Search medication requests
+
+  ## Examples
+      iex> OPS.Rpc.medication_requests(%{"legal_entity_id" => "4d958f02-c2c3-4228-8ea3-ac4a7a7a286a"})
+      %Scrivener.Page{
+        entries: [
+          %{
+            category: "community",
+            context: %{
+              "identifier" => %{
+                "type" => %{
+                  "coding" => [
+                    %{
+                      "code" => "encounter",
+                      "system" => "eHealth/resources"
+                    }
+                  ]
+                },
+                "value" => "b766941c-6cf0-42e2-888f-595a6658e1b4"
+              }
+            },
+            created_at: ~D[2019-04-17],
+            dispense_valid_from: ~D[2019-04-17],
+            dispense_valid_to: ~D[2019-04-17],
+            division_id: "dc1fa9a2-46f1-4fcc-ae33-68c21f9c549a",
+            dosage_instruction: [
+              %{
+                "additional_instruction" => [
+                  %{
+                    "coding" => [
+                      %{
+                        "code" => "311504000",
+                        "system" => "eHealth/SNOMED/additional_dosage_instructions"
+                      }
+                    ]
+                  }
+                ],
+                "as_needed_boolean" => true,
+                "dose_and_rate" => %{
+                  "dose_range" => %{
+                    "high" => %{
+                      "code" => "mg",
+                      "comparator" => ">",
+                      "system" => "eHealth/units",
+                      "unit" => "mg",
+                      "value" => 13
+                    },
+                    "low" => %{
+                      "code" => "mg",
+                      "comparator" => ">",
+                      "system" => "eHealth/units",
+                      "unit" => "mg",
+                      "value" => 13
+                    }
+                  },
+                  "rate_ratio" => %{
+                    "denominator" => %{
+                      "code" => "mg",
+                      "comparator" => ">",
+                      "system" => "eHealth/units",
+                      "unit" => "mg",
+                      "value" => 13
+                    },
+                    "numerator" => %{
+                      "code" => "mg",
+                      "comparator" => ">",
+                      "system" => "eHealth/units",
+                      "unit" => "mg",
+                      "value" => 13
+                    }
+                  },
+                  "type" => %{
+                    "coding" => [
+                      %{
+                        "code" => "'ordered'",
+                        "system" => "eHealth/dose_and_rate"
+                      }
+                    ]
+                  }
+                },
+                "max_dose_per_administration" => %{
+                  "code" => "mg",
+                  "system" => "eHealth/units",
+                  "unit" => "mg",
+                  "value" => 13
+                },
+                "max_dose_per_lifetime" => %{
+                  "code" => "mg",
+                  "system" => "eHealth/units",
+                  "unit" => "mg",
+                  "value" => 13
+                },
+                "max_dose_per_period" => %{
+                  "denominator" => %{
+                    "code" => "mg",
+                    "comparator" => ">",
+                    "system" => "eHealth/units",
+                    "unit" => "mg",
+                    "value" => 13
+                  },
+                  "numerator" => %{
+                    "code" => "mg",
+                    "comparator" => ">",
+                    "system" => "eHealth/units",
+                    "unit" => "mg",
+                    "value" => 13
+                  }
+                },
+                "method" => %{
+                  "coding" => [
+                    %{
+                      "code" => "419747000",
+                      "system" => "eHealth/SNOMED/administration_methods"
+                    }
+                  ]
+                },
+                "patient_instruction" => "0.25mg PO every 6-12 hours as needed for menses from Jan 15-20, 2015.  Do not exceed more than 4mg per day",
+                "route" => %{
+                  "coding" => [
+                    %{
+                      "code" => "46713006",
+                      "system" => "eHealth/SNOMED/route_codes"
+                    }
+                  ]
+                },
+                "sequence" => 1,
+                "site" => %{
+                  "coding" => [
+                    %{
+                      "code" => "344001",
+                      "system" => "eHealth/SNOMED/anatomical_structure_administration_site_codes"
+                    }
+                  ]
+                },
+                "text" => "0.25mg PO every 6-12 hours as needed for menses from Jan 15-20, 2015.  Do not exceed more than 4mg per day",
+                "timing" => %{
+                  "code" => %{
+                    "coding" => [
+                      %{
+                        "code" => "patient",
+                        "system" => "eHealth/timing_abbreviation"
+                      }
+                    ]
+                  },
+                  "event" => ["2017-04-20T19:14:13Z"],
+                  "repeat" => %{
+                    "bounds_duration" => %{
+                      "code" => "d",
+                      "system" => "http://unitsofmeasure.org",
+                      "unit" => "days",
+                      "value" => 10
+                    },
+                    "count" => 2,
+                    "count_max" => 4,
+                    "day_of_week" => ["mon"],
+                    "duration" => 4,
+                    "duration_max" => 6,
+                    "duration_unit" => "d",
+                    "frequency" => 1,
+                    "frequency_max" => 2,
+                    "offset" => 4,
+                    "period" => 4,
+                    "period_max" => 6,
+                    "period_unit" => "d",
+                    "time_of_day" => ["2017-04-20T19:14:13Z"],
+                    "when" => ["WAKE"]
+                  }
+                }
+              }
+            ],
+            employee_id: "bed1bc93-ef2e-4ca0-9f07-e58f52b312c6",
+            ended_at: ~D[2019-04-17],
+            id: "e9b4d92a-dc7c-483f-9ae9-f4b57bc89c4d",
+            inserted_at: #DateTime<2019-04-17 12:50:22Z>,
+            inserted_by: "1630ef83-1b03-4d15-b03f-33f6b13a44b7",
+            intent: "order",
+            is_active: true,
+            legal_entity_id: "4d958f02-c2c3-4228-8ea3-ac4a7a7a286a",
+            medical_program_id: nil,
+            medication_id: "85e70454-6fd6-4a3d-8e5f-78fdf657d24b",
+            medication_qty: 0.0,
+            medication_request_requests_id: "64878c2f-9960-4536-a92a-6f8571b0f4ed",
+            person_id: "13630bed-1a1c-4854-afaf-ff50cf5164d9",
+            reject_reason: nil,
+            rejected_at: nil,
+            rejected_by: nil,
+            request_number: "0.7320575476812545",
+            started_at: ~D[2019-04-17],
+            status: "ACTIVE",
+            updated_at: #DateTime<2019-04-17 12:50:22Z>,
+            updated_by: "649ae8e4-eea3-46d5-b19f-747b9cdb2c39",
+            verification_code: nil
+          }
+        ],
+        page_number: 1,
+        page_size: 50,
+        total_entries: 1,
+        total_pages: 1
+      }
+  """
+  @spec medication_requests(map) :: {:error, any()} | page_medication_requests
+  def medication_requests(params) do
+    with %Page{} = page <- MedicationRequests.doctor_list(params) do
+      %Page{page | entries: MedicationRequestView.render("index.json", %{medication_requests: page.entries})}
     end
   end
 end

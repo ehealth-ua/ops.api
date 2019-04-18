@@ -9,6 +9,7 @@ defmodule OPS.RpcTest do
   alias OPS.Rpc
   alias OPS.Web.DeclarationView
   alias OPS.Web.MedicationRequestView
+  alias Scrivener.Page
 
   setup :verify_on_exit!
 
@@ -254,6 +255,24 @@ defmodule OPS.RpcTest do
 
     test "id does not exist" do
       refute Rpc.medication_request_by_id(UUID.generate())
+    end
+  end
+
+  describe "medication_requests/1" do
+    test "success search medication_requests by legal_entity_id" do
+      insert(:medication_request)
+      %{id: id, legal_entity_id: legal_entity_id} = insert(:medication_request)
+
+      assert %Page{entries: [%{id: ^id, legal_entity_id: ^legal_entity_id}]} =
+               Rpc.medication_requests(%{"legal_entity_id" => legal_entity_id})
+    end
+
+    test "success search medication_request second page" do
+      for _ <- 0..9 do
+        insert(:medication_request)
+      end
+
+      assert %Page{entries: _, total_pages: 2, total_entries: 10} = Rpc.medication_requests(%{"page_size" => 5})
     end
   end
 
