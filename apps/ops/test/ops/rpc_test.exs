@@ -31,18 +31,21 @@ defmodule OPS.RpcTest do
       medication_id = Enum.join([medication_id_1, medication_id_2], ",")
       medical_program_id = UUID.generate()
 
+      max_ended_at = Date.add(Date.utc_today(), 3)
+      started_at_to = Date.add(Date.utc_today(), 1)
+
       search_params = %{
         "person_id" => person_id,
         "medication_id" => medication_id,
         "medical_program_id" => medical_program_id,
-        "status" => Enum.join([MedicationRequest.status(:active), MedicationRequest.status(:completed)], ",")
+        "status" => Enum.join([MedicationRequest.status(:active), MedicationRequest.status(:completed)], ","),
+        "started_at_to" => started_at_to
       }
-
-      max_ended_at = Date.add(Date.utc_today(), 3)
 
       # valid medication requests
 
       insert(:medication_request,
+        started_at: Date.add(started_at_to, -1),
         ended_at: Date.add(Date.utc_today(), 1),
         person_id: person_id,
         medication_id: medication_id_1,
@@ -51,6 +54,7 @@ defmodule OPS.RpcTest do
       )
 
       insert(:medication_request,
+        started_at: Date.add(started_at_to, -1),
         ended_at: max_ended_at,
         person_id: person_id,
         medication_id: medication_id_2,
@@ -59,6 +63,7 @@ defmodule OPS.RpcTest do
       )
 
       insert(:medication_request,
+        started_at: Date.add(started_at_to, -1),
         ended_at: Date.add(Date.utc_today(), 2),
         person_id: person_id,
         medication_id: medication_id_1,
@@ -67,6 +72,15 @@ defmodule OPS.RpcTest do
       )
 
       # invalid medication requests
+
+      insert(:medication_request,
+        started_at: started_at_to,
+        ended_at: Date.add(max_ended_at, 1),
+        person_id: person_id,
+        medication_id: medication_id_2,
+        medical_program_id: medical_program_id,
+        status: MedicationRequest.status(:active)
+      )
 
       insert(:medication_request,
         ended_at: Date.add(Date.utc_today(), 4),

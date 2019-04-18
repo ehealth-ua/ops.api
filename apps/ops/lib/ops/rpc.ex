@@ -24,6 +24,7 @@ defmodule OPS.Rpc do
     medication_id
     medical_program_id
     status
+    started_at_to
   )
 
   @type page_medication_requests() :: %Page{
@@ -107,12 +108,13 @@ defmodule OPS.Rpc do
 
   Available parameters (all of them are required):
 
-  | Parameter           | Type                                                                   | Example                                | Description                     |
-  | :-----------------: | :--------------------------------------------------------------------: | :------------------------------------: | :-----------------------------: |
-  | person_id           | `UUID`                                                                 | `72b38c55-4fc9-4ab3-b656-1091af4c557c` |                                 |
+  | Parameter           | Type                                                                   | Example                                | Description                                       |
+  | :-----------------: | :--------------------------------------------------------------------: | :------------------------------------: | :-----------------------------------------------: |
+  | person_id           | `UUID`                                                                 | `72b38c55-4fc9-4ab3-b656-1091af4c557c` |                                                   |
   | medication_id       | `binary` (lists are represented as binary with comma-separated values) | `64841249-7e59-4dfd-93ae-9a48b0f70595` or `7ac0d860-0430-4df5-9d56-0c267b64dfac,486bf854-9bae-496b-be13-1eeec5d57fed` |                                 |
-  | medical_program_id  | `UUID`                                                                 | `c4b3bf60-8352-4454-a762-fc67847e3797` |                                 |
-  | status              | `binary` (lists are represented as binary with comma-separated values) | `ACTIVE` or `ACTIVE,COMPLETED`         |                                 |
+  | medical_program_id  | `UUID`                                                                 | `c4b3bf60-8352-4454-a762-fc67847e3797` |                                                   |
+  | status              | `binary` (lists are represented as binary with comma-separated values) | `ACTIVE` or `ACTIVE,COMPLETED`         |                                                   |
+  | started_at_to       | `date`                                                                 | ~D[2018-12-18]                         | `started_at` attr less than `started_at_to` value |
 
   Returns
     `{:ok, %{"started_at" => Date.t(), "ended_at" => Date.t()}` when medication request is found.
@@ -140,7 +142,8 @@ defmodule OPS.Rpc do
   defp search_last_medication_request_dates(%Ecto.Changeset{valid?: true, changes: changes}) do
     statuses = changes |> Map.get(:status, "") |> String.split(",")
     medication_ids = changes |> Map.get(:medication_id, "") |> String.split(",")
-    params = changes |> Map.drop(~w(status medication_id)a) |> Map.to_list()
+    started_at = Map.get(changes, :started_at_to)
+    params = changes |> Map.drop(~w(status medication_id started_at_to)a) |> Map.to_list()
 
     result =
       MedicationRequest
@@ -148,6 +151,7 @@ defmodule OPS.Rpc do
       |> where([mr], ^params)
       |> add_query_medication_ids(medication_ids)
       |> add_query_statuses(statuses)
+      |> add_query_started_at(started_at)
       |> order_by([mr], desc: :ended_at)
       |> limit([mr], 1)
       |> @read_repo.all()
@@ -164,6 +168,9 @@ defmodule OPS.Rpc do
 
   defp add_query_statuses(query, [""]), do: query
   defp add_query_statuses(query, statuses), do: where(query, [mr], mr.status in ^statuses)
+
+  defp add_query_started_at(query, nil), do: query
+  defp add_query_started_at(query, started_at), do: where(query, [mr], mr.started_at < ^started_at)
 
   @doc """
   Get declarations by list of employee ids

@@ -17,5 +17,6 @@ defmodule Core.MedicationRequest.Search do
     field(:medication_id, :string)
     field(:medical_program_id, UUID)
     field(:is_active, :boolean)
+    field(:started_at_to, :date)
   end
 end

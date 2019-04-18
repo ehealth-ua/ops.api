@@ -57,6 +57,8 @@ defmodule Core.Factory do
   end
 
   def medication_request_factory do
+    today = Date.utc_today()
+
     %MedicationRequest{
       id: UUID.generate(),
       status: MedicationRequest.status(:active),
@@ -67,11 +69,11 @@ defmodule Core.Factory do
       employee_id: UUID.generate(),
       division_id: UUID.generate(),
       medication_id: UUID.generate(),
-      created_at: NaiveDateTime.utc_now(),
-      started_at: NaiveDateTime.utc_now(),
-      ended_at: NaiveDateTime.utc_now(),
-      dispense_valid_from: Date.utc_today(),
-      dispense_valid_to: Date.utc_today(),
+      created_at: today,
+      started_at: today,
+      ended_at: today,
+      dispense_valid_from: today,
+      dispense_valid_to: today,
       medication_qty: 0,
       medication_request_requests_id: UUID.generate(),
       request_number: to_string(:rand.uniform()),
