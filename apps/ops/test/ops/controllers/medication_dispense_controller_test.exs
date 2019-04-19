@@ -3,6 +3,7 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
 
   import Mox
   alias Core.MedicationDispenses.MedicationDispense
+  alias Core.MedicationRequests.MedicationRequest
   alias Ecto.UUID
 
   setup :verify_on_exit!
@@ -277,6 +278,41 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
              "status" => ^status,
              "inserted_by" => ^inserted_by,
              "updated_by" => ^updated_by
+           } = resp["data"]
+  end
+
+  test "process medication dispense", %{conn: conn} do
+    expect(KafkaMock, :publish_to_event_manager, 2, fn _ -> :ok end)
+    %MedicationDispense{id: id, medication_request: medication_request} = insert(:medication_dispense)
+    medication_request_id = medication_request.id
+
+    user_id = UUID.generate()
+    status = MedicationDispense.status(:processed)
+
+    dispense_params = %{
+      "payment_id" => UUID.generate(),
+      "payment_amount" => 100,
+      "status" => status,
+      "updated_by" => user_id
+    }
+
+    request_status = MedicationRequest.status(:completed)
+    request_params = %{"status" => request_status, "updated_by" => user_id}
+
+    resp =
+      conn
+      |> patch(medication_dispense_path(conn, :process, id),
+        medication_dispense: dispense_params,
+        medication_request: request_params
+      )
+      |> json_response(200)
+
+    assert %{
+             "id" => ^id,
+             "medication_request" => %{"id" => ^medication_request_id, "status" => ^request_status},
+             "payment_amount" => 100.0,
+             "status" => ^status,
+             "updated_by" => ^user_id
            } = resp["data"]
   end
 end
