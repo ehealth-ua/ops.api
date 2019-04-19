@@ -28,4 +28,10 @@ defmodule OPS.Web.MedicationDispenseController do
       render(conn, "show.json", medication_dispense: medication_dispense)
     end
   end
+
+  def process(conn, %{"id" => id, "medication_dispense" => dispense_params, "medication_request" => request_params}) do
+    with {:ok, medication_dispense} <- MedicationDispenses.process(id, dispense_params, request_params) do
+      render(conn, "show.json", medication_dispense: medication_dispense)
+    end
+  end
 end

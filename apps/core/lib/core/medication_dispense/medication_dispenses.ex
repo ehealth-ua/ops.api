@@ -10,7 +10,9 @@ defmodule Core.MedicationDispenses do
   alias Core.MedicationDispense.Details
   alias Core.MedicationDispense.Search
   alias Core.MedicationDispenses.MedicationDispense
+  alias Core.MedicationRequests
   alias Core.Repo
+  alias Scrivener.Page
 
   @read_repo Application.get_env(:core, :repos)[:read_repo]
 
@@ -88,6 +90,40 @@ defmodule Core.MedicationDispenses do
          status <- medication_dispense.status,
          _ <- EventManager.insert_change_status(medication_dispense, old_status, status, author_id) do
       {:ok, @read_repo.preload(medication_dispense, :medication_request, force: true)}
+    end
+  end
+
+  def process(id, dispense_attrs, request_attrs) do
+    with %Page{entries: [medication_dispense]} <- list(%{"id" => id}) do
+      Repo.transaction(fn ->
+        dispense_old_status = medication_dispense.status
+        request_old_status = medication_dispense.medication_request.status
+
+        with {:ok, medication_dispense} <-
+               medication_dispense
+               |> changeset(dispense_attrs)
+               |> Repo.update_and_log(Map.get(dispense_attrs, "updated_by")),
+             {:ok, medication_request} <-
+               medication_dispense.medication_request
+               |> MedicationRequests.changeset(request_attrs)
+               |> Repo.update_and_log(Map.get(request_attrs, "updated_by")) do
+          EventManager.publish_change_status(
+            medication_dispense,
+            dispense_old_status,
+            medication_dispense.status,
+            medication_dispense.updated_by
+          )
+
+          EventManager.publish_change_status(
+            medication_request,
+            request_old_status,
+            medication_request.status,
+            medication_request.updated_by
+          )
+
+          @read_repo.preload(medication_dispense, :medication_request, force: true)
+        end
+      end)
     end
   end
 
