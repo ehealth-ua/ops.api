@@ -3,7 +3,8 @@
 use Mix.Config
 
 config :core,
-  ecto_repos: [Core.Repo, Core.BlockRepo]
+  ecto_repos: [Core.Repo, Core.BlockRepo],
+  max_page_size: {:system, :integer, "MAX_PAGE_SIZE", 300}
 
 config :core,
   system_user: {:system, "EHEALTH_SYSTEM_USER", "4261eacf-8008-4e62-899f-de1e2f7065f0"},

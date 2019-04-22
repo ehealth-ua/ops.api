@@ -56,12 +56,12 @@ defmodule OPS.Web.DeclarationControllerTest do
   end
 
   test "max page size", %{conn: conn} do
-    for _i <- 1..110 do
+    for _i <- 1..310 do
       insert(:declaration)
     end
 
     conn = get(conn, declaration_path(conn, :index), page_size: 1000)
-    assert 100 == length(json_response(conn, 200)["data"])
+    assert 300 == length(json_response(conn, 200)["data"])
   end
 
   test "searches entries", %{conn: conn} do
