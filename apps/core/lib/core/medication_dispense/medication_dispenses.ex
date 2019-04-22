@@ -62,7 +62,7 @@ defmodule Core.MedicationDispenses do
 
     if dispense_changeset.valid? && Enum.all?(details, & &1.valid?) do
       Repo.transaction(fn ->
-        inserted_by = Map.get(attrs, "inserted_by")
+        inserted_by = Map.get(dispense_changeset.changes, :inserted_by)
 
         with {:ok, medication_dispense} <- Repo.insert_and_log(dispense_changeset, inserted_by) do
           Enum.each(details, fn item ->
@@ -82,10 +82,9 @@ defmodule Core.MedicationDispenses do
   end
 
   def update(%MedicationDispense{status: old_status} = medication_dispense, attrs) do
-    with {:ok, medication_dispense} <-
-           medication_dispense
-           |> changeset(attrs)
-           |> Repo.update_and_log(Map.get(attrs, "updated_by")),
+    with changes <- changeset(medication_dispense, attrs),
+         {:ok, medication_dispense} <-
+           Repo.update_and_log(changes, Map.get(changes.changes, :updated_by)),
          author_id <- medication_dispense.updated_by,
          status <- medication_dispense.status,
          _ <- EventManager.publish_change_status(medication_dispense, old_status, status, author_id) do

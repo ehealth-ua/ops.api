@@ -40,20 +40,17 @@ defmodule Core.MedicationRequests do
   end
 
   def update(%MedicationRequest{status: old_status} = medication_request, attrs) do
-    with {:ok, medication_request} <-
-           medication_request
-           |> changeset(attrs)
-           |> Repo.update_and_log(Map.get(attrs, "updated_by")),
-         author_id <- medication_request.updated_by,
+    with changes <- changeset(medication_request, attrs),
+         author_id <- get_change(changes, :updated_by),
+         {:ok, medication_request} <- Repo.update_and_log(changes, author_id),
          _ <- EventManager.publish_change_status(medication_request, old_status, medication_request.status, author_id) do
       {:ok, medication_request}
     end
   end
 
   def create(%{"medication_request" => mr}) do
-    %MedicationRequest{}
-    |> create_changeset(mr)
-    |> Repo.insert_and_log(Map.get(mr, "employee_id"))
+    changes = create_changeset(%MedicationRequest{}, mr)
+    Repo.insert_and_log(changes, get_change(changes, :employee_id))
   end
 
   def get_search_query(entity, changes) do

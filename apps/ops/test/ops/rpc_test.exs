@@ -4,6 +4,7 @@ defmodule OPS.RpcTest do
   use Core.DataCase
   import Mox
 
+  alias Core.MedicationDispenses.MedicationDispense
   alias Core.MedicationRequests.MedicationRequest
   alias Ecto.UUID
   alias OPS.Rpc
@@ -287,6 +288,161 @@ defmodule OPS.RpcTest do
       end
 
       assert %Page{entries: _, total_pages: 2, total_entries: 10} = Rpc.medication_requests(%{"page_size" => 5})
+    end
+  end
+
+  describe "doctor_medication_requests/1" do
+    test "success search medication_requests by legal_entity_id" do
+      insert(:medication_request)
+      %{id: id, legal_entity_id: legal_entity_id} = insert(:medication_request)
+
+      assert %Page{entries: [%{id: ^id, legal_entity_id: ^legal_entity_id}]} =
+               Rpc.doctor_medication_requests(%{"legal_entity_id" => legal_entity_id})
+    end
+
+    test "success search medication_request second page" do
+      for _ <- 0..9 do
+        insert(:medication_request)
+      end
+
+      assert %Page{entries: _, total_pages: 2, total_entries: 10} = Rpc.doctor_medication_requests(%{"page_size" => 5})
+    end
+  end
+
+  describe "medication_dispenses/1" do
+    test "success search medication_dispenses by legal_entity_id" do
+      legal_entity_id = UUID.generate()
+
+      %{id: id, medication_request: %{id: medication_request_id}} =
+        insert(:medication_dispense, legal_entity_id: legal_entity_id)
+
+      assert %Page{
+               entries: [
+                 %{id: ^id, legal_entity_id: ^legal_entity_id, medication_request: %{id: ^medication_request_id}}
+               ]
+             } = Rpc.medication_dispenses(%{"legal_entity_id" => legal_entity_id})
+    end
+
+    test "success search medication_dispenses second page" do
+      for _ <- 0..9 do
+        insert(:medication_dispense)
+      end
+
+      assert %Page{entries: _, total_pages: 2, total_entries: 10} = Rpc.medication_dispenses(%{"page_size" => 5})
+    end
+  end
+
+  describe "qualify_medication_requests/1" do
+    test "success qualify medication_request" do
+      started_at = Date.utc_today()
+      ended_at = Date.add(started_at, 5)
+      medication_request = insert(:medication_request, started_at: started_at, ended_at: ended_at)
+      medication_id = medication_request.medication_id
+
+      insert(:medication_dispense,
+        medication_request: medication_request,
+        status: MedicationDispense.status(:processed)
+      )
+
+      insert(:medication_request)
+
+      assert {:ok, [^medication_id]} =
+               Rpc.qualify_medication_requests(%{
+                 "person_id" => medication_request.person_id,
+                 "started_at" => medication_request.started_at,
+                 "ended_at" => medication_request.ended_at
+               })
+    end
+  end
+
+  describe "prequalify_medication_requests/1" do
+    test "success prequalify medication_request" do
+      started_at = Date.utc_today()
+      ended_at = Date.add(started_at, 5)
+      medication_request = insert(:medication_request, started_at: started_at, ended_at: ended_at)
+      medication_id = medication_request.medication_id
+
+      insert(:medication_request)
+
+      assert {:ok, [^medication_id]} =
+               Rpc.prequalify_medication_requests(%{
+                 "person_id" => medication_request.person_id,
+                 "started_at" => medication_request.started_at,
+                 "ended_at" => medication_request.ended_at
+               })
+    end
+  end
+
+  describe "create_medication_request/1" do
+    test "success create medication_request" do
+      medication_request_id = UUID.generate()
+
+      assert {:ok, %{id: ^medication_request_id}} =
+               Rpc.create_medication_request(%{
+                 id: medication_request_id,
+                 request_number: "1234",
+                 person_id: UUID.generate(),
+                 division_id: UUID.generate(),
+                 medication_id: UUID.generate(),
+                 legal_entity_id: UUID.generate(),
+                 medication_qty: 20,
+                 medication_request_requests_id: UUID.generate(),
+                 employee_id: UUID.generate(),
+                 created_at: Date.utc_today(),
+                 started_at: Date.utc_today(),
+                 ended_at: Date.utc_today(),
+                 inserted_by: UUID.generate(),
+                 updated_by: UUID.generate()
+               })
+    end
+  end
+
+  describe "update_medication_request/2" do
+    test "success update medication_request" do
+      expect(KafkaMock, :publish_to_event_manager, fn _ -> :ok end)
+      %{id: id} = insert(:medication_request)
+      status_completed = MedicationRequest.status(:completed)
+
+      assert {:ok, %{id: ^id, status: ^status_completed}} =
+               Rpc.update_medication_request(id, %{
+                 status: status_completed,
+                 updated_by: UUID.generate()
+               })
+    end
+  end
+
+  describe "create_medication_dispense/1" do
+    test "success create medication_dispense" do
+      medication_dispense_id = UUID.generate()
+
+      assert {:ok, %{id: ^medication_dispense_id}} =
+               Rpc.create_medication_dispense(%{
+                 id: medication_dispense_id,
+                 legal_entity_id: UUID.generate(),
+                 medication_request_id: UUID.generate(),
+                 dispensed_at: Date.utc_today(),
+                 party_id: UUID.generate(),
+                 division_id: UUID.generate(),
+                 status: MedicationDispense.status(:new),
+                 is_active: true,
+                 inserted_by: UUID.generate(),
+                 updated_by: UUID.generate()
+               })
+    end
+  end
+
+  describe "update_medication_dispense/2" do
+    test "success update medication_dispense" do
+      expect(KafkaMock, :publish_to_event_manager, fn _ -> :ok end)
+      medication_dispense = insert(:medication_dispense)
+      medication_dispense_id = medication_dispense.id
+      status_processed = MedicationDispense.status(:processed)
+
+      assert {:ok, %{id: ^medication_dispense_id, status: ^status_processed}} =
+               Rpc.update_medication_dispense(medication_dispense_id, %{
+                 status: status_processed,
+                 updated_by: UUID.generate()
+               })
     end
   end
 
