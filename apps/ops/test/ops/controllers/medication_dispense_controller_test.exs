@@ -277,7 +277,6 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
   end
 
   test "process medication dispense", %{conn: conn} do
-    expect(KafkaMock, :publish_to_event_manager, 2, fn _ -> :ok end)
     %MedicationDispense{id: id, medication_request: medication_request} = insert(:medication_dispense)
     medication_request_id = medication_request.id
 

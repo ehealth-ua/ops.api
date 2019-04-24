@@ -107,14 +107,14 @@ defmodule Core.MedicationDispenses do
                medication_dispense.medication_request
                |> MedicationRequests.changeset(request_attrs)
                |> Repo.update_and_log(Map.get(request_attrs, "updated_by")) do
-          EventManager.publish_change_status(
+          EventManager.insert_change_status(
             medication_dispense,
             dispense_old_status,
             medication_dispense.status,
             medication_dispense.updated_by
           )
 
-          EventManager.publish_change_status(
+          EventManager.insert_change_status(
             medication_request,
             request_old_status,
             medication_request.status,
