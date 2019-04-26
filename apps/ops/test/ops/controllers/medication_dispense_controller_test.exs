@@ -315,4 +315,86 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
              "updated_by" => ^user_id
            } = resp["data"]
   end
+
+  test "process processed medication dispense", %{conn: conn} do
+    status = MedicationDispense.status(:processed)
+    %MedicationDispense{id: id} = insert(:medication_dispense, status: status)
+    user_id = UUID.generate()
+
+    dispense_params = %{
+      "payment_id" => UUID.generate(),
+      "payment_amount" => 100,
+      "status" => status,
+      "updated_by" => user_id
+    }
+
+    request_status = MedicationRequest.status(:completed)
+    request_params = %{"status" => request_status, "updated_by" => user_id}
+
+    resp =
+      conn
+      |> patch(medication_dispense_path(conn, :process, id),
+        medication_dispense: dispense_params,
+        medication_request: request_params
+      )
+      |> json_response(422)
+
+    assert %{
+             "invalid" => [
+               %{
+                 "entry" => "$.status",
+                 "entry_type" => "json_data_property",
+                 "rules" => [
+                   %{
+                     "description" => "Incorrect status transition.",
+                     "params" => [],
+                     "rule" => nil
+                   }
+                 ]
+               }
+             ]
+           } = resp["error"]
+  end
+
+  test "process medication dispense with existing processed dispense to the same medication request", %{conn: conn} do
+    status = MedicationDispense.status(:processed)
+    %MedicationDispense{medication_request: medication_request} = insert(:medication_dispense, status: status)
+    %MedicationDispense{id: id} = insert(:medication_dispense, medication_request: medication_request)
+
+    user_id = UUID.generate()
+
+    dispense_params = %{
+      "payment_id" => UUID.generate(),
+      "payment_amount" => 100,
+      "status" => status,
+      "updated_by" => user_id
+    }
+
+    request_status = MedicationRequest.status(:completed)
+    request_params = %{"status" => request_status, "updated_by" => user_id}
+
+    resp =
+      conn
+      |> patch(medication_dispense_path(conn, :process, id),
+        medication_dispense: dispense_params,
+        medication_request: request_params
+      )
+      |> json_response(422)
+
+    assert %{
+             "invalid" => [
+               %{
+                 "entry" => "$.medication_request_id",
+                 "entry_type" => "json_data_property",
+                 "rules" => [
+                   %{
+                     "description" => "has already been taken",
+                     "params" => [],
+                     "rule" => nil
+                   }
+                 ]
+               }
+             ]
+           } = resp["error"]
+  end
 end

@@ -121,6 +121,8 @@ defmodule Core.MedicationDispenses do
           )
 
           @read_repo.preload(medication_dispense, :medication_request, force: true)
+        else
+          {:error, changeset} -> Repo.rollback(changeset)
         end
       end)
     end
@@ -164,6 +166,7 @@ defmodule Core.MedicationDispenses do
         &MedicationDispense.status/1
       )
     )
+    |> unique_constraint(:medication_request_id, name: :medication_dispenses_medication_request_id_index)
   end
 
   defp validate_status_transition(changeset) do
