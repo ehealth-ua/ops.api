@@ -200,6 +200,47 @@ defmodule OPS.Web.DeclarationControllerTest do
     assert json_response(conn, 422)["errors"] != %{}
   end
 
+  test "create declaration that already exists and active", %{conn: conn} do
+    %{id: id, person_id: person_id, declaration_number: declaration_number} = insert(:declaration, status: "active")
+
+    params =
+      @create_attrs
+      |> Map.put(:id, id)
+      |> Map.put(:person_id, person_id)
+      |> Map.put(:declaration_request_id, UUID.generate())
+      |> Map.put(:declaration_number, declaration_number)
+
+    resp =
+      conn
+      |> post(declaration_path(conn, :create_with_termination_logic), params)
+      |> json_response(200)
+
+    assert Map.has_key?(resp, "data")
+    assert Map.has_key?(resp["data"], "id")
+    assert id = resp["data"]["id"]
+    assert "active" = resp["data"]["status"]
+    %{id: ^id, status: "active"} = Declarations.get_declaration!(id)
+  end
+
+  test "create declaration that already exists and inactive", %{conn: conn} do
+    %{id: id, person_id: person_id, declaration_number: declaration_number} = insert(:declaration, status: "inactive")
+
+    params =
+      @create_attrs
+      |> Map.put(:id, id)
+      |> Map.put(:person_id, person_id)
+      |> Map.put(:declaration_request_id, UUID.generate())
+      |> Map.put(:declaration_number, declaration_number)
+
+    resp =
+      conn
+      |> post(declaration_path(conn, :create_with_termination_logic), params)
+      |> json_response(409)
+
+    assert "Declaration inactive" == resp["error"]["message"]
+    %{id: ^id, status: "inactive"} = Declarations.get_declaration!(id)
+  end
+
   test "creates declaration and terminates other person declarations when data is valid", %{conn: conn} do
     expect(KafkaMock, :publish_to_event_manager, fn _ -> :ok end)
     %{id: id1, person_id: person_id} = fixture(:declaration)

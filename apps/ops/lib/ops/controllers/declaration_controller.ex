@@ -52,6 +52,9 @@ defmodule OPS.Web.DeclarationController do
 
       {:error, _transaction_step, changeset, _} ->
         {:error, changeset}
+
+      error ->
+        error
     end
   end
 

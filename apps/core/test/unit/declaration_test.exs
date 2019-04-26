@@ -143,12 +143,26 @@ defmodule Core.DeclarationTest do
     test "with invalid data doesn't terminate other declarations and returns error changeset" do
       %{id: id} = fixture(:declaration)
       invalid_attrs = Map.put(@invalid_attrs, "person_id", "person_id")
-
-      assert {:error, _transaction_step, %Ecto.Changeset{}, _} =
-               Declarations.create_declaration_with_termination_logic(invalid_attrs)
-
+      assert %Ecto.Changeset{} = Declarations.create_declaration_with_termination_logic(invalid_attrs)
       %{status: status} = Declarations.get_declaration!(id)
       assert "active" == status
+    end
+
+    test "with already existing active declaration" do
+      %{id: id, person_id: person_id, declaration_number: number} = insert(:declaration, status: "active")
+      params = Map.merge(@create_attrs, %{"id" => id, "person_id" => person_id, "declaration_number" => number})
+      {:ok, %{new_declaration: %{id: id}}} = Declarations.create_declaration_with_termination_logic(params)
+      assert %{id: ^id, status: "active"} = Declarations.get_declaration!(id)
+    end
+
+    test "with already existing inactive declaration conflict" do
+      %{id: id, person_id: person_id, declaration_number: number} = insert(:declaration, status: "inactive")
+      params = Map.merge(@create_attrs, %{"id" => id, "person_id" => person_id, "declaration_number" => number})
+
+      assert {:error, {:conflict, "Declaration inactive"}} ==
+               Declarations.create_declaration_with_termination_logic(params)
+
+      assert %{id: ^id, status: "inactive"} = Declarations.get_declaration!(id)
     end
   end
 

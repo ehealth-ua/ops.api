@@ -22,6 +22,10 @@ defmodule Core.Declarations do
 
   @read_repo Application.get_env(:core, :repos)[:read_repo]
 
+  @status_active Declaration.status(:active)
+  @status_terminated Declaration.status(:terminated)
+  @status_pending Declaration.status(:pending)
+
   def list_declarations(params) do
     %{changes: changes} = changeset = declaration_changeset(%DeclarationSearch{}, params)
 
@@ -83,7 +87,7 @@ defmodule Core.Declarations do
      Declaration
      |> select([d], fragment("count(*)"))
      |> where([d], d.employee_id in ^employee_ids)
-     |> where([d], d.status in [^Declaration.status(:active), ^Declaration.status(:pending)])
+     |> where([d], d.status in ^[@status_active, @status_pending])
      |> filter_by_person_id(params)
      |> @read_repo.one!()}
   end
@@ -189,35 +193,44 @@ defmodule Core.Declarations do
     |> validate_status_transition()
   end
 
-  def create_declaration_with_termination_logic(%{"person_id" => person_id} = declaration_params) do
+  def create_declaration_with_termination_logic(declaration_params) do
     block = BlockAPI.get_latest()
-    user_id = Map.get(declaration_params, "created_by")
-    status = Declaration.status(:terminated)
-    updates = [status: status, updated_by: user_id, updated_at: DateTime.utc_now()]
 
-    query =
-      Declaration
-      |> select([d], ^updated_fields_list(updates))
-      |> where([d], d.person_id == ^person_id)
-      |> where([d], d.status in ^[Declaration.status(:active), Declaration.status(:pending)])
+    with %Ecto.Changeset{valid?: true, changes: %{id: id, person_id: person_id, created_by: user_id}} =
+           declaration_changeset <-
+           declaration_changeset(%Declaration{seed: block.hash}, declaration_params),
+         nil <- Repo.get(Declaration, id) do
+      updates = [status: @status_terminated, updated_by: user_id, updated_at: DateTime.utc_now()]
 
-    Multi.new()
-    |> Multi.update_all(:previous_declarations, query, set: updates)
-    |> Multi.insert(
-      :new_declaration,
-      declaration_changeset(%Declaration{seed: block.hash}, declaration_params),
-      returning: true
-    )
-    |> Multi.run(:log_declarations_update, fn _repo, response ->
-      {_, declarations} = response.previous_declarations
-      log_status_updates(declarations, status, user_id)
-    end)
-    |> Multi.run(:log_declaration_insert, &log_insert/2)
-    |> Repo.transaction()
+      query =
+        Declaration
+        |> select([d], ^updated_fields_list(updates))
+        |> where([d], d.person_id == ^person_id)
+        |> where([d], d.status in ^[@status_active, @status_pending])
+
+      Multi.new()
+      |> Multi.update_all(:previous_declarations, query, set: updates)
+      |> Multi.insert(:new_declaration, declaration_changeset, returning: true)
+      |> Multi.run(:log_declarations_update, fn _repo, response ->
+        {_, declarations} = response.previous_declarations
+        log_status_updates(declarations, @status_terminated, user_id)
+      end)
+      |> Multi.run(:log_declaration_insert, &log_insert/2)
+      |> Repo.transaction()
+    else
+      %Declaration{status: @status_active, is_active: true} = declaration ->
+        {:ok, %{new_declaration: declaration}}
+
+      %Declaration{} ->
+        {:error, {:conflict, "Declaration inactive"}}
+
+      error ->
+        error
+    end
   end
 
   def terminate_declaration(id, attrs) do
-    attrs = Map.put(attrs, "status", Declaration.status(:terminated))
+    attrs = Map.put(attrs, "status", @status_terminated)
 
     with %Declaration{} = declaration <- get_declaration!(id),
          updated_by <- Map.fetch!(attrs, "updated_by"),
@@ -229,7 +242,7 @@ defmodule Core.Declarations do
   end
 
   def terminate_declarations(attrs, limit \\ 0) do
-    query = where(Declaration, [d], d.status in ^[Declaration.status(:active), Declaration.status(:pending)])
+    query = where(Declaration, [d], d.status in ^[@status_active, @status_pending])
 
     query =
       if Map.has_key?(attrs, "person_id") do
@@ -245,11 +258,10 @@ defmodule Core.Declarations do
         query
       end
 
-    status = Declaration.status(:terminated)
     user_id = Map.get(attrs, "actor_id")
 
     updates = [
-      status: status,
+      status: @status_terminated,
       reason: Map.get(attrs, "reason"),
       reason_description: Map.get(attrs, "reason_description"),
       updated_by: user_id,
@@ -262,7 +274,7 @@ defmodule Core.Declarations do
       |> join(:inner, [d], s in subquery(query), on: s.id == d.id)
 
     {count, declarations} = Repo.update_all(query, set: updates)
-    log_status_updates(declarations, status, user_id)
+    log_status_updates(declarations, @status_terminated, user_id)
     {:ok, declarations, count}
   end
 
@@ -281,7 +293,7 @@ defmodule Core.Declarations do
   def get_person_ids(employee_ids) when is_list(employee_ids) do
     Declaration
     |> select([d], d.person_id)
-    |> where([d], d.status in ^[Declaration.status(:active), Declaration.status(:pending)])
+    |> where([d], d.status in ^[@status_active, @status_pending])
     |> where([d], d.employee_id in ^employee_ids)
     |> @read_repo.all()
   end
