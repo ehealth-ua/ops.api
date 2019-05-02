@@ -49,8 +49,18 @@ defmodule Core.MedicationRequests do
   end
 
   def create(%{"medication_request" => mr}) do
-    changes = create_changeset(%MedicationRequest{}, mr)
-    Repo.insert_and_log(changes, get_change(changes, :employee_id))
+    mrr_id = mr["medication_request_requests_id"] || mr.medication_request_requests_id
+
+    with nil <- get_unique_medication_request(mrr_id) do
+      changes = create_changeset(%MedicationRequest{}, mr)
+      Repo.insert_and_log(changes, get_change(changes, :employee_id))
+    else
+      %MedicationRequest{} = medication_request ->
+        {:ok, medication_request}
+
+      error ->
+        error
+    end
   end
 
   def get_search_query(entity, changes) do
@@ -64,6 +74,12 @@ defmodule Core.MedicationRequests do
     |> add_ilike_statuses(Map.get(changes, :status))
     |> add_created_at(Map.get(changes, :created_at))
     |> order_by([mr], mr.inserted_at)
+  end
+
+  defp get_unique_medication_request(medication_request_requests_id) do
+    MedicationRequest
+    |> where([mr], mr.medication_request_requests_id == ^medication_request_requests_id)
+    |> Repo.one()
   end
 
   defp add_ilike_statuses(query, nil), do: query

@@ -268,6 +268,17 @@ defmodule OPS.Web.MedicationRequestControllerTest do
       assert json_response(conn, 201)["data"]["id"] == id
       assert MedicationRequest.status(:active) == json_response(conn, 201)["data"]["status"]
     end
+
+    test "creates with valid data when mr already exists", %{conn: conn} do
+      mr = insert(:medication_request)
+
+      assert resp =
+               conn
+               |> post(medication_request_path(conn, :create), %{"medication_request" => Map.from_struct(mr)})
+               |> json_response(201)
+
+      assert mr.id == resp["data"]["id"]
+    end
   end
 
   describe "prequalify search medication requests" do
