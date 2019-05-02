@@ -15,7 +15,11 @@ config :ops_scheduler, OpsScheduler.Jobs.DeclarationsTerminator,
 config :ops_scheduler, OpsScheduler.Jobs.DeclarationsApprove,
   approve_batch_size: {:system, :integer, "DECLARATION_REQUEST_AUTOTERMINATION_BATCH", 10}
 
+config :ops_scheduler, OpsScheduler.Jobs.MedicationRequestsTerminator,
+  termination_batch_size: {:system, :integer, "MEDICATION_REQUEST_AUTOTERMINATION_BATCH", 10}
+
 config :ops_scheduler, OpsScheduler.Jobs.MedicationDispensesTerminator,
-  expiration: {:system, :integer, "MEDICATION_DISPENSE_EXPIRATION", 10}
+  expiration: {:system, :integer, "MEDICATION_DISPENSE_EXPIRATION", 10},
+  termination_batch_size: {:system, :integer, "MEDICATION_DISPENSE_AUTOTERMINATION_BATCH", 10}
 
 import_config "#{Mix.env()}.exs"

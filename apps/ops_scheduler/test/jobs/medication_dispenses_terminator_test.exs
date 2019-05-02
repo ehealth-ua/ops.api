@@ -10,14 +10,17 @@ defmodule OpsScheduler.Jobs.MedicationDispensesTerminatorTest do
   setup :verify_on_exit!
 
   test "run/0" do
-    expect(KafkaMock, :publish_to_event_manager, fn _ -> :ok end)
+    termination_batch_size = Application.get_env(:ops_scheduler, MedicationDispensesTerminator)[:termination_batch_size]
+    terminate_count = termination_batch_size * 2 + 1
+    expect(KafkaMock, :publish_to_event_manager, terminate_count, fn _ -> :ok end)
     inserted_at = NaiveDateTime.add(NaiveDateTime.utc_now(), -86_400 * 10, :second)
-    insert(:medication_dispense, inserted_at: inserted_at)
-    assert 1 == count_by_status(MedicationDispense.status(:new))
+
+    Enum.each(1..terminate_count, fn _ -> insert(:medication_dispense, inserted_at: inserted_at) end)
+    assert terminate_count == count_by_status(MedicationDispense.status(:new))
 
     MedicationDispensesTerminator.run()
     assert 0 == count_by_status(MedicationDispense.status(:new))
-    assert 1 == count_by_status(MedicationDispense.status(:expired))
+    assert terminate_count == count_by_status(MedicationDispense.status(:expired))
   end
 
   defp count_by_status(status) do
