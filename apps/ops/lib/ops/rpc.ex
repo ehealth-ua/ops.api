@@ -201,7 +201,7 @@ defmodule OPS.Rpc do
   defp add_query_statuses(query, statuses), do: where(query, [mr], mr.status in ^statuses)
 
   defp add_query_started_at(query, nil), do: query
-  defp add_query_started_at(query, started_at), do: where(query, [mr], mr.started_at < ^started_at)
+  defp add_query_started_at(query, started_at), do: where(query, [mr], mr.started_at <= ^started_at)
 
   @doc """
   Get declarations by list of employee ids
