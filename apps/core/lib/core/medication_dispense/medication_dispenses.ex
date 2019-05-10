@@ -82,12 +82,18 @@ defmodule Core.MedicationDispenses do
   end
 
   def update(%MedicationDispense{status: old_status} = medication_dispense, attrs) do
+    author_id = Map.get(attrs, "updated_by") || Map.get(attrs, :updated_by)
+
     with changes <- changeset(medication_dispense, attrs),
          {:ok, medication_dispense} <-
-           Repo.update_and_log(changes, Map.get(changes.changes, :updated_by)),
-         author_id <- medication_dispense.updated_by,
-         status <- medication_dispense.status,
-         _ <- EventManager.publish_change_status(medication_dispense, old_status, status, author_id) do
+           Repo.update_and_log(changes, author_id),
+         _ <-
+           EventManager.publish_change_status(
+             medication_dispense,
+             old_status,
+             medication_dispense.status,
+             medication_dispense.updated_by
+           ) do
       {:ok, @read_repo.preload(medication_dispense, :medication_request, force: true)}
     end
   end
@@ -98,14 +104,16 @@ defmodule Core.MedicationDispenses do
         dispense_old_status = medication_dispense.status
         request_old_status = medication_dispense.medication_request.status
 
-        with {:ok, medication_dispense} <-
+        with author_id <- Map.get(dispense_attrs, "updated_by") || Map.get(dispense_attrs, :updated_by),
+             {:ok, medication_dispense} <-
                medication_dispense
                |> changeset(dispense_attrs)
-               |> Repo.update_and_log(Map.get(dispense_attrs, "updated_by")),
+               |> Repo.update_and_log(author_id),
+             author_id <- Map.get(request_attrs, "updated_by") || Map.get(request_attrs, :updated_by),
              {:ok, medication_request} <-
                medication_dispense.medication_request
                |> MedicationRequests.changeset(request_attrs)
-               |> Repo.update_and_log(Map.get(request_attrs, "updated_by")) do
+               |> Repo.update_and_log(author_id) do
           EventManager.publish_change_status(
             medication_dispense,
             dispense_old_status,

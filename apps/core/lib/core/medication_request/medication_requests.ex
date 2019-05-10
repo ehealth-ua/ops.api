@@ -40,8 +40,9 @@ defmodule Core.MedicationRequests do
   end
 
   def update(%MedicationRequest{status: old_status} = medication_request, attrs) do
+    author_id = Map.get(attrs, "updated_by") || Map.get(attrs, :updated_by)
+
     with changes <- changeset(medication_request, attrs),
-         author_id <- get_change(changes, :updated_by),
          {:ok, medication_request} <- Repo.update_and_log(changes, author_id),
          _ <- EventManager.publish_change_status(medication_request, old_status, medication_request.status, author_id) do
       {:ok, medication_request}
