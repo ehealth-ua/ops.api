@@ -281,6 +281,36 @@ defmodule OPS.Web.MedicationDispenseControllerTest do
            } = resp["data"]
   end
 
+  test "updates medication dispense when data is valid and updated_by param is not changed", %{conn: conn} do
+    expect(KafkaMock, :publish_to_event_manager, fn _ -> :ok end)
+    %MedicationDispense{id: id} = insert(:medication_dispense, updated_by: @update_attrs.updated_by)
+    medication_request_id = @update_attrs.medication_request_id
+    insert(:medication_request, id: medication_request_id)
+
+    resp =
+      conn |> put(medication_dispense_path(conn, :update, id), medication_dispense: @update_attrs) |> json_response(200)
+
+    division_id = @update_attrs.division_id
+    legal_entity_id = @update_attrs.legal_entity_id
+    status = MedicationDispense.status(:rejected)
+    inserted_by = @update_attrs.inserted_by
+    updated_by = @update_attrs.updated_by
+    dispensed_by = @update_attrs.dispensed_by
+    dispensed_at = @update_attrs.dispensed_at
+
+    assert %{
+             "id" => ^id,
+             "medication_request" => %{"id" => ^medication_request_id},
+             "division_id" => ^division_id,
+             "legal_entity_id" => ^legal_entity_id,
+             "dispensed_by" => ^dispensed_by,
+             "dispensed_at" => ^dispensed_at,
+             "status" => ^status,
+             "inserted_by" => ^inserted_by,
+             "updated_by" => ^updated_by
+           } = resp["data"]
+  end
+
   test "process medication dispense", %{conn: conn} do
     expect(KafkaMock, :publish_to_event_manager, 2, fn _ -> :ok end)
     %MedicationDispense{id: id, medication_request: medication_request} = insert(:medication_dispense)

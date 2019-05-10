@@ -247,6 +247,23 @@ defmodule OPS.Web.MedicationRequestControllerTest do
       resp = json_response(conn, 200)
       assert status == resp["data"]["status"]
     end
+
+    test "success update when updated_by param is not changed", %{conn: conn, data: [medication_request, _]} do
+      expect(KafkaMock, :publish_to_event_manager, fn _ -> :ok end)
+      id = medication_request.id
+      status = MedicationRequest.status(:completed)
+
+      conn =
+        patch(conn, medication_request_path(conn, :update, id), %{
+          "medication_request" => %{
+            "status" => status,
+            "updated_by" => medication_request.updated_by
+          }
+        })
+
+      resp = json_response(conn, 200)
+      assert status == resp["data"]["status"]
+    end
   end
 
   describe "create medication request" do
