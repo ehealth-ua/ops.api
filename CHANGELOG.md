@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [2.6.1](https://github.com/edenlabllc/ops.api/compare/2.6.0...2.6.1) (2019-5-14)
+
+
+
+
+### Bug Fixes:
+
+* audit log actor_id param fetching fixed (#234)
+
 ## [2.6.0](https://github.com/edenlabllc/ops.api/compare/2.6.0...2.6.0) (2019-5-9)
 
 
