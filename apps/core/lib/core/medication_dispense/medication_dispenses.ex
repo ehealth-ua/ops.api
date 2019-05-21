@@ -39,21 +39,12 @@ defmodule Core.MedicationDispenses do
   def list(params) do
     %Search{}
     |> changeset(params)
-    |> search(params, MedicationDispense)
+    |> search_medication_dispenses(params, MedicationDispense)
   end
 
   def get_search_query(entity, changes) do
-    dispensed_from = Map.get(changes, :dispensed_from)
-    dispensed_to = Map.get(changes, :dispensed_to)
-
     params = Map.drop(changes, ~w(dispensed_from dispensed_to)a)
-
-    entity
-    |> super(params)
-    |> join(:left, [md], mr in assoc(md, :medication_request))
-    |> join(:left, [md, mr], d in assoc(md, :details))
-    |> preload([md, mr, d], medication_request: mr, details: d)
-    |> add_dispensed_at_query(dispensed_from, dispensed_to)
+    super(entity, params)
   end
 
   def create(attrs) do
@@ -232,5 +223,35 @@ defmodule Core.MedicationDispenses do
 
   defp add_dispensed_at_query(query, dispensed_from, dispensed_to) do
     where(query, [md], fragment("? BETWEEN ? AND ?", md.dispensed_at, ^dispensed_from, ^dispensed_to))
+  end
+
+  defp search_medication_dispenses(%Ecto.Changeset{valid?: true, changes: changes}, search_params, entity) do
+    entity
+    |> get_search_query(changes)
+    |> get_medication_dispenses_list(search_params, changes)
+  end
+
+  defp search_medication_dispenses(%Ecto.Changeset{valid?: false} = changeset, _search_params, _entity) do
+    {:error, changeset}
+  end
+
+  defp get_medication_dispenses_list(query, search_params, changes) do
+    dispensed_from = Map.get(changes, :dispensed_from)
+    dispensed_to = Map.get(changes, :dispensed_to)
+
+    entries_query =
+      query
+      |> join(:left, [md], mr in assoc(md, :medication_request))
+      |> join(:left, [md, mr], d in assoc(md, :details))
+      |> preload([md, mr, d], medication_request: mr, details: d)
+      |> add_dispensed_at_query(dispensed_from, dispensed_to)
+
+    count_query =
+      query
+      |> exclude(:order_by)
+      |> add_dispensed_at_query(dispensed_from, dispensed_to)
+      |> select([md], count(md.id))
+
+    EctoPaginator.paginate(entries_query, count_query, @read_repo.paginator_options(search_params))
   end
 end
