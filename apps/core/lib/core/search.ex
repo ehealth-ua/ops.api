@@ -9,6 +9,8 @@ defmodule Core.Search do
       import Ecto.Query
       import Ecto.Changeset
 
+      alias Core.Declarations.Declaration
+
       @read_repo Application.get_env(:core, :repos)[:read_repo]
 
       def search(%Ecto.Changeset{valid?: true, changes: changes}, search_params, entity) do
@@ -21,24 +23,28 @@ defmodule Core.Search do
         {:error, changeset}
       end
 
-      def get_search_query(entity, changes) when map_size(changes) > 0 do
+      def get_search_query(entity, changes) do
+        entity
+        |> get_query_condition(changes)
+        |> order_by([e], desc: :inserted_at)
+      end
+
+      def get_count_query(entity, changes) do
+        entity |> get_query_condition(changes) |> select([d], count(d.id))
+      end
+
+      def get_query_condition(entity, changes) when map_size(changes) > 0 do
         statuses = changes |> Map.get(:status, "") |> String.split(",")
         start_year = changes |> Map.get(:start_year)
         params = changes |> Map.drop([:status, :start_year]) |> Map.to_list()
 
-        query =
-          from(
-            e in entity,
-            where: ^params,
-            order_by: [desc: :inserted_at]
-          )
-
-        query
+        entity
+        |> where([e], ^params)
         |> add_query_statuses(statuses)
         |> add_query_start_year(start_year)
       end
 
-      def get_search_query(entity, _changes), do: from(e in entity, order_by: [desc: :inserted_at])
+      def get_query_condition(entity, _changes), do: entity
 
       defp add_query_statuses(query, [""]), do: query
       defp add_query_statuses(query, statuses), do: where(query, [e], e.status in ^statuses)

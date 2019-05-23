@@ -22,6 +22,14 @@ defmodule OPS.Redis do
     do_set(["SETEX", key, ttl_seconds, encode(value)])
   end
 
+  def delete(key) do
+    do_set(["DEL", key])
+  end
+
+  def flush do
+    do_set(["FLUSHDB"])
+  end
+
   defp do_set(params) do
     case command(params) do
       {:ok, _} ->
