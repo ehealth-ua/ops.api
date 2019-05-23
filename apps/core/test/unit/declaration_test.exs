@@ -8,6 +8,7 @@ defmodule Core.DeclarationTest do
   alias Core.Declarations.Declaration
   alias EctoTrail.Changelog
   alias Ecto.UUID
+  alias OPS.Redis
   alias Scrivener.Page
 
   @create_attrs %{
@@ -48,8 +49,8 @@ defmodule Core.DeclarationTest do
   setup :verify_on_exit!
 
   setup do
+    Redis.flush()
     {:ok, initial_block} = insert_initial_block()
-
     {:ok, %{hash: initial_block.hash}}
   end
 
@@ -77,6 +78,30 @@ defmodule Core.DeclarationTest do
   test "list_declarations/1 returns all declarations" do
     declaration = fixture(:declaration)
     assert %Page{entries: [^declaration]} = Declarations.list_declarations(%{})
+  end
+
+  test "list_declarations/1 pagination works" do
+    max_page_size = Confex.fetch_env!(:core, :max_page_size)
+    insert_list(max_page_size + 1, :declaration)
+
+    assert %Page{page_number: 1, page_size: ^max_page_size, total_pages: 2} =
+             Declarations.list_declarations(%{"page_size" => max_page_size * 2})
+  end
+
+  test "list_declarations/1 use redis count for empty params" do
+    declaration = fixture(:declaration)
+    params = %{}
+    cache_key = Declarations.get_cache_key(params)
+    Redis.setex(cache_key, Confex.fetch_env!(:ops, :cache)[:list_declarations_ttl], 1000)
+    assert %Page{entries: [^declaration], total_entries: 1000} = Declarations.list_declarations(params)
+  end
+
+  test "list_declarations/1 don't use redis count if no such key" do
+    declaration = fixture(:declaration)
+    params = %{is_active: false}
+    cache_key = Declarations.get_cache_key(params)
+    Redis.setex(cache_key, Confex.fetch_env!(:ops, :cache)[:list_declarations_ttl], 1000)
+    assert %Page{entries: [^declaration], total_entries: 1} = Declarations.list_declarations(%{id: declaration.id})
   end
 
   test "get_declaration! returns the declaration with given id" do

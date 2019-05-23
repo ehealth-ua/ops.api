@@ -45,6 +45,7 @@ defmodule OPS.MixProject do
       {:eview, "~> 0.15.0"},
       {:phoenix, "~> 1.4.0"},
       {:plug_cowboy, "~> 2.0"},
+      {:ecto_paginator, git: "https://github.com/edenlabllc/ecto_paginator.git"},
       {:core, in_umbrella: true}
     ]
   end

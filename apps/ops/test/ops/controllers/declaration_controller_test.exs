@@ -8,6 +8,7 @@ defmodule OPS.Web.DeclarationControllerTest do
   alias Core.Declarations.Declaration
   alias Core.Declarations.DeclarationStatusHistory
   alias Ecto.UUID
+  alias OPS.Redis
   setup :verify_on_exit!
 
   @create_attrs %{
@@ -437,6 +438,22 @@ defmodule OPS.Web.DeclarationControllerTest do
 
       assert resp = json_response(conn, 200)
       assert %{"count" => 2} == resp["data"]
+    end
+
+    test "count only active and pending declarations with redis", %{conn: conn} do
+      employee_id1 = UUID.generate()
+      insert(:declaration, employee_id: employee_id1, status: Declaration.status(:active))
+      insert(:declaration, employee_id: employee_id1, status: Declaration.status(:pending))
+      insert(:declaration, employee_id: employee_id1, status: Declaration.status(:closed))
+      insert(:declaration, employee_id: employee_id1, status: Declaration.status(:terminated))
+
+      cache_key = Declarations.get_cache_key(%{ids: [employee_id1]})
+      Redis.setex(cache_key, Confex.fetch_env!(:ops, :cache)[:list_declarations_ttl], 99)
+
+      assert resp = conn |> post(declaration_path(conn, :declarations_count, ids: [employee_id1])) |> json_response(200)
+      assert %{"count" => 99} == resp["data"]
+
+      Redis.delete(cache_key)
     end
 
     test "success count declarations by employee_ids and person_id to exclude", %{conn: conn} do
