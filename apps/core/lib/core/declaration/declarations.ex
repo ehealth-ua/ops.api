@@ -83,7 +83,7 @@ defmodule Core.Declarations do
         {k, v}, acc -> "#{acc}_#{k}_#{v}"
       end)
 
-    :crypto.hash(:md5, key)
+    :md5 |> :crypto.hash(key) |> Base.encode64()
   end
 
   defp filter_by_person_id(query, %{"exclude_person_id" => exclude_person_id}) when not is_nil(exclude_person_id) do
