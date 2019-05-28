@@ -3,7 +3,7 @@ defmodule Ops.MixProject do
 
   use Mix.Project
 
-  @version "2.6.1"
+  @version "2.7.0"
   def project do
     [
       version: @version,
