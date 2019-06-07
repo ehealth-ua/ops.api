@@ -9,7 +9,7 @@ defmodule OpsScheduler.CacheHelper do
   @spec get_entity_pipeline(integer, (map -> binary), (() -> Ecto.Query.t())) :: list()
   def get_entity_pipeline(ttl, key_resolver, query_resolver) do
     query_resolver.()
-    |> @read_repo.all()
+    |> @read_repo.all(timeout: :infinity)
     |> Enum.map(fn %{count: count} = entity_data ->
       cache_key = key_resolver.(Map.delete(entity_data, :count))
       ["SETEX", cache_key, ttl, Redis.encode(count)]
