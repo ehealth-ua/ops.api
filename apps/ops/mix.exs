@@ -41,12 +41,12 @@ defmodule OPS.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:core, in_umbrella: true},
       {:confex_config_provider, "~> 0.1.0"},
       {:eview, "~> 0.15.0"},
       {:phoenix, "~> 1.4.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:ecto_paginator, git: "https://github.com/edenlabllc/ecto_paginator.git"},
-      {:core, in_umbrella: true}
+      {:ecto_paginator, git: "https://github.com/edenlabllc/ecto_paginator.git"}
     ]
   end
 

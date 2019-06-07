@@ -2,22 +2,40 @@ defmodule Core.MedicationRequests do
   @moduledoc false
 
   use Core.Search
+
+  import Ecto.Changeset
+  import Core.AuditLogs, only: [create_audit_logs: 1]
+
   alias Core.EventManager
   alias Core.MedicationDispenses.MedicationDispense
   alias Core.MedicationRequest.DoctorSearch
   alias Core.MedicationRequest.QualifySearch
   alias Core.MedicationRequest.Search
   alias Core.MedicationRequests.MedicationRequest
+  alias Core.Redis
   alias Core.Repo
-  import Ecto.Changeset
-  import Core.AuditLogs, only: [create_audit_logs: 1]
 
   @read_repo Application.get_env(:core, :repos)[:read_repo]
 
   def list(params) do
-    %Search{}
-    |> changeset(params)
-    |> search(params, MedicationRequest)
+    %{changes: search_params} = changeset(%Search{}, params)
+    query = get_search_query(MedicationRequest, search_params)
+    cache_key = get_cache_key(search_params)
+    ttl = Confex.fetch_env!(:core, :cache)[:list_medication_requests_ttl]
+
+    count_result = Redis.get_lazy(cache_key, ttl, fn -> @read_repo.aggregate(query, :count, :id) end)
+
+    with {:ok, total_entries} <- count_result do
+      options =
+        params
+        |> Map.take(["page", "page_size"])
+        |> Map.put("options", total_entries: total_entries)
+        |> @read_repo.paginator_options()
+
+      query
+      |> order_by([mr], mr.inserted_at)
+      |> EctoPaginator.paginate(options)
+    end
   end
 
   def doctor_list(params) do
@@ -74,7 +92,6 @@ defmodule Core.MedicationRequests do
     |> where([mr], ^params)
     |> add_ilike_statuses(Map.get(changes, :status))
     |> add_created_at(Map.get(changes, :created_at))
-    |> order_by([mr], mr.inserted_at)
   end
 
   defp get_unique_medication_request(medication_request_requests_id) do
@@ -207,6 +224,8 @@ defmodule Core.MedicationRequests do
 
     {:ok, medication_requests}
   end
+
+  def get_cache_key(params), do: Redis.create_cache_key("count_medication_requests", params)
 
   defp add_created_at_doctor(query, nil, nil), do: query
 

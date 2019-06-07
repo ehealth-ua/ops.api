@@ -8,7 +8,7 @@ defmodule Core.DeclarationTest do
   alias Core.Declarations.Declaration
   alias EctoTrail.Changelog
   alias Ecto.UUID
-  alias OPS.Redis
+  alias Core.Redis
   alias Scrivener.Page
 
   @create_attrs %{
@@ -92,7 +92,7 @@ defmodule Core.DeclarationTest do
     declaration = fixture(:declaration)
     params = %{}
     cache_key = Declarations.get_cache_key(params)
-    Redis.setex(cache_key, Confex.fetch_env!(:ops, :cache)[:list_declarations_ttl], 1000)
+    Redis.setex(cache_key, Confex.fetch_env!(:core, :cache)[:list_declarations_ttl], 1000)
     assert %Page{entries: [^declaration], total_entries: 1000} = Declarations.list_declarations(params)
   end
 
@@ -100,7 +100,7 @@ defmodule Core.DeclarationTest do
     declaration = fixture(:declaration)
     params = %{is_active: false}
     cache_key = Declarations.get_cache_key(params)
-    Redis.setex(cache_key, Confex.fetch_env!(:ops, :cache)[:list_declarations_ttl], 1000)
+    Redis.setex(cache_key, Confex.fetch_env!(:core, :cache)[:list_declarations_ttl], 1000)
     assert %Page{entries: [^declaration], total_entries: 1} = Declarations.list_declarations(%{id: declaration.id})
   end
 

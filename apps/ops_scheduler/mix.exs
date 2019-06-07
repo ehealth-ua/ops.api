@@ -37,9 +37,9 @@ defmodule OpsScheduler.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:core, in_umbrella: true},
       {:confex_config_provider, "~> 0.1.0"},
-      {:quantum, "~> 2.3"},
-      {:core, in_umbrella: true}
+      {:quantum, "~> 2.3"}
     ]
   end
 

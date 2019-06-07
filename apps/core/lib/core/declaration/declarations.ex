@@ -5,17 +5,17 @@ defmodule Core.Declarations do
 
   use Core.Search
 
+  import Core.AuditLogs, only: [create_audit_logs: 1, create_audit_log: 1]
+  import Ecto.Changeset
+  import Ecto.Query
+
   alias Core.Block.API, as: BlockAPI
   alias Core.Declarations.Declaration
   alias Core.Declarations.DeclarationSearch
   alias Core.EventManager
+  alias Core.Redis
   alias Core.Repo
   alias Ecto.Multi
-  alias OPS.Redis
-
-  import Core.AuditLogs, only: [create_audit_logs: 1, create_audit_log: 1]
-  import Ecto.Changeset
-  import Ecto.Query
 
   require Logger
 
@@ -26,65 +26,51 @@ defmodule Core.Declarations do
   @status_pending Declaration.status(:pending)
 
   def list_declarations(params) do
-    %{changes: changes} = declaration_changeset(%DeclarationSearch{}, params)
-    cache_key = get_cache_key(changes)
-    query = get_search_query(Declaration, changes)
+    %{changes: search_params} = declaration_changeset(%DeclarationSearch{}, params)
+    query = get_search_query(Declaration, search_params)
+    cache_key = get_cache_key(search_params)
+    ttl = Confex.fetch_env!(:core, :cache)[:list_declarations_ttl]
 
-    total_entries =
-      case Redis.get(cache_key) do
-        {:ok, count} ->
-          count
+    count_result =
+      Redis.get_lazy(cache_key, ttl, fn ->
+        Declaration
+        |> get_count_query(search_params)
+        |> @read_repo.one()
+      end)
 
-        _ ->
-          count = Declaration |> get_count_query(changes) |> @read_repo.one
-          Redis.setex(cache_key, Confex.fetch_env!(:ops, :cache)[:list_declarations_ttl], count)
-          count
-      end
+    with {:ok, total_entries} <- count_result do
+      options =
+        params
+        |> Map.take(["page", "page_size"])
+        |> Map.put("options", total_entries: total_entries)
+        |> @read_repo.paginator_options()
 
-    options =
-      params
-      |> Map.take(~w(page page_size))
-      |> Map.put("options", total_entries: total_entries)
-      |> @read_repo.paginator_options()
-
-    EctoPaginator.paginate(query, options)
+      EctoPaginator.paginate(query, options)
+    end
   end
 
   def count_by_employee_ids(%{"ids" => employee_ids} = params) do
     cache_key = get_cache_key(params)
+    ttl = Confex.fetch_env!(:core, :cache)[:list_declarations_ttl]
 
-    count =
-      case Redis.get(cache_key) do
-        {:ok, count} ->
-          count
+    count_result =
+      Redis.get_lazy(cache_key, ttl, fn ->
+        Declaration
+        |> select([d], count(d.id))
+        |> where([d], d.employee_id in ^employee_ids)
+        |> where([d], d.status in ^[@status_active, @status_pending])
+        |> filter_by_person_id(params)
+        |> @read_repo.one!()
+      end)
 
-        _ ->
-          count =
-            Declaration
-            |> select([d], count(d.id))
-            |> where([d], d.employee_id in ^employee_ids)
-            |> where([d], d.status in ^[@status_active, @status_pending])
-            |> filter_by_person_id(params)
-            |> @read_repo.one!()
-
-          Redis.setex(cache_key, Confex.fetch_env!(:ops, :cache)[:list_declarations_ttl], count)
-          count
-      end
-
-    {:ok, count}
+    with {:ok, count} <- count_result do
+      {:ok, count}
+    end
   end
 
   def count_by_employee_ids(_), do: :error
 
-  def get_cache_key(changes) do
-    key =
-      Enum.reduce(changes, "count_declarations", fn
-        {k, v}, acc when is_list(v) -> "#{acc}_#{k}_#{Enum.sort(v)}"
-        {k, v}, acc -> "#{acc}_#{k}_#{v}"
-      end)
-
-    :md5 |> :crypto.hash(key) |> Base.encode64()
-  end
+  def get_cache_key(params), do: Redis.create_cache_key("count_declarations", params)
 
   defp filter_by_person_id(query, %{"exclude_person_id" => exclude_person_id}) when not is_nil(exclude_person_id) do
     where(query, [d], d.person_id != ^exclude_person_id)

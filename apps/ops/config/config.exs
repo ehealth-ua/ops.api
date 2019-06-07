@@ -12,15 +12,6 @@ config :ops, OPS.Web.Endpoint,
 
 config :phoenix, json_library: Jason
 
-config :ops, :cache, list_declarations_ttl: {:system, :integer, "LIST_DECLARATIONS_TTL", 60 * 60}
-
-config :ops, OPS.Redis,
-  host: {:system, "REDIS_HOST", "0.0.0.0"},
-  port: {:system, :integer, "REDIS_PORT", 6379},
-  password: {:system, "REDIS_PASSWORD", nil},
-  database: {:system, "REDIS_DATABASE", nil},
-  pool_size: {:system, :integer, "REDIS_POOL_SIZE", 5}
-
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

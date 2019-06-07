@@ -8,7 +8,7 @@ defmodule OPS.Web.DeclarationControllerTest do
   alias Core.Declarations.Declaration
   alias Core.Declarations.DeclarationStatusHistory
   alias Ecto.UUID
-  alias OPS.Redis
+  alias Core.Redis
   setup :verify_on_exit!
 
   @create_attrs %{
@@ -448,7 +448,7 @@ defmodule OPS.Web.DeclarationControllerTest do
       insert(:declaration, employee_id: employee_id1, status: Declaration.status(:terminated))
 
       cache_key = Declarations.get_cache_key(%{ids: [employee_id1]})
-      Redis.setex(cache_key, Confex.fetch_env!(:ops, :cache)[:list_declarations_ttl], 99)
+      Redis.setex(cache_key, Confex.fetch_env!(:core, :cache)[:list_declarations_ttl], 99)
 
       assert resp = conn |> post(declaration_path(conn, :declarations_count, ids: [employee_id1])) |> json_response(200)
       assert %{"count" => 99} == resp["data"]

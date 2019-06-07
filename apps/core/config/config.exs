@@ -21,6 +21,10 @@ config :core,
 
 config :core, Core.AuditLogs, max_audit_record_insert: 100
 
+config :core, :cache,
+  list_declarations_ttl: {:system, :integer, "LIST_DECLARATIONS_TTL", 60 * 60 * 2},
+  list_medication_requests_ttl: {:system, :integer, "LIST_MEDICATION_REQUESTS_TTL", 60 * 60 * 2}
+
 config :core, :block_versions, %{
   "v1" => "
     WITH concat AS (
@@ -85,6 +89,13 @@ config :core, Core.API.IL,
 config :core, :current_block_version, "v2"
 
 config :ecto_trail, table_name: "audit_log"
+
+config :core, Core.Redis,
+  host: {:system, "REDIS_HOST", "0.0.0.0"},
+  port: {:system, :integer, "REDIS_PORT", 6379},
+  password: {:system, "REDIS_PASSWORD", nil},
+  database: {:system, "REDIS_DATABASE", nil},
+  pool_size: {:system, :integer, "REDIS_POOL_SIZE", 5}
 
 config :kaffe,
   producer: [

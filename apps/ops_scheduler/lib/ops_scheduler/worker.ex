@@ -4,6 +4,8 @@ defmodule OpsScheduler.Worker do
   use Quantum.Scheduler, otp_app: :ops_scheduler
 
   alias Crontab.CronExpression.Parser
+  alias OpsScheduler.Jobs.CacheDeclarationsCountJob
+  alias OpsScheduler.Jobs.CacheMedicationRequestsCountJob
   alias OpsScheduler.Jobs.CloseBlockJob
   alias OpsScheduler.Jobs.DeclarationsApprove
   alias OpsScheduler.Jobs.DeclarationsTerminator
@@ -13,6 +15,8 @@ defmodule OpsScheduler.Worker do
   alias Quantum.RunStrategy.Local
 
   def create_jobs do
+    create_job(&CacheDeclarationsCountJob.run/0, :cache_declarations_count_job_schedule)
+    create_job(&CacheMedicationRequestsCountJob.run/0, :cache_medication_requests_count_job_schedule)
     create_job(&DeclarationsApprove.run/0, :declarations_approve_schedule)
     create_job(&DeclarationsTerminator.run/0, :declarations_terminator_schedule)
     create_job(&MedicationDispensesTerminator.run/0, :medication_dispenses_terminator_schedule)
