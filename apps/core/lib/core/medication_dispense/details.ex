@@ -15,6 +15,7 @@ defmodule Core.MedicationDispense.Details do
     field(:medication_dispense_id, UUID)
     field(:sell_amount, :float)
     field(:discount_amount, :float)
+    field(:program_medication_id, UUID)
 
     belongs_to(:medication_dispense, MedicationDispense, define_field: false)
   end
