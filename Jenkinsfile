@@ -189,7 +189,7 @@ pipeline {
         timeout(activity: true, time: 3)
       }
       environment {
-        APPS='[{"app":"ops","chart":"ops","namespace":"ops","deployment":"api"},{"app":"ops_scheduler","chart":"ops","namespace":"ops","deployment":"ops-scheduler","label":"scheduler"},{"app":"deactivate_declaration_consumer","chart":"ops","namespace":"ops","deployment":"deactivate-declaration-consumer","label":"deactivate-declaration-consumer"}]'
+        APPS='[{"app":"ops","chart":"ops","namespace":"ops","deployment":"api","label":"api"},{"app":"ops_scheduler","chart":"ops","namespace":"ops","deployment":"ops-scheduler","label":"scheduler"},{"app":"deactivate_declaration_consumer","chart":"ops","namespace":"ops","deployment":"deactivate-declaration-consumer","label":"deactivate-declaration-consumer"}]'
       }
       steps {
         withCredentials([string(credentialsId: '86a8df0b-edef-418f-844a-cd1fa2cf813d', variable: 'GITHUB_TOKEN')]) {
