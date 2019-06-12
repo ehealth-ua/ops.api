@@ -34,7 +34,7 @@ defmodule Core.MixProject do
     [
       {:httpoison, "~> 1.4"},
       {:kaffe, "~> 1.11"},
-      {:kube_rpc, "~> 0.2.0"},
+      {:kube_rpc, "~> 0.3.0"},
       {:confex, "~> 3.4"},
       {:mox, "~> 0.4.0", only: [:test]},
       {:jason, "~> 1.1"},
